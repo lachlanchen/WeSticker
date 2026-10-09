@@ -1,0 +1,3069 @@
+{
+  "packs": [
+    {
+      "id": "vol-01",
+      "name": "啦啦侠阿芽酱日常",
+      "english": "Little everyday joys",
+      "tag": "daily",
+      "description": "早呀、抱抱、谢谢你。把平常的一天，过成有人陪的小日子。",
+      "count": 24,
+      "wechat": "listed",
+      "color": "pink",
+      "banner": "/previews/vol-01/banner.webp",
+      "cover": "/previews/vol-01/cover.webp",
+      "editions": [
+        "original",
+        "compact",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-aya-morning",
+            "label": "早呀",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/01-aya-morning.gif",
+            "poster": "/previews/vol-01/compact/01-aya-morning.webp"
+          },
+          {
+            "id": "02-lala-arrive",
+            "label": "来啦",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/02-lala-arrive.gif",
+            "poster": "/previews/vol-01/compact/02-lala-arrive.webp"
+          },
+          {
+            "id": "03-zhuangzi-received",
+            "label": "收到",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/03-zhuangzi-received.gif",
+            "poster": "/previews/vol-01/compact/03-zhuangzi-received.webp"
+          },
+          {
+            "id": "04-sasa-go",
+            "label": "出发",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/04-sasa-go.gif",
+            "poster": "/previews/vol-01/compact/04-sasa-go.webp"
+          },
+          {
+            "id": "05-lala-snack",
+            "label": "想吃",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/05-lala-snack.gif",
+            "poster": "/previews/vol-01/compact/05-lala-snack.webp"
+          },
+          {
+            "id": "06-lala-gift",
+            "label": "给你",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/06-lala-gift.gif",
+            "poster": "/previews/vol-01/compact/06-lala-gift.webp"
+          },
+          {
+            "id": "07-aya-thanks",
+            "label": "谢谢",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/07-aya-thanks.gif",
+            "poster": "/previews/vol-01/compact/07-aya-thanks.webp"
+          },
+          {
+            "id": "08-aya-haha",
+            "label": "哈哈",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/08-aya-haha.gif",
+            "poster": "/previews/vol-01/compact/08-aya-haha.webp"
+          },
+          {
+            "id": "09-aya-hmph",
+            "label": "哼",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/09-aya-hmph.gif",
+            "poster": "/previews/vol-01/compact/09-aya-hmph.webp"
+          },
+          {
+            "id": "10-aya-okay",
+            "label": "好吧",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/10-aya-okay.gif",
+            "poster": "/previews/vol-01/compact/10-aya-okay.webp"
+          },
+          {
+            "id": "11-lala-cheer",
+            "label": "加油",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/11-lala-cheer.gif",
+            "poster": "/previews/vol-01/compact/11-lala-cheer.webp"
+          },
+          {
+            "id": "12-zhuangzi-care",
+            "label": "辛苦啦",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/12-zhuangzi-care.gif",
+            "poster": "/previews/vol-01/compact/12-zhuangzi-care.webp"
+          },
+          {
+            "id": "13-duo-hug",
+            "label": "抱抱",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/13-duo-hug.gif",
+            "poster": "/previews/vol-01/compact/13-duo-hug.webp"
+          },
+          {
+            "id": "14-sasa-wait",
+            "label": "等等我",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/14-sasa-wait.gif",
+            "poster": "/previews/vol-01/compact/14-sasa-wait.webp"
+          },
+          {
+            "id": "15-duo-yay",
+            "label": "好耶",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/15-duo-yay.gif",
+            "poster": "/previews/vol-01/compact/15-duo-yay.webp"
+          },
+          {
+            "id": "16-aya-night",
+            "label": "晚安",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/16-aya-night.gif",
+            "poster": "/previews/vol-01/compact/16-aya-night.webp"
+          },
+          {
+            "id": "17-duo-kiss",
+            "label": "亲亲",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/17-duo-kiss.gif",
+            "poster": "/previews/vol-01/compact/17-duo-kiss.webp"
+          },
+          {
+            "id": "18-aya-cry",
+            "label": "哭哭",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/18-aya-cry.gif",
+            "poster": "/previews/vol-01/compact/18-aya-cry.webp"
+          },
+          {
+            "id": "19-team-support",
+            "label": "撑腰",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/19-team-support.gif",
+            "poster": "/previews/vol-01/compact/19-team-support.webp"
+          },
+          {
+            "id": "20-duo-bonk",
+            "label": "打你",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/20-duo-bonk.gif",
+            "poster": "/previews/vol-01/compact/20-duo-bonk.webp"
+          },
+          {
+            "id": "21-aya-shy",
+            "label": "害羞",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/21-aya-shy.gif",
+            "poster": "/previews/vol-01/compact/21-aya-shy.webp"
+          },
+          {
+            "id": "22-lala-sorry",
+            "label": "对不起",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/22-lala-sorry.gif",
+            "poster": "/previews/vol-01/compact/22-lala-sorry.webp"
+          },
+          {
+            "id": "23-duo-pat",
+            "label": "摸摸头",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/23-duo-pat.gif",
+            "poster": "/previews/vol-01/compact/23-duo-pat.webp"
+          },
+          {
+            "id": "24-lala-full",
+            "label": "吃饱啦",
+            "gif": "https://aya.lazying.art/media/vol-01/compact/24-lala-full.gif",
+            "poster": "/previews/vol-01/compact/24-lala-full.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-aya-morning",
+            "label": "Morning!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/01-aya-morning.gif",
+            "poster": "/previews/vol-01/en/01-aya-morning.webp"
+          },
+          {
+            "id": "02-lala-arrive",
+            "label": "I'm here!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/02-lala-arrive.gif",
+            "poster": "/previews/vol-01/en/02-lala-arrive.webp"
+          },
+          {
+            "id": "03-zhuangzi-received",
+            "label": "Got it!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/03-zhuangzi-received.gif",
+            "poster": "/previews/vol-01/en/03-zhuangzi-received.webp"
+          },
+          {
+            "id": "04-sasa-go",
+            "label": "Let's go!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/04-sasa-go.gif",
+            "poster": "/previews/vol-01/en/04-sasa-go.webp"
+          },
+          {
+            "id": "05-lala-snack",
+            "label": "Want a bite",
+            "gif": "https://aya.lazying.art/media/vol-01/en/05-lala-snack.gif",
+            "poster": "/previews/vol-01/en/05-lala-snack.webp"
+          },
+          {
+            "id": "06-lala-gift",
+            "label": "For you",
+            "gif": "https://aya.lazying.art/media/vol-01/en/06-lala-gift.gif",
+            "poster": "/previews/vol-01/en/06-lala-gift.webp"
+          },
+          {
+            "id": "07-aya-thanks",
+            "label": "Thank you",
+            "gif": "https://aya.lazying.art/media/vol-01/en/07-aya-thanks.gif",
+            "poster": "/previews/vol-01/en/07-aya-thanks.webp"
+          },
+          {
+            "id": "08-aya-haha",
+            "label": "Haha!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/08-aya-haha.gif",
+            "poster": "/previews/vol-01/en/08-aya-haha.webp"
+          },
+          {
+            "id": "09-aya-hmph",
+            "label": "Hmph!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/09-aya-hmph.gif",
+            "poster": "/previews/vol-01/en/09-aya-hmph.webp"
+          },
+          {
+            "id": "10-aya-okay",
+            "label": "Okay then",
+            "gif": "https://aya.lazying.art/media/vol-01/en/10-aya-okay.gif",
+            "poster": "/previews/vol-01/en/10-aya-okay.webp"
+          },
+          {
+            "id": "11-lala-cheer",
+            "label": "You got this",
+            "gif": "https://aya.lazying.art/media/vol-01/en/11-lala-cheer.gif",
+            "poster": "/previews/vol-01/en/11-lala-cheer.webp"
+          },
+          {
+            "id": "12-zhuangzi-care",
+            "label": "Good work!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/12-zhuangzi-care.gif",
+            "poster": "/previews/vol-01/en/12-zhuangzi-care.webp"
+          },
+          {
+            "id": "13-duo-hug",
+            "label": "Hugs",
+            "gif": "https://aya.lazying.art/media/vol-01/en/13-duo-hug.gif",
+            "poster": "/previews/vol-01/en/13-duo-hug.webp"
+          },
+          {
+            "id": "14-sasa-wait",
+            "label": "Wait for me",
+            "gif": "https://aya.lazying.art/media/vol-01/en/14-sasa-wait.gif",
+            "poster": "/previews/vol-01/en/14-sasa-wait.webp"
+          },
+          {
+            "id": "15-duo-yay",
+            "label": "Yay!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/15-duo-yay.gif",
+            "poster": "/previews/vol-01/en/15-duo-yay.webp"
+          },
+          {
+            "id": "16-aya-night",
+            "label": "Good night",
+            "gif": "https://aya.lazying.art/media/vol-01/en/16-aya-night.gif",
+            "poster": "/previews/vol-01/en/16-aya-night.webp"
+          },
+          {
+            "id": "17-duo-kiss",
+            "label": "Kisses",
+            "gif": "https://aya.lazying.art/media/vol-01/en/17-duo-kiss.gif",
+            "poster": "/previews/vol-01/en/17-duo-kiss.webp"
+          },
+          {
+            "id": "18-aya-cry",
+            "label": "Sob...",
+            "gif": "https://aya.lazying.art/media/vol-01/en/18-aya-cry.gif",
+            "poster": "/previews/vol-01/en/18-aya-cry.webp"
+          },
+          {
+            "id": "19-team-support",
+            "label": "Got your back",
+            "gif": "https://aya.lazying.art/media/vol-01/en/19-team-support.gif",
+            "poster": "/previews/vol-01/en/19-team-support.webp"
+          },
+          {
+            "id": "20-duo-bonk",
+            "label": "Bonk!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/20-duo-bonk.gif",
+            "poster": "/previews/vol-01/en/20-duo-bonk.webp"
+          },
+          {
+            "id": "21-aya-shy",
+            "label": "So shy",
+            "gif": "https://aya.lazying.art/media/vol-01/en/21-aya-shy.gif",
+            "poster": "/previews/vol-01/en/21-aya-shy.webp"
+          },
+          {
+            "id": "22-lala-sorry",
+            "label": "I'm sorry",
+            "gif": "https://aya.lazying.art/media/vol-01/en/22-lala-sorry.gif",
+            "poster": "/previews/vol-01/en/22-lala-sorry.webp"
+          },
+          {
+            "id": "23-duo-pat",
+            "label": "Pat pat",
+            "gif": "https://aya.lazying.art/media/vol-01/en/23-duo-pat.gif",
+            "poster": "/previews/vol-01/en/23-duo-pat.webp"
+          },
+          {
+            "id": "24-lala-full",
+            "label": "So full!",
+            "gif": "https://aya.lazying.art/media/vol-01/en/24-lala-full.gif",
+            "poster": "/previews/vol-01/en/24-lala-full.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-aya-morning",
+            "label": "おはよう",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/01-aya-morning.gif",
+            "poster": "/previews/vol-01/ja/01-aya-morning.webp"
+          },
+          {
+            "id": "02-lala-arrive",
+            "label": "来たよ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/02-lala-arrive.gif",
+            "poster": "/previews/vol-01/ja/02-lala-arrive.webp"
+          },
+          {
+            "id": "03-zhuangzi-received",
+            "label": "了解",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/03-zhuangzi-received.gif",
+            "poster": "/previews/vol-01/ja/03-zhuangzi-received.webp"
+          },
+          {
+            "id": "04-sasa-go",
+            "label": "出発！",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/04-sasa-go.gif",
+            "poster": "/previews/vol-01/ja/04-sasa-go.webp"
+          },
+          {
+            "id": "05-lala-snack",
+            "label": "食べたい",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/05-lala-snack.gif",
+            "poster": "/previews/vol-01/ja/05-lala-snack.webp"
+          },
+          {
+            "id": "06-lala-gift",
+            "label": "どうぞ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/06-lala-gift.gif",
+            "poster": "/previews/vol-01/ja/06-lala-gift.webp"
+          },
+          {
+            "id": "07-aya-thanks",
+            "label": "ありがとう",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/07-aya-thanks.gif",
+            "poster": "/previews/vol-01/ja/07-aya-thanks.webp"
+          },
+          {
+            "id": "08-aya-haha",
+            "label": "あはは",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/08-aya-haha.gif",
+            "poster": "/previews/vol-01/ja/08-aya-haha.webp"
+          },
+          {
+            "id": "09-aya-hmph",
+            "label": "ふんっ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/09-aya-hmph.gif",
+            "poster": "/previews/vol-01/ja/09-aya-hmph.webp"
+          },
+          {
+            "id": "10-aya-okay",
+            "label": "わかった",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/10-aya-okay.gif",
+            "poster": "/previews/vol-01/ja/10-aya-okay.webp"
+          },
+          {
+            "id": "11-lala-cheer",
+            "label": "がんばれ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/11-lala-cheer.gif",
+            "poster": "/previews/vol-01/ja/11-lala-cheer.webp"
+          },
+          {
+            "id": "12-zhuangzi-care",
+            "label": "おつかれ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/12-zhuangzi-care.gif",
+            "poster": "/previews/vol-01/ja/12-zhuangzi-care.webp"
+          },
+          {
+            "id": "13-duo-hug",
+            "label": "ぎゅー",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/13-duo-hug.gif",
+            "poster": "/previews/vol-01/ja/13-duo-hug.webp"
+          },
+          {
+            "id": "14-sasa-wait",
+            "label": "待って",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/14-sasa-wait.gif",
+            "poster": "/previews/vol-01/ja/14-sasa-wait.webp"
+          },
+          {
+            "id": "15-duo-yay",
+            "label": "やった！",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/15-duo-yay.gif",
+            "poster": "/previews/vol-01/ja/15-duo-yay.webp"
+          },
+          {
+            "id": "16-aya-night",
+            "label": "おやすみ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/16-aya-night.gif",
+            "poster": "/previews/vol-01/ja/16-aya-night.webp"
+          },
+          {
+            "id": "17-duo-kiss",
+            "label": "ちゅっ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/17-duo-kiss.gif",
+            "poster": "/previews/vol-01/ja/17-duo-kiss.webp"
+          },
+          {
+            "id": "18-aya-cry",
+            "label": "えーん",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/18-aya-cry.gif",
+            "poster": "/previews/vol-01/ja/18-aya-cry.webp"
+          },
+          {
+            "id": "19-team-support",
+            "label": "味方だよ",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/19-team-support.gif",
+            "poster": "/previews/vol-01/ja/19-team-support.webp"
+          },
+          {
+            "id": "20-duo-bonk",
+            "label": "こつん",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/20-duo-bonk.gif",
+            "poster": "/previews/vol-01/ja/20-duo-bonk.webp"
+          },
+          {
+            "id": "21-aya-shy",
+            "label": "照れちゃう",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/21-aya-shy.gif",
+            "poster": "/previews/vol-01/ja/21-aya-shy.webp"
+          },
+          {
+            "id": "22-lala-sorry",
+            "label": "ごめんね",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/22-lala-sorry.gif",
+            "poster": "/previews/vol-01/ja/22-lala-sorry.webp"
+          },
+          {
+            "id": "23-duo-pat",
+            "label": "よしよし",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/23-duo-pat.gif",
+            "poster": "/previews/vol-01/ja/23-duo-pat.webp"
+          },
+          {
+            "id": "24-lala-full",
+            "label": "おなかいっぱい",
+            "gif": "https://aya.lazying.art/media/vol-01/ja/24-lala-full.gif",
+            "poster": "/previews/vol-01/ja/24-lala-full.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vol-02",
+      "name": "今天也想黏着你",
+      "english": "Always a little closer",
+      "tag": "love",
+      "description": "想你就靠近一点。撒娇、晚安，还有不想松开的抱抱。",
+      "count": 16,
+      "wechat": "review",
+      "color": "coral",
+      "banner": "/previews/vol-02/banner.webp",
+      "cover": "/previews/vol-02/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-aya-miss-you",
+            "label": "想你啦",
+            "gif": "https://aya.lazying.art/media/vol-02/original/01-aya-miss-you.gif",
+            "poster": "/previews/vol-02/original/01-aya-miss-you.webp"
+          },
+          {
+            "id": "02-duo-nuzzle",
+            "label": "贴贴",
+            "gif": "https://aya.lazying.art/media/vol-02/original/02-duo-nuzzle.gif",
+            "poster": "/previews/vol-02/original/02-duo-nuzzle.webp"
+          },
+          {
+            "id": "03-lala-saved-bun",
+            "label": "给你留了",
+            "gif": "https://aya.lazying.art/media/vol-02/original/03-lala-saved-bun.gif",
+            "poster": "/previews/vol-02/original/03-lala-saved-bun.webp"
+          },
+          {
+            "id": "04-aya-eat-more",
+            "label": "多吃点",
+            "gif": "https://aya.lazying.art/media/vol-02/original/04-aya-eat-more.gif",
+            "poster": "/previews/vol-02/original/04-aya-eat-more.webp"
+          },
+          {
+            "id": "05-zhuangzi-water",
+            "label": "喝口水",
+            "gif": "https://aya.lazying.art/media/vol-02/original/05-zhuangzi-water.gif",
+            "poster": "/previews/vol-02/original/05-zhuangzi-water.webp"
+          },
+          {
+            "id": "06-lala-rest",
+            "label": "歇会儿",
+            "gif": "https://aya.lazying.art/media/vol-02/original/06-lala-rest.gif",
+            "poster": "/previews/vol-02/original/06-lala-rest.webp"
+          },
+          {
+            "id": "07-duo-company",
+            "label": "我陪你",
+            "gif": "https://aya.lazying.art/media/vol-02/original/07-duo-company.gif",
+            "poster": "/previews/vol-02/original/07-duo-company.webp"
+          },
+          {
+            "id": "08-duo-not-angry",
+            "label": "不气啦",
+            "gif": "https://aya.lazying.art/media/vol-02/original/08-duo-not-angry.gif",
+            "poster": "/previews/vol-02/original/08-duo-not-angry.webp"
+          },
+          {
+            "id": "09-sasa-really",
+            "label": "真的吗",
+            "gif": "https://aya.lazying.art/media/vol-02/original/09-sasa-really.gif",
+            "poster": "/previews/vol-02/original/09-sasa-really.webp"
+          },
+          {
+            "id": "10-aya-look",
+            "label": "我看看",
+            "gif": "https://aya.lazying.art/media/vol-02/original/10-aya-look.gif",
+            "poster": "/previews/vol-02/original/10-aya-look.webp"
+          },
+          {
+            "id": "11-lala-sleepy",
+            "label": "好困呀",
+            "gif": "https://aya.lazying.art/media/vol-02/original/11-lala-sleepy.gif",
+            "poster": "/previews/vol-02/original/11-lala-sleepy.webp"
+          },
+          {
+            "id": "12-zhuangzi-busy",
+            "label": "在忙呢",
+            "gif": "https://aya.lazying.art/media/vol-02/original/12-zhuangzi-busy.gif",
+            "poster": "/previews/vol-02/original/12-zhuangzi-busy.webp"
+          },
+          {
+            "id": "13-aya-wait-home",
+            "label": "等你回来",
+            "gif": "https://aya.lazying.art/media/vol-02/original/13-aya-wait-home.gif",
+            "poster": "/previews/vol-02/original/13-aya-wait-home.webp"
+          },
+          {
+            "id": "14-sasa-off-work",
+            "label": "下班啦",
+            "gif": "https://aya.lazying.art/media/vol-02/original/14-sasa-off-work.gif",
+            "poster": "/previews/vol-02/original/14-sasa-off-work.webp"
+          },
+          {
+            "id": "15-duo-promise",
+            "label": "说定啦",
+            "gif": "https://aya.lazying.art/media/vol-02/original/15-duo-promise.gif",
+            "poster": "/previews/vol-02/original/15-duo-promise.webp"
+          },
+          {
+            "id": "16-duo-tomorrow",
+            "label": "明天见",
+            "gif": "https://aya.lazying.art/media/vol-02/original/16-duo-tomorrow.gif",
+            "poster": "/previews/vol-02/original/16-duo-tomorrow.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-aya-miss-you",
+            "label": "Miss you",
+            "gif": "https://aya.lazying.art/media/vol-02/en/01-aya-miss-you.gif",
+            "poster": "/previews/vol-02/en/01-aya-miss-you.webp"
+          },
+          {
+            "id": "02-duo-nuzzle",
+            "label": "Snuggle up",
+            "gif": "https://aya.lazying.art/media/vol-02/en/02-duo-nuzzle.gif",
+            "poster": "/previews/vol-02/en/02-duo-nuzzle.webp"
+          },
+          {
+            "id": "03-lala-saved-bun",
+            "label": "Saved you one",
+            "gif": "https://aya.lazying.art/media/vol-02/en/03-lala-saved-bun.gif",
+            "poster": "/previews/vol-02/en/03-lala-saved-bun.webp"
+          },
+          {
+            "id": "04-aya-eat-more",
+            "label": "Eat some more",
+            "gif": "https://aya.lazying.art/media/vol-02/en/04-aya-eat-more.gif",
+            "poster": "/previews/vol-02/en/04-aya-eat-more.webp"
+          },
+          {
+            "id": "05-zhuangzi-water",
+            "label": "Water break",
+            "gif": "https://aya.lazying.art/media/vol-02/en/05-zhuangzi-water.gif",
+            "poster": "/previews/vol-02/en/05-zhuangzi-water.webp"
+          },
+          {
+            "id": "06-lala-rest",
+            "label": "Take a break",
+            "gif": "https://aya.lazying.art/media/vol-02/en/06-lala-rest.gif",
+            "poster": "/previews/vol-02/en/06-lala-rest.webp"
+          },
+          {
+            "id": "07-duo-company",
+            "label": "Here for you",
+            "gif": "https://aya.lazying.art/media/vol-02/en/07-duo-company.gif",
+            "poster": "/previews/vol-02/en/07-duo-company.webp"
+          },
+          {
+            "id": "08-duo-not-angry",
+            "label": "All better",
+            "gif": "https://aya.lazying.art/media/vol-02/en/08-duo-not-angry.gif",
+            "poster": "/previews/vol-02/en/08-duo-not-angry.webp"
+          },
+          {
+            "id": "09-sasa-really",
+            "label": "Really?",
+            "gif": "https://aya.lazying.art/media/vol-02/en/09-sasa-really.gif",
+            "poster": "/previews/vol-02/en/09-sasa-really.webp"
+          },
+          {
+            "id": "10-aya-look",
+            "label": "Let me see",
+            "gif": "https://aya.lazying.art/media/vol-02/en/10-aya-look.gif",
+            "poster": "/previews/vol-02/en/10-aya-look.webp"
+          },
+          {
+            "id": "11-lala-sleepy",
+            "label": "So sleepy",
+            "gif": "https://aya.lazying.art/media/vol-02/en/11-lala-sleepy.gif",
+            "poster": "/previews/vol-02/en/11-lala-sleepy.webp"
+          },
+          {
+            "id": "12-zhuangzi-busy",
+            "label": "Busy now",
+            "gif": "https://aya.lazying.art/media/vol-02/en/12-zhuangzi-busy.gif",
+            "poster": "/previews/vol-02/en/12-zhuangzi-busy.webp"
+          },
+          {
+            "id": "13-aya-wait-home",
+            "label": "Come back soon",
+            "gif": "https://aya.lazying.art/media/vol-02/en/13-aya-wait-home.gif",
+            "poster": "/previews/vol-02/en/13-aya-wait-home.webp"
+          },
+          {
+            "id": "14-sasa-off-work",
+            "label": "Work's over!",
+            "gif": "https://aya.lazying.art/media/vol-02/en/14-sasa-off-work.gif",
+            "poster": "/previews/vol-02/en/14-sasa-off-work.webp"
+          },
+          {
+            "id": "15-duo-promise",
+            "label": "It's a promise",
+            "gif": "https://aya.lazying.art/media/vol-02/en/15-duo-promise.gif",
+            "poster": "/previews/vol-02/en/15-duo-promise.webp"
+          },
+          {
+            "id": "16-duo-tomorrow",
+            "label": "See you tomorrow",
+            "gif": "https://aya.lazying.art/media/vol-02/en/16-duo-tomorrow.gif",
+            "poster": "/previews/vol-02/en/16-duo-tomorrow.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-aya-miss-you",
+            "label": "会いたい",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/01-aya-miss-you.gif",
+            "poster": "/previews/vol-02/ja/01-aya-miss-you.webp"
+          },
+          {
+            "id": "02-duo-nuzzle",
+            "label": "ぴとっ",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/02-duo-nuzzle.gif",
+            "poster": "/previews/vol-02/ja/02-duo-nuzzle.webp"
+          },
+          {
+            "id": "03-lala-saved-bun",
+            "label": "取っといたよ",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/03-lala-saved-bun.gif",
+            "poster": "/previews/vol-02/ja/03-lala-saved-bun.webp"
+          },
+          {
+            "id": "04-aya-eat-more",
+            "label": "もっと食べて",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/04-aya-eat-more.gif",
+            "poster": "/previews/vol-02/ja/04-aya-eat-more.webp"
+          },
+          {
+            "id": "05-zhuangzi-water",
+            "label": "水分補給",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/05-zhuangzi-water.gif",
+            "poster": "/previews/vol-02/ja/05-zhuangzi-water.webp"
+          },
+          {
+            "id": "06-lala-rest",
+            "label": "ひと休み",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/06-lala-rest.gif",
+            "poster": "/previews/vol-02/ja/06-lala-rest.webp"
+          },
+          {
+            "id": "07-duo-company",
+            "label": "そばにいるよ",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/07-duo-company.gif",
+            "poster": "/previews/vol-02/ja/07-duo-company.webp"
+          },
+          {
+            "id": "08-duo-not-angry",
+            "label": "もう平気",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/08-duo-not-angry.gif",
+            "poster": "/previews/vol-02/ja/08-duo-not-angry.webp"
+          },
+          {
+            "id": "09-sasa-really",
+            "label": "ほんと？",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/09-sasa-really.gif",
+            "poster": "/previews/vol-02/ja/09-sasa-really.webp"
+          },
+          {
+            "id": "10-aya-look",
+            "label": "見せて",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/10-aya-look.gif",
+            "poster": "/previews/vol-02/ja/10-aya-look.webp"
+          },
+          {
+            "id": "11-lala-sleepy",
+            "label": "ねむい",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/11-lala-sleepy.gif",
+            "poster": "/previews/vol-02/ja/11-lala-sleepy.webp"
+          },
+          {
+            "id": "12-zhuangzi-busy",
+            "label": "いま忙しい",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/12-zhuangzi-busy.gif",
+            "poster": "/previews/vol-02/ja/12-zhuangzi-busy.webp"
+          },
+          {
+            "id": "13-aya-wait-home",
+            "label": "待ってるよ",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/13-aya-wait-home.gif",
+            "poster": "/previews/vol-02/ja/13-aya-wait-home.webp"
+          },
+          {
+            "id": "14-sasa-off-work",
+            "label": "お仕事おわり",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/14-sasa-off-work.gif",
+            "poster": "/previews/vol-02/ja/14-sasa-off-work.webp"
+          },
+          {
+            "id": "15-duo-promise",
+            "label": "約束だよ",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/15-duo-promise.gif",
+            "poster": "/previews/vol-02/ja/15-duo-promise.webp"
+          },
+          {
+            "id": "16-duo-tomorrow",
+            "label": "また明日",
+            "gif": "https://aya.lazying.art/media/vol-02/ja/16-duo-tomorrow.gif",
+            "poster": "/previews/vol-02/ja/16-duo-tomorrow.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vol-03",
+      "name": "一起出门吧",
+      "english": "Let's go together",
+      "tag": "daily",
+      "description": "约好出门，一路都有小伙伴。把每一次见面变成小冒险。",
+      "count": 16,
+      "wechat": "review",
+      "color": "blue",
+      "banner": "/previews/vol-03/banner.webp",
+      "cover": "/previews/vol-03/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-aya-please",
+            "label": "拜托啦",
+            "gif": "https://aya.lazying.art/media/vol-03/original/01-aya-please.gif",
+            "poster": "/previews/vol-03/original/01-aya-please.webp"
+          },
+          {
+            "id": "02-lala-help",
+            "label": "交给我",
+            "gif": "https://aya.lazying.art/media/vol-03/original/02-lala-help.gif",
+            "poster": "/previews/vol-03/original/02-lala-help.webp"
+          },
+          {
+            "id": "03-duo-outing",
+            "label": "出门啦",
+            "gif": "https://aya.lazying.art/media/vol-03/original/03-duo-outing.gif",
+            "poster": "/previews/vol-03/original/03-duo-outing.webp"
+          },
+          {
+            "id": "04-sasa-on-way",
+            "label": "路上啦",
+            "gif": "https://aya.lazying.art/media/vol-03/original/04-sasa-on-way.gif",
+            "poster": "/previews/vol-03/original/04-sasa-on-way.webp"
+          },
+          {
+            "id": "05-zhuangzi-way",
+            "label": "走这边",
+            "gif": "https://aya.lazying.art/media/vol-03/original/05-zhuangzi-way.gif",
+            "poster": "/previews/vol-03/original/05-zhuangzi-way.webp"
+          },
+          {
+            "id": "06-aya-photo",
+            "label": "拍一张",
+            "gif": "https://aya.lazying.art/media/vol-03/original/06-aya-photo.gif",
+            "poster": "/previews/vol-03/original/06-aya-photo.webp"
+          },
+          {
+            "id": "07-duo-whisper",
+            "label": "悄悄说",
+            "gif": "https://aya.lazying.art/media/vol-03/original/07-duo-whisper.gif",
+            "poster": "/previews/vol-03/original/07-duo-whisper.webp"
+          },
+          {
+            "id": "08-lala-aroma",
+            "label": "好香呀",
+            "gif": "https://aya.lazying.art/media/vol-03/original/08-lala-aroma.gif",
+            "poster": "/previews/vol-03/original/08-lala-aroma.webp"
+          },
+          {
+            "id": "09-duo-share",
+            "label": "分你一半",
+            "gif": "https://aya.lazying.art/media/vol-03/original/09-duo-share.gif",
+            "poster": "/previews/vol-03/original/09-duo-share.webp"
+          },
+          {
+            "id": "10-aya-yummy",
+            "label": "好吃",
+            "gif": "https://aya.lazying.art/media/vol-03/original/10-aya-yummy.gif",
+            "poster": "/previews/vol-03/original/10-aya-yummy.webp"
+          },
+          {
+            "id": "11-sasa-hehe",
+            "label": "嘿嘿",
+            "gif": "https://aya.lazying.art/media/vol-03/original/11-sasa-hehe.gif",
+            "poster": "/previews/vol-03/original/11-sasa-hehe.webp"
+          },
+          {
+            "id": "12-zhuangzi-steady",
+            "label": "稳稳的",
+            "gif": "https://aya.lazying.art/media/vol-03/original/12-zhuangzi-steady.gif",
+            "poster": "/previews/vol-03/original/12-zhuangzi-steady.webp"
+          },
+          {
+            "id": "13-lala-think",
+            "label": "让我想想",
+            "gif": "https://aya.lazying.art/media/vol-03/original/13-lala-think.gif",
+            "poster": "/previews/vol-03/original/13-lala-think.webp"
+          },
+          {
+            "id": "14-aya-knew",
+            "label": "就知道",
+            "gif": "https://aya.lazying.art/media/vol-03/original/14-aya-knew.gif",
+            "poster": "/previews/vol-03/original/14-aya-knew.webp"
+          },
+          {
+            "id": "15-duo-home",
+            "label": "到家啦",
+            "gif": "https://aya.lazying.art/media/vol-03/original/15-duo-home.gif",
+            "poster": "/previews/vol-03/original/15-duo-home.webp"
+          },
+          {
+            "id": "16-aya-weekend",
+            "label": "周末快乐",
+            "gif": "https://aya.lazying.art/media/vol-03/original/16-aya-weekend.gif",
+            "poster": "/previews/vol-03/original/16-aya-weekend.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-aya-please",
+            "label": "Pretty please",
+            "gif": "https://aya.lazying.art/media/vol-03/en/01-aya-please.gif",
+            "poster": "/previews/vol-03/en/01-aya-please.webp"
+          },
+          {
+            "id": "02-lala-help",
+            "label": "Leave it to me",
+            "gif": "https://aya.lazying.art/media/vol-03/en/02-lala-help.gif",
+            "poster": "/previews/vol-03/en/02-lala-help.webp"
+          },
+          {
+            "id": "03-duo-outing",
+            "label": "Heading out!",
+            "gif": "https://aya.lazying.art/media/vol-03/en/03-duo-outing.gif",
+            "poster": "/previews/vol-03/en/03-duo-outing.webp"
+          },
+          {
+            "id": "04-sasa-on-way",
+            "label": "On my way",
+            "gif": "https://aya.lazying.art/media/vol-03/en/04-sasa-on-way.gif",
+            "poster": "/previews/vol-03/en/04-sasa-on-way.webp"
+          },
+          {
+            "id": "05-zhuangzi-way",
+            "label": "This way",
+            "gif": "https://aya.lazying.art/media/vol-03/en/05-zhuangzi-way.gif",
+            "poster": "/previews/vol-03/en/05-zhuangzi-way.webp"
+          },
+          {
+            "id": "06-aya-photo",
+            "label": "Say cheese!",
+            "gif": "https://aya.lazying.art/media/vol-03/en/06-aya-photo.gif",
+            "poster": "/previews/vol-03/en/06-aya-photo.webp"
+          },
+          {
+            "id": "07-duo-whisper",
+            "label": "Psst...",
+            "gif": "https://aya.lazying.art/media/vol-03/en/07-duo-whisper.gif",
+            "poster": "/previews/vol-03/en/07-duo-whisper.webp"
+          },
+          {
+            "id": "08-lala-aroma",
+            "label": "Smells good",
+            "gif": "https://aya.lazying.art/media/vol-03/en/08-lala-aroma.gif",
+            "poster": "/previews/vol-03/en/08-lala-aroma.webp"
+          },
+          {
+            "id": "09-duo-share",
+            "label": "Half for you",
+            "gif": "https://aya.lazying.art/media/vol-03/en/09-duo-share.gif",
+            "poster": "/previews/vol-03/en/09-duo-share.webp"
+          },
+          {
+            "id": "10-aya-yummy",
+            "label": "Yummy!",
+            "gif": "https://aya.lazying.art/media/vol-03/en/10-aya-yummy.gif",
+            "poster": "/previews/vol-03/en/10-aya-yummy.webp"
+          },
+          {
+            "id": "11-sasa-hehe",
+            "label": "Hehe",
+            "gif": "https://aya.lazying.art/media/vol-03/en/11-sasa-hehe.gif",
+            "poster": "/previews/vol-03/en/11-sasa-hehe.webp"
+          },
+          {
+            "id": "12-zhuangzi-steady",
+            "label": "Nice and steady",
+            "gif": "https://aya.lazying.art/media/vol-03/en/12-zhuangzi-steady.gif",
+            "poster": "/previews/vol-03/en/12-zhuangzi-steady.webp"
+          },
+          {
+            "id": "13-lala-think",
+            "label": "Let me think",
+            "gif": "https://aya.lazying.art/media/vol-03/en/13-lala-think.gif",
+            "poster": "/previews/vol-03/en/13-lala-think.webp"
+          },
+          {
+            "id": "14-aya-knew",
+            "label": "Knew it!",
+            "gif": "https://aya.lazying.art/media/vol-03/en/14-aya-knew.gif",
+            "poster": "/previews/vol-03/en/14-aya-knew.webp"
+          },
+          {
+            "id": "15-duo-home",
+            "label": "Home sweet home",
+            "gif": "https://aya.lazying.art/media/vol-03/en/15-duo-home.gif",
+            "poster": "/previews/vol-03/en/15-duo-home.webp"
+          },
+          {
+            "id": "16-aya-weekend",
+            "label": "Happy weekend",
+            "gif": "https://aya.lazying.art/media/vol-03/en/16-aya-weekend.gif",
+            "poster": "/previews/vol-03/en/16-aya-weekend.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-aya-please",
+            "label": "お願い",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/01-aya-please.gif",
+            "poster": "/previews/vol-03/ja/01-aya-please.webp"
+          },
+          {
+            "id": "02-lala-help",
+            "label": "任せて",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/02-lala-help.gif",
+            "poster": "/previews/vol-03/ja/02-lala-help.webp"
+          },
+          {
+            "id": "03-duo-outing",
+            "label": "行ってきます",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/03-duo-outing.gif",
+            "poster": "/previews/vol-03/ja/03-duo-outing.webp"
+          },
+          {
+            "id": "04-sasa-on-way",
+            "label": "向かってるよ",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/04-sasa-on-way.gif",
+            "poster": "/previews/vol-03/ja/04-sasa-on-way.webp"
+          },
+          {
+            "id": "05-zhuangzi-way",
+            "label": "こっちだよ",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/05-zhuangzi-way.gif",
+            "poster": "/previews/vol-03/ja/05-zhuangzi-way.webp"
+          },
+          {
+            "id": "06-aya-photo",
+            "label": "はいチーズ",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/06-aya-photo.gif",
+            "poster": "/previews/vol-03/ja/06-aya-photo.webp"
+          },
+          {
+            "id": "07-duo-whisper",
+            "label": "こっそりね",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/07-duo-whisper.gif",
+            "poster": "/previews/vol-03/ja/07-duo-whisper.webp"
+          },
+          {
+            "id": "08-lala-aroma",
+            "label": "いいにおい",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/08-lala-aroma.gif",
+            "poster": "/previews/vol-03/ja/08-lala-aroma.webp"
+          },
+          {
+            "id": "09-duo-share",
+            "label": "半分どうぞ",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/09-duo-share.gif",
+            "poster": "/previews/vol-03/ja/09-duo-share.webp"
+          },
+          {
+            "id": "10-aya-yummy",
+            "label": "おいしい",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/10-aya-yummy.gif",
+            "poster": "/previews/vol-03/ja/10-aya-yummy.webp"
+          },
+          {
+            "id": "11-sasa-hehe",
+            "label": "えへへ",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/11-sasa-hehe.gif",
+            "poster": "/previews/vol-03/ja/11-sasa-hehe.webp"
+          },
+          {
+            "id": "12-zhuangzi-steady",
+            "label": "安定してる",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/12-zhuangzi-steady.gif",
+            "poster": "/previews/vol-03/ja/12-zhuangzi-steady.webp"
+          },
+          {
+            "id": "13-lala-think",
+            "label": "考えさせて",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/13-lala-think.gif",
+            "poster": "/previews/vol-03/ja/13-lala-think.webp"
+          },
+          {
+            "id": "14-aya-knew",
+            "label": "やっぱりね",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/14-aya-knew.gif",
+            "poster": "/previews/vol-03/ja/14-aya-knew.webp"
+          },
+          {
+            "id": "15-duo-home",
+            "label": "ただいま",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/15-duo-home.gif",
+            "poster": "/previews/vol-03/ja/15-duo-home.webp"
+          },
+          {
+            "id": "16-aya-weekend",
+            "label": "よい週末を",
+            "gif": "https://aya.lazying.art/media/vol-03/ja/16-aya-weekend.gif",
+            "poster": "/previews/vol-03/ja/16-aya-weekend.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vol-04",
+      "name": "庄子上班啦",
+      "english": "Your robot work buddy",
+      "tag": "work",
+      "description": "收到，我来吧！庄子机器人和伙伴们，把忙碌的工作日过得可爱一点。",
+      "count": 24,
+      "wechat": "listed",
+      "color": "teal",
+      "banner": "/previews/vol-04/banner.webp",
+      "cover": "/previews/vol-04/cover.webp",
+      "editions": [
+        "original",
+        "compact",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-zhuangzi-good",
+            "label": "好",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/01-zhuangzi-good.gif",
+            "poster": "/previews/vol-04/compact/01-zhuangzi-good.webp"
+          },
+          {
+            "id": "02-zhuangzi-okay",
+            "label": "可以",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/02-zhuangzi-okay.gif",
+            "poster": "/previews/vol-04/compact/02-zhuangzi-okay.webp"
+          },
+          {
+            "id": "03-zhuangzi-received",
+            "label": "收到",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/03-zhuangzi-received.gif",
+            "poster": "/previews/vol-04/compact/03-zhuangzi-received.webp"
+          },
+          {
+            "id": "04-zhuangzi-no-problem",
+            "label": "没问题",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/04-zhuangzi-no-problem.gif",
+            "poster": "/previews/vol-04/compact/04-zhuangzi-no-problem.webp"
+          },
+          {
+            "id": "05-duo-let-me",
+            "label": "我来吧",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/05-duo-let-me.gif",
+            "poster": "/previews/vol-04/compact/05-duo-let-me.webp"
+          },
+          {
+            "id": "06-zhuangzi-review",
+            "label": "让我看看",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/06-zhuangzi-review.gif",
+            "poster": "/previews/vol-04/compact/06-zhuangzi-review.webp"
+          },
+          {
+            "id": "07-duo-think",
+            "label": "一起想想",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/07-duo-think.gif",
+            "poster": "/previews/vol-04/compact/07-duo-think.webp"
+          },
+          {
+            "id": "08-sasa-idea",
+            "label": "有办法了",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/08-sasa-idea.gif",
+            "poster": "/previews/vol-04/compact/08-sasa-idea.webp"
+          },
+          {
+            "id": "09-zhuangzi-done",
+            "label": "搞定",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/09-zhuangzi-done.gif",
+            "poster": "/previews/vol-04/compact/09-zhuangzi-done.webp"
+          },
+          {
+            "id": "10-duo-believe",
+            "label": "看好你",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/10-duo-believe.gif",
+            "poster": "/previews/vol-04/compact/10-duo-believe.webp"
+          },
+          {
+            "id": "11-duo-thanks-work",
+            "label": "辛苦啦",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/11-duo-thanks-work.gif",
+            "poster": "/previews/vol-04/compact/11-duo-thanks-work.webp"
+          },
+          {
+            "id": "12-aya-water",
+            "label": "先喝口水",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/12-aya-water.gif",
+            "poster": "/previews/vol-04/compact/12-aya-water.webp"
+          },
+          {
+            "id": "13-sasa-break",
+            "label": "歇一会儿",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/13-sasa-break.gif",
+            "poster": "/previews/vol-04/compact/13-sasa-break.webp"
+          },
+          {
+            "id": "14-zhuangzi-thanks",
+            "label": "谢谢啦",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/14-zhuangzi-thanks.gif",
+            "poster": "/previews/vol-04/compact/14-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "15-duo-off-work",
+            "label": "下班啦",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/15-duo-off-work.gif",
+            "poster": "/previews/vol-04/compact/15-duo-off-work.webp"
+          },
+          {
+            "id": "16-duo-tomorrow",
+            "label": "明天见",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/16-duo-tomorrow.gif",
+            "poster": "/previews/vol-04/compact/16-duo-tomorrow.webp"
+          },
+          {
+            "id": "17-duo-go-play",
+            "label": "去玩吧",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/17-duo-go-play.gif",
+            "poster": "/previews/vol-04/compact/17-duo-go-play.webp"
+          },
+          {
+            "id": "18-zhuangzi-want-play",
+            "label": "好想玩",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/18-zhuangzi-want-play.gif",
+            "poster": "/previews/vol-04/compact/18-zhuangzi-want-play.webp"
+          },
+          {
+            "id": "19-zhuangzi-no-work",
+            "label": "不想工作",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/19-zhuangzi-no-work.gif",
+            "poster": "/previews/vol-04/compact/19-zhuangzi-no-work.webp"
+          },
+          {
+            "id": "20-duo-confused",
+            "label": "听不懂",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/20-duo-confused.gif",
+            "poster": "/previews/vol-04/compact/20-duo-confused.webp"
+          },
+          {
+            "id": "21-duo-take-time",
+            "label": "你醒啦",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/21-duo-take-time.gif",
+            "poster": "/previews/vol-04/compact/21-duo-take-time.webp"
+          },
+          {
+            "id": "22-aya-soon",
+            "label": "做噩梦了",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/22-aya-soon.gif",
+            "poster": "/previews/vol-04/compact/22-aya-soon.webp"
+          },
+          {
+            "id": "23-zhuangzi-low-battery",
+            "label": "一起玩吧",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/23-zhuangzi-low-battery.gif",
+            "poster": "/previews/vol-04/compact/23-zhuangzi-low-battery.webp"
+          },
+          {
+            "id": "24-duo-friday",
+            "label": "快乐就好",
+            "gif": "https://aya.lazying.art/media/vol-04/compact/24-duo-friday.gif",
+            "poster": "/previews/vol-04/compact/24-duo-friday.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-zhuangzi-good",
+            "label": "Great!",
+            "gif": "https://aya.lazying.art/media/vol-04/en/01-zhuangzi-good.gif",
+            "poster": "/previews/vol-04/en/01-zhuangzi-good.webp"
+          },
+          {
+            "id": "02-zhuangzi-okay",
+            "label": "Okay!",
+            "gif": "https://aya.lazying.art/media/vol-04/en/02-zhuangzi-okay.gif",
+            "poster": "/previews/vol-04/en/02-zhuangzi-okay.webp"
+          },
+          {
+            "id": "03-zhuangzi-received",
+            "label": "Got it",
+            "gif": "https://aya.lazying.art/media/vol-04/en/03-zhuangzi-received.gif",
+            "poster": "/previews/vol-04/en/03-zhuangzi-received.webp"
+          },
+          {
+            "id": "04-zhuangzi-no-problem",
+            "label": "No problem",
+            "gif": "https://aya.lazying.art/media/vol-04/en/04-zhuangzi-no-problem.gif",
+            "poster": "/previews/vol-04/en/04-zhuangzi-no-problem.webp"
+          },
+          {
+            "id": "05-duo-let-me",
+            "label": "I'll do it",
+            "gif": "https://aya.lazying.art/media/vol-04/en/05-duo-let-me.gif",
+            "poster": "/previews/vol-04/en/05-duo-let-me.webp"
+          },
+          {
+            "id": "06-zhuangzi-review",
+            "label": "Let's see",
+            "gif": "https://aya.lazying.art/media/vol-04/en/06-zhuangzi-review.gif",
+            "poster": "/previews/vol-04/en/06-zhuangzi-review.webp"
+          },
+          {
+            "id": "07-duo-think",
+            "label": "Think together",
+            "gif": "https://aya.lazying.art/media/vol-04/en/07-duo-think.gif",
+            "poster": "/previews/vol-04/en/07-duo-think.webp"
+          },
+          {
+            "id": "08-sasa-idea",
+            "label": "Got an idea!",
+            "gif": "https://aya.lazying.art/media/vol-04/en/08-sasa-idea.gif",
+            "poster": "/previews/vol-04/en/08-sasa-idea.webp"
+          },
+          {
+            "id": "09-zhuangzi-done",
+            "label": "Done!",
+            "gif": "https://aya.lazying.art/media/vol-04/en/09-zhuangzi-done.gif",
+            "poster": "/previews/vol-04/en/09-zhuangzi-done.webp"
+          },
+          {
+            "id": "10-duo-believe",
+            "label": "I believe in you",
+            "gif": "https://aya.lazying.art/media/vol-04/en/10-duo-believe.gif",
+            "poster": "/previews/vol-04/en/10-duo-believe.webp"
+          },
+          {
+            "id": "11-duo-thanks-work",
+            "label": "Good work",
+            "gif": "https://aya.lazying.art/media/vol-04/en/11-duo-thanks-work.gif",
+            "poster": "/previews/vol-04/en/11-duo-thanks-work.webp"
+          },
+          {
+            "id": "12-aya-water",
+            "label": "Water first",
+            "gif": "https://aya.lazying.art/media/vol-04/en/12-aya-water.gif",
+            "poster": "/previews/vol-04/en/12-aya-water.webp"
+          },
+          {
+            "id": "13-sasa-break",
+            "label": "Little break",
+            "gif": "https://aya.lazying.art/media/vol-04/en/13-sasa-break.gif",
+            "poster": "/previews/vol-04/en/13-sasa-break.webp"
+          },
+          {
+            "id": "14-zhuangzi-thanks",
+            "label": "Thanks!",
+            "gif": "https://aya.lazying.art/media/vol-04/en/14-zhuangzi-thanks.gif",
+            "poster": "/previews/vol-04/en/14-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "15-duo-off-work",
+            "label": "Clocking out",
+            "gif": "https://aya.lazying.art/media/vol-04/en/15-duo-off-work.gif",
+            "poster": "/previews/vol-04/en/15-duo-off-work.webp"
+          },
+          {
+            "id": "16-duo-tomorrow",
+            "label": "See you tomorrow",
+            "gif": "https://aya.lazying.art/media/vol-04/en/16-duo-tomorrow.gif",
+            "poster": "/previews/vol-04/en/16-duo-tomorrow.webp"
+          },
+          {
+            "id": "17-duo-go-play",
+            "label": "Go have fun",
+            "gif": "https://aya.lazying.art/media/vol-04/en/17-duo-go-play.gif",
+            "poster": "/previews/vol-04/en/17-duo-go-play.webp"
+          },
+          {
+            "id": "18-zhuangzi-want-play",
+            "label": "Wanna play",
+            "gif": "https://aya.lazying.art/media/vol-04/en/18-zhuangzi-want-play.gif",
+            "poster": "/previews/vol-04/en/18-zhuangzi-want-play.webp"
+          },
+          {
+            "id": "19-zhuangzi-no-work",
+            "label": "No work today",
+            "gif": "https://aya.lazying.art/media/vol-04/en/19-zhuangzi-no-work.gif",
+            "poster": "/previews/vol-04/en/19-zhuangzi-no-work.webp"
+          },
+          {
+            "id": "20-duo-confused",
+            "label": "Huh?",
+            "gif": "https://aya.lazying.art/media/vol-04/en/20-duo-confused.gif",
+            "poster": "/previews/vol-04/en/20-duo-confused.webp"
+          },
+          {
+            "id": "21-duo-take-time",
+            "label": "You're awake!",
+            "gif": "https://aya.lazying.art/media/vol-04/en/21-duo-take-time.gif",
+            "poster": "/previews/vol-04/en/21-duo-take-time.webp"
+          },
+          {
+            "id": "22-aya-soon",
+            "label": "Bad dream?",
+            "gif": "https://aya.lazying.art/media/vol-04/en/22-aya-soon.gif",
+            "poster": "/previews/vol-04/en/22-aya-soon.webp"
+          },
+          {
+            "id": "23-zhuangzi-low-battery",
+            "label": "Let's play",
+            "gif": "https://aya.lazying.art/media/vol-04/en/23-zhuangzi-low-battery.gif",
+            "poster": "/previews/vol-04/en/23-zhuangzi-low-battery.webp"
+          },
+          {
+            "id": "24-duo-friday",
+            "label": "Just be happy",
+            "gif": "https://aya.lazying.art/media/vol-04/en/24-duo-friday.gif",
+            "poster": "/previews/vol-04/en/24-duo-friday.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-zhuangzi-good",
+            "label": "いいね",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/01-zhuangzi-good.gif",
+            "poster": "/previews/vol-04/ja/01-zhuangzi-good.webp"
+          },
+          {
+            "id": "02-zhuangzi-okay",
+            "label": "オッケー",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/02-zhuangzi-okay.gif",
+            "poster": "/previews/vol-04/ja/02-zhuangzi-okay.webp"
+          },
+          {
+            "id": "03-zhuangzi-received",
+            "label": "了解",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/03-zhuangzi-received.gif",
+            "poster": "/previews/vol-04/ja/03-zhuangzi-received.webp"
+          },
+          {
+            "id": "04-zhuangzi-no-problem",
+            "label": "大丈夫",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/04-zhuangzi-no-problem.gif",
+            "poster": "/previews/vol-04/ja/04-zhuangzi-no-problem.webp"
+          },
+          {
+            "id": "05-duo-let-me",
+            "label": "私がやるよ",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/05-duo-let-me.gif",
+            "poster": "/previews/vol-04/ja/05-duo-let-me.webp"
+          },
+          {
+            "id": "06-zhuangzi-review",
+            "label": "見てみよう",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/06-zhuangzi-review.gif",
+            "poster": "/previews/vol-04/ja/06-zhuangzi-review.webp"
+          },
+          {
+            "id": "07-duo-think",
+            "label": "一緒に考えよう",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/07-duo-think.gif",
+            "poster": "/previews/vol-04/ja/07-duo-think.webp"
+          },
+          {
+            "id": "08-sasa-idea",
+            "label": "ひらめいた",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/08-sasa-idea.gif",
+            "poster": "/previews/vol-04/ja/08-sasa-idea.webp"
+          },
+          {
+            "id": "09-zhuangzi-done",
+            "label": "できた",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/09-zhuangzi-done.gif",
+            "poster": "/previews/vol-04/ja/09-zhuangzi-done.webp"
+          },
+          {
+            "id": "10-duo-believe",
+            "label": "期待してるよ",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/10-duo-believe.gif",
+            "poster": "/previews/vol-04/ja/10-duo-believe.webp"
+          },
+          {
+            "id": "11-duo-thanks-work",
+            "label": "おつかれさま",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/11-duo-thanks-work.gif",
+            "poster": "/previews/vol-04/ja/11-duo-thanks-work.webp"
+          },
+          {
+            "id": "12-aya-water",
+            "label": "まずお水",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/12-aya-water.gif",
+            "poster": "/previews/vol-04/ja/12-aya-water.webp"
+          },
+          {
+            "id": "13-sasa-break",
+            "label": "ひと休み",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/13-sasa-break.gif",
+            "poster": "/previews/vol-04/ja/13-sasa-break.webp"
+          },
+          {
+            "id": "14-zhuangzi-thanks",
+            "label": "ありがと",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/14-zhuangzi-thanks.gif",
+            "poster": "/previews/vol-04/ja/14-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "15-duo-off-work",
+            "label": "退勤！",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/15-duo-off-work.gif",
+            "poster": "/previews/vol-04/ja/15-duo-off-work.webp"
+          },
+          {
+            "id": "16-duo-tomorrow",
+            "label": "また明日",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/16-duo-tomorrow.gif",
+            "poster": "/previews/vol-04/ja/16-duo-tomorrow.webp"
+          },
+          {
+            "id": "17-duo-go-play",
+            "label": "遊んでおいで",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/17-duo-go-play.gif",
+            "poster": "/previews/vol-04/ja/17-duo-go-play.webp"
+          },
+          {
+            "id": "18-zhuangzi-want-play",
+            "label": "遊びたい",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/18-zhuangzi-want-play.gif",
+            "poster": "/previews/vol-04/ja/18-zhuangzi-want-play.webp"
+          },
+          {
+            "id": "19-zhuangzi-no-work",
+            "label": "働きたくない",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/19-zhuangzi-no-work.gif",
+            "poster": "/previews/vol-04/ja/19-zhuangzi-no-work.webp"
+          },
+          {
+            "id": "20-duo-confused",
+            "label": "わかんない",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/20-duo-confused.gif",
+            "poster": "/previews/vol-04/ja/20-duo-confused.webp"
+          },
+          {
+            "id": "21-duo-take-time",
+            "label": "起きた？",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/21-duo-take-time.gif",
+            "poster": "/previews/vol-04/ja/21-duo-take-time.webp"
+          },
+          {
+            "id": "22-aya-soon",
+            "label": "悪い夢？",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/22-aya-soon.gif",
+            "poster": "/previews/vol-04/ja/22-aya-soon.webp"
+          },
+          {
+            "id": "23-zhuangzi-low-battery",
+            "label": "一緒に遊ぼ",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/23-zhuangzi-low-battery.gif",
+            "poster": "/previews/vol-04/ja/23-zhuangzi-low-battery.webp"
+          },
+          {
+            "id": "24-duo-friday",
+            "label": "楽しければいい",
+            "gif": "https://aya.lazying.art/media/vol-04/ja/24-duo-friday.gif",
+            "poster": "/previews/vol-04/ja/24-duo-friday.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "daily",
+      "name": "闪光的日常",
+      "english": "Small moments, big feelings",
+      "tag": "daily",
+      "description": "一点委屈，一点得意，还有认真说出口的恭喜。每种小心情都值得被接住。",
+      "count": 12,
+      "wechat": "review",
+      "color": "yellow",
+      "banner": "/previews/daily/banner.webp",
+      "cover": "/previews/daily/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-aya-wronged",
+            "label": "委屈",
+            "gif": "https://aya.lazying.art/media/daily/original/01-aya-wronged.gif",
+            "poster": "/previews/daily/original/01-aya-wronged.webp"
+          },
+          {
+            "id": "02-lala-sweat",
+            "label": "汗",
+            "gif": "https://aya.lazying.art/media/daily/original/02-lala-sweat.gif",
+            "poster": "/previews/daily/original/02-lala-sweat.webp"
+          },
+          {
+            "id": "03-aya-welcome",
+            "label": "不客气",
+            "gif": "https://aya.lazying.art/media/daily/original/03-aya-welcome.gif",
+            "poster": "/previews/daily/original/03-aya-welcome.webp"
+          },
+          {
+            "id": "04-aya-polite",
+            "label": "客气啦",
+            "gif": "https://aya.lazying.art/media/daily/original/04-aya-polite.gif",
+            "poster": "/previews/daily/original/04-aya-polite.webp"
+          },
+          {
+            "id": "05-sasa-move",
+            "label": "动起来",
+            "gif": "https://aya.lazying.art/media/daily/original/05-sasa-move.gif",
+            "poster": "/previews/daily/original/05-sasa-move.webp"
+          },
+          {
+            "id": "06-lala-eat",
+            "label": "开吃啦",
+            "gif": "https://aya.lazying.art/media/daily/original/06-lala-eat.gif",
+            "poster": "/previews/daily/original/06-lala-eat.webp"
+          },
+          {
+            "id": "07-aya-congrats",
+            "label": "恭喜",
+            "gif": "https://aya.lazying.art/media/daily/original/07-aya-congrats.gif",
+            "poster": "/previews/daily/original/07-aya-congrats.webp"
+          },
+          {
+            "id": "08-zhuangzi-cheer",
+            "label": "加油",
+            "gif": "https://aya.lazying.art/media/daily/original/08-zhuangzi-cheer.gif",
+            "poster": "/previews/daily/original/08-zhuangzi-cheer.webp"
+          },
+          {
+            "id": "09-sasa-effort",
+            "label": "努力中",
+            "gif": "https://aya.lazying.art/media/daily/original/09-sasa-effort.gif",
+            "poster": "/previews/daily/original/09-sasa-effort.webp"
+          },
+          {
+            "id": "10-aya-tired",
+            "label": "好累呀",
+            "gif": "https://aya.lazying.art/media/daily/original/10-aya-tired.gif",
+            "poster": "/previews/daily/original/10-aya-tired.webp"
+          },
+          {
+            "id": "11-duo-hug",
+            "label": "抱一下",
+            "gif": "https://aya.lazying.art/media/daily/original/11-duo-hug.gif",
+            "poster": "/previews/daily/original/11-duo-hug.webp"
+          },
+          {
+            "id": "12-duo-yay",
+            "label": "太棒啦",
+            "gif": "https://aya.lazying.art/media/daily/original/12-duo-yay.gif",
+            "poster": "/previews/daily/original/12-duo-yay.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-aya-wronged",
+            "label": "Not fair...",
+            "gif": "https://aya.lazying.art/media/daily/en/01-aya-wronged.gif",
+            "poster": "/previews/daily/en/01-aya-wronged.webp"
+          },
+          {
+            "id": "02-lala-sweat",
+            "label": "Awkward...",
+            "gif": "https://aya.lazying.art/media/daily/en/02-lala-sweat.gif",
+            "poster": "/previews/daily/en/02-lala-sweat.webp"
+          },
+          {
+            "id": "03-aya-welcome",
+            "label": "You're welcome",
+            "gif": "https://aya.lazying.art/media/daily/en/03-aya-welcome.gif",
+            "poster": "/previews/daily/en/03-aya-welcome.webp"
+          },
+          {
+            "id": "04-aya-polite",
+            "label": "You're too kind",
+            "gif": "https://aya.lazying.art/media/daily/en/04-aya-polite.gif",
+            "poster": "/previews/daily/en/04-aya-polite.webp"
+          },
+          {
+            "id": "05-sasa-move",
+            "label": "Let's move",
+            "gif": "https://aya.lazying.art/media/daily/en/05-sasa-move.gif",
+            "poster": "/previews/daily/en/05-sasa-move.webp"
+          },
+          {
+            "id": "06-lala-eat",
+            "label": "Time to eat",
+            "gif": "https://aya.lazying.art/media/daily/en/06-lala-eat.gif",
+            "poster": "/previews/daily/en/06-lala-eat.webp"
+          },
+          {
+            "id": "07-aya-congrats",
+            "label": "Congrats!",
+            "gif": "https://aya.lazying.art/media/daily/en/07-aya-congrats.gif",
+            "poster": "/previews/daily/en/07-aya-congrats.webp"
+          },
+          {
+            "id": "08-zhuangzi-cheer",
+            "label": "You got this",
+            "gif": "https://aya.lazying.art/media/daily/en/08-zhuangzi-cheer.gif",
+            "poster": "/previews/daily/en/08-zhuangzi-cheer.webp"
+          },
+          {
+            "id": "09-sasa-effort",
+            "label": "Doing my best",
+            "gif": "https://aya.lazying.art/media/daily/en/09-sasa-effort.gif",
+            "poster": "/previews/daily/en/09-sasa-effort.webp"
+          },
+          {
+            "id": "10-aya-tired",
+            "label": "So tired",
+            "gif": "https://aya.lazying.art/media/daily/en/10-aya-tired.gif",
+            "poster": "/previews/daily/en/10-aya-tired.webp"
+          },
+          {
+            "id": "11-duo-hug",
+            "label": "Need a hug",
+            "gif": "https://aya.lazying.art/media/daily/en/11-duo-hug.gif",
+            "poster": "/previews/daily/en/11-duo-hug.webp"
+          },
+          {
+            "id": "12-duo-yay",
+            "label": "Amazing!",
+            "gif": "https://aya.lazying.art/media/daily/en/12-duo-yay.gif",
+            "poster": "/previews/daily/en/12-duo-yay.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-aya-wronged",
+            "label": "しょんぼり",
+            "gif": "https://aya.lazying.art/media/daily/ja/01-aya-wronged.gif",
+            "poster": "/previews/daily/ja/01-aya-wronged.webp"
+          },
+          {
+            "id": "02-lala-sweat",
+            "label": "あせあせ",
+            "gif": "https://aya.lazying.art/media/daily/ja/02-lala-sweat.gif",
+            "poster": "/previews/daily/ja/02-lala-sweat.webp"
+          },
+          {
+            "id": "03-aya-welcome",
+            "label": "どういたしまして",
+            "gif": "https://aya.lazying.art/media/daily/ja/03-aya-welcome.gif",
+            "poster": "/previews/daily/ja/03-aya-welcome.webp"
+          },
+          {
+            "id": "04-aya-polite",
+            "label": "気にしないで",
+            "gif": "https://aya.lazying.art/media/daily/ja/04-aya-polite.gif",
+            "poster": "/previews/daily/ja/04-aya-polite.webp"
+          },
+          {
+            "id": "05-sasa-move",
+            "label": "動こう",
+            "gif": "https://aya.lazying.art/media/daily/ja/05-sasa-move.gif",
+            "poster": "/previews/daily/ja/05-sasa-move.webp"
+          },
+          {
+            "id": "06-lala-eat",
+            "label": "いただきます",
+            "gif": "https://aya.lazying.art/media/daily/ja/06-lala-eat.gif",
+            "poster": "/previews/daily/ja/06-lala-eat.webp"
+          },
+          {
+            "id": "07-aya-congrats",
+            "label": "おめでとう",
+            "gif": "https://aya.lazying.art/media/daily/ja/07-aya-congrats.gif",
+            "poster": "/previews/daily/ja/07-aya-congrats.webp"
+          },
+          {
+            "id": "08-zhuangzi-cheer",
+            "label": "がんばれ",
+            "gif": "https://aya.lazying.art/media/daily/ja/08-zhuangzi-cheer.gif",
+            "poster": "/previews/daily/ja/08-zhuangzi-cheer.webp"
+          },
+          {
+            "id": "09-sasa-effort",
+            "label": "がんばってる",
+            "gif": "https://aya.lazying.art/media/daily/ja/09-sasa-effort.gif",
+            "poster": "/previews/daily/ja/09-sasa-effort.webp"
+          },
+          {
+            "id": "10-aya-tired",
+            "label": "つかれた",
+            "gif": "https://aya.lazying.art/media/daily/ja/10-aya-tired.gif",
+            "poster": "/previews/daily/ja/10-aya-tired.webp"
+          },
+          {
+            "id": "11-duo-hug",
+            "label": "ぎゅーして",
+            "gif": "https://aya.lazying.art/media/daily/ja/11-duo-hug.gif",
+            "poster": "/previews/daily/ja/11-duo-hug.webp"
+          },
+          {
+            "id": "12-duo-yay",
+            "label": "すごい！",
+            "gif": "https://aya.lazying.art/media/daily/ja/12-duo-yay.gif",
+            "poster": "/previews/daily/ja/12-duo-yay.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "phonetic",
+      "name": "空耳小日常",
+      "english": "Playful Japanese sounds",
+      "tag": "language",
+      "description": "哦哈哟、呆胶布、阿姨洗铁路。用中文谐音，打个可可爱爱的招呼。",
+      "count": 16,
+      "wechat": "review",
+      "color": "pink",
+      "banner": "/previews/phonetic/banner.webp",
+      "cover": "/previews/phonetic/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-aya-hello",
+            "label": "空你七哇",
+            "gif": "https://aya.lazying.art/media/phonetic/original/01-aya-hello.gif",
+            "poster": "/previews/phonetic/original/01-aya-hello.webp"
+          },
+          {
+            "id": "02-aya-night",
+            "label": "哦呀斯密",
+            "gif": "https://aya.lazying.art/media/phonetic/original/02-aya-night.gif",
+            "poster": "/previews/phonetic/original/02-aya-night.webp"
+          },
+          {
+            "id": "03-sasa-morning",
+            "label": "哦哈哟",
+            "gif": "https://aya.lazying.art/media/phonetic/original/03-sasa-morning.gif",
+            "poster": "/previews/phonetic/original/03-sasa-morning.webp"
+          },
+          {
+            "id": "04-lala-home",
+            "label": "他大姨妈",
+            "gif": "https://aya.lazying.art/media/phonetic/original/04-lala-home.gif",
+            "poster": "/previews/phonetic/original/04-lala-home.webp"
+          },
+          {
+            "id": "05-aya-welcome",
+            "label": "哦卡诶里",
+            "gif": "https://aya.lazying.art/media/phonetic/original/05-aya-welcome.gif",
+            "poster": "/previews/phonetic/original/05-aya-welcome.webp"
+          },
+          {
+            "id": "06-aya-yummy",
+            "label": "哦伊西",
+            "gif": "https://aya.lazying.art/media/phonetic/original/06-aya-yummy.gif",
+            "poster": "/previews/phonetic/original/06-aya-yummy.webp"
+          },
+          {
+            "id": "07-lala-spicy",
+            "label": "卡拉伊",
+            "gif": "https://aya.lazying.art/media/phonetic/original/07-lala-spicy.gif",
+            "poster": "/previews/phonetic/original/07-lala-spicy.webp"
+          },
+          {
+            "id": "08-lala-fragrant",
+            "label": "伊伊尼欧伊",
+            "gif": "https://aya.lazying.art/media/phonetic/original/08-lala-fragrant.gif",
+            "poster": "/previews/phonetic/original/08-lala-fragrant.webp"
+          },
+          {
+            "id": "09-sasa-sleepy",
+            "label": "内木伊",
+            "gif": "https://aya.lazying.art/media/phonetic/original/09-sasa-sleepy.gif",
+            "poster": "/previews/phonetic/original/09-sasa-sleepy.webp"
+          },
+          {
+            "id": "10-lala-mealtime",
+            "label": "一大个麻薯",
+            "gif": "https://aya.lazying.art/media/phonetic/original/10-lala-mealtime.gif",
+            "poster": "/previews/phonetic/original/10-lala-mealtime.webp"
+          },
+          {
+            "id": "11-aya-farewell",
+            "label": "姨爹拉沙姨",
+            "gif": "https://aya.lazying.art/media/phonetic/original/11-aya-farewell.gif",
+            "poster": "/previews/phonetic/original/11-aya-farewell.webp"
+          },
+          {
+            "id": "12-zhuangzi-thanks",
+            "label": "阿里嘎多",
+            "gif": "https://aya.lazying.art/media/phonetic/original/12-zhuangzi-thanks.gif",
+            "poster": "/previews/phonetic/original/12-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "13-aya-love",
+            "label": "阿姨洗铁路",
+            "gif": "https://aya.lazying.art/media/phonetic/original/13-aya-love.gif",
+            "poster": "/previews/phonetic/original/13-aya-love.webp"
+          },
+          {
+            "id": "14-lala-sorry",
+            "label": "私密马赛",
+            "gif": "https://aya.lazying.art/media/phonetic/original/14-lala-sorry.gif",
+            "poster": "/previews/phonetic/original/14-lala-sorry.webp"
+          },
+          {
+            "id": "15-sasa-cheer",
+            "label": "干巴爹",
+            "gif": "https://aya.lazying.art/media/phonetic/original/15-sasa-cheer.gif",
+            "poster": "/previews/phonetic/original/15-sasa-cheer.webp"
+          },
+          {
+            "id": "16-zhuangzi-okay",
+            "label": "呆胶布",
+            "gif": "https://aya.lazying.art/media/phonetic/original/16-zhuangzi-okay.gif",
+            "poster": "/previews/phonetic/original/16-zhuangzi-okay.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-aya-hello",
+            "label": "Hello!",
+            "gif": "https://aya.lazying.art/media/phonetic/en/01-aya-hello.gif",
+            "poster": "/previews/phonetic/en/01-aya-hello.webp"
+          },
+          {
+            "id": "02-aya-night",
+            "label": "Good night",
+            "gif": "https://aya.lazying.art/media/phonetic/en/02-aya-night.gif",
+            "poster": "/previews/phonetic/en/02-aya-night.webp"
+          },
+          {
+            "id": "03-sasa-morning",
+            "label": "Morning!",
+            "gif": "https://aya.lazying.art/media/phonetic/en/03-sasa-morning.gif",
+            "poster": "/previews/phonetic/en/03-sasa-morning.webp"
+          },
+          {
+            "id": "04-lala-home",
+            "label": "I'm home",
+            "gif": "https://aya.lazying.art/media/phonetic/en/04-lala-home.gif",
+            "poster": "/previews/phonetic/en/04-lala-home.webp"
+          },
+          {
+            "id": "05-aya-welcome",
+            "label": "Welcome back",
+            "gif": "https://aya.lazying.art/media/phonetic/en/05-aya-welcome.gif",
+            "poster": "/previews/phonetic/en/05-aya-welcome.webp"
+          },
+          {
+            "id": "06-aya-yummy",
+            "label": "Delicious!",
+            "gif": "https://aya.lazying.art/media/phonetic/en/06-aya-yummy.gif",
+            "poster": "/previews/phonetic/en/06-aya-yummy.webp"
+          },
+          {
+            "id": "07-lala-spicy",
+            "label": "Spicy!",
+            "gif": "https://aya.lazying.art/media/phonetic/en/07-lala-spicy.gif",
+            "poster": "/previews/phonetic/en/07-lala-spicy.webp"
+          },
+          {
+            "id": "08-lala-fragrant",
+            "label": "Smells good",
+            "gif": "https://aya.lazying.art/media/phonetic/en/08-lala-fragrant.gif",
+            "poster": "/previews/phonetic/en/08-lala-fragrant.webp"
+          },
+          {
+            "id": "09-sasa-sleepy",
+            "label": "Sleepy...",
+            "gif": "https://aya.lazying.art/media/phonetic/en/09-sasa-sleepy.gif",
+            "poster": "/previews/phonetic/en/09-sasa-sleepy.webp"
+          },
+          {
+            "id": "10-lala-mealtime",
+            "label": "Let's eat",
+            "gif": "https://aya.lazying.art/media/phonetic/en/10-lala-mealtime.gif",
+            "poster": "/previews/phonetic/en/10-lala-mealtime.webp"
+          },
+          {
+            "id": "11-aya-farewell",
+            "label": "Take care!",
+            "gif": "https://aya.lazying.art/media/phonetic/en/11-aya-farewell.gif",
+            "poster": "/previews/phonetic/en/11-aya-farewell.webp"
+          },
+          {
+            "id": "12-zhuangzi-thanks",
+            "label": "Thank you",
+            "gif": "https://aya.lazying.art/media/phonetic/en/12-zhuangzi-thanks.gif",
+            "poster": "/previews/phonetic/en/12-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "13-aya-love",
+            "label": "I love you",
+            "gif": "https://aya.lazying.art/media/phonetic/en/13-aya-love.gif",
+            "poster": "/previews/phonetic/en/13-aya-love.webp"
+          },
+          {
+            "id": "14-lala-sorry",
+            "label": "Sorry!",
+            "gif": "https://aya.lazying.art/media/phonetic/en/14-lala-sorry.gif",
+            "poster": "/previews/phonetic/en/14-lala-sorry.webp"
+          },
+          {
+            "id": "15-sasa-cheer",
+            "label": "You got this",
+            "gif": "https://aya.lazying.art/media/phonetic/en/15-sasa-cheer.gif",
+            "poster": "/previews/phonetic/en/15-sasa-cheer.webp"
+          },
+          {
+            "id": "16-zhuangzi-okay",
+            "label": "It's okay",
+            "gif": "https://aya.lazying.art/media/phonetic/en/16-zhuangzi-okay.gif",
+            "poster": "/previews/phonetic/en/16-zhuangzi-okay.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-aya-hello",
+            "label": "こんにちは",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/01-aya-hello.gif",
+            "poster": "/previews/phonetic/ja/01-aya-hello.webp"
+          },
+          {
+            "id": "02-aya-night",
+            "label": "おやすみ",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/02-aya-night.gif",
+            "poster": "/previews/phonetic/ja/02-aya-night.webp"
+          },
+          {
+            "id": "03-sasa-morning",
+            "label": "おはよう",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/03-sasa-morning.gif",
+            "poster": "/previews/phonetic/ja/03-sasa-morning.webp"
+          },
+          {
+            "id": "04-lala-home",
+            "label": "ただいま",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/04-lala-home.gif",
+            "poster": "/previews/phonetic/ja/04-lala-home.webp"
+          },
+          {
+            "id": "05-aya-welcome",
+            "label": "おかえり",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/05-aya-welcome.gif",
+            "poster": "/previews/phonetic/ja/05-aya-welcome.webp"
+          },
+          {
+            "id": "06-aya-yummy",
+            "label": "おいしい",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/06-aya-yummy.gif",
+            "poster": "/previews/phonetic/ja/06-aya-yummy.webp"
+          },
+          {
+            "id": "07-lala-spicy",
+            "label": "辛い！",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/07-lala-spicy.gif",
+            "poster": "/previews/phonetic/ja/07-lala-spicy.webp"
+          },
+          {
+            "id": "08-lala-fragrant",
+            "label": "いいにおい",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/08-lala-fragrant.gif",
+            "poster": "/previews/phonetic/ja/08-lala-fragrant.webp"
+          },
+          {
+            "id": "09-sasa-sleepy",
+            "label": "ねむい",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/09-sasa-sleepy.gif",
+            "poster": "/previews/phonetic/ja/09-sasa-sleepy.webp"
+          },
+          {
+            "id": "10-lala-mealtime",
+            "label": "いただきます",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/10-lala-mealtime.gif",
+            "poster": "/previews/phonetic/ja/10-lala-mealtime.webp"
+          },
+          {
+            "id": "11-aya-farewell",
+            "label": "いってらっしゃい",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/11-aya-farewell.gif",
+            "poster": "/previews/phonetic/ja/11-aya-farewell.webp"
+          },
+          {
+            "id": "12-zhuangzi-thanks",
+            "label": "ありがとう",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/12-zhuangzi-thanks.gif",
+            "poster": "/previews/phonetic/ja/12-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "13-aya-love",
+            "label": "愛してる",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/13-aya-love.gif",
+            "poster": "/previews/phonetic/ja/13-aya-love.webp"
+          },
+          {
+            "id": "14-lala-sorry",
+            "label": "すみません",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/14-lala-sorry.gif",
+            "poster": "/previews/phonetic/ja/14-lala-sorry.webp"
+          },
+          {
+            "id": "15-sasa-cheer",
+            "label": "がんばって",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/15-sasa-cheer.gif",
+            "poster": "/previews/phonetic/ja/15-sasa-cheer.webp"
+          },
+          {
+            "id": "16-zhuangzi-okay",
+            "label": "大丈夫",
+            "gif": "https://aya.lazying.art/media/phonetic/ja/16-zhuangzi-okay.gif",
+            "poster": "/previews/phonetic/ja/16-zhuangzi-okay.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cantonese",
+      "name": "得闲陪你倾",
+      "english": "A little Cantonese warmth",
+      "tag": "language",
+      "description": "得闲就倾两句。多谢、唔该、辛苦晒，把关心说得亲切又轻松。",
+      "count": 12,
+      "wechat": "review",
+      "color": "teal",
+      "banner": "/previews/cantonese/banner.webp",
+      "cover": "/previews/cantonese/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-aya-morning",
+            "label": "早晨",
+            "gif": "https://aya.lazying.art/media/cantonese/original/01-aya-morning.gif",
+            "poster": "/previews/cantonese/original/01-aya-morning.webp"
+          },
+          {
+            "id": "02-aya-please",
+            "label": "唔該",
+            "gif": "https://aya.lazying.art/media/cantonese/original/02-aya-please.gif",
+            "poster": "/previews/cantonese/original/02-aya-please.webp"
+          },
+          {
+            "id": "03-zhuangzi-thanks",
+            "label": "多謝",
+            "gif": "https://aya.lazying.art/media/cantonese/original/03-zhuangzi-thanks.gif",
+            "poster": "/previews/cantonese/original/03-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "04-aya-welcome",
+            "label": "唔使客氣",
+            "gif": "https://aya.lazying.art/media/cantonese/original/04-aya-welcome.gif",
+            "poster": "/previews/cantonese/original/04-aya-welcome.webp"
+          },
+          {
+            "id": "05-aya-dinner",
+            "label": "食飯未",
+            "gif": "https://aya.lazying.art/media/cantonese/original/05-aya-dinner.gif",
+            "poster": "/previews/cantonese/original/05-aya-dinner.webp"
+          },
+          {
+            "id": "06-lala-yummy",
+            "label": "好味",
+            "gif": "https://aya.lazying.art/media/cantonese/original/06-lala-yummy.gif",
+            "poster": "/previews/cantonese/original/06-lala-yummy.webp"
+          },
+          {
+            "id": "07-aya-tired",
+            "label": "好攰",
+            "gif": "https://aya.lazying.art/media/cantonese/original/07-aya-tired.gif",
+            "poster": "/previews/cantonese/original/07-aya-tired.webp"
+          },
+          {
+            "id": "08-sasa-wait",
+            "label": "等陣",
+            "gif": "https://aya.lazying.art/media/cantonese/original/08-sasa-wait.gif",
+            "poster": "/previews/cantonese/original/08-sasa-wait.webp"
+          },
+          {
+            "id": "09-zhuangzi-okay",
+            "label": "冇問題",
+            "gif": "https://aya.lazying.art/media/cantonese/original/09-zhuangzi-okay.gif",
+            "poster": "/previews/cantonese/original/09-zhuangzi-okay.webp"
+          },
+          {
+            "id": "10-lala-cheer",
+            "label": "加油",
+            "gif": "https://aya.lazying.art/media/cantonese/original/10-lala-cheer.gif",
+            "poster": "/previews/cantonese/original/10-lala-cheer.webp"
+          },
+          {
+            "id": "11-aya-congrats",
+            "label": "恭喜",
+            "gif": "https://aya.lazying.art/media/cantonese/original/11-aya-congrats.gif",
+            "poster": "/previews/cantonese/original/11-aya-congrats.webp"
+          },
+          {
+            "id": "12-zhuangzi-tea",
+            "label": "得閒飲茶",
+            "gif": "https://aya.lazying.art/media/cantonese/original/12-zhuangzi-tea.gif",
+            "poster": "/previews/cantonese/original/12-zhuangzi-tea.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-aya-morning",
+            "label": "Morning!",
+            "gif": "https://aya.lazying.art/media/cantonese/en/01-aya-morning.gif",
+            "poster": "/previews/cantonese/en/01-aya-morning.webp"
+          },
+          {
+            "id": "02-aya-please",
+            "label": "Thanks a lot",
+            "gif": "https://aya.lazying.art/media/cantonese/en/02-aya-please.gif",
+            "poster": "/previews/cantonese/en/02-aya-please.webp"
+          },
+          {
+            "id": "03-zhuangzi-thanks",
+            "label": "Thank you",
+            "gif": "https://aya.lazying.art/media/cantonese/en/03-zhuangzi-thanks.gif",
+            "poster": "/previews/cantonese/en/03-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "04-aya-welcome",
+            "label": "You're welcome",
+            "gif": "https://aya.lazying.art/media/cantonese/en/04-aya-welcome.gif",
+            "poster": "/previews/cantonese/en/04-aya-welcome.webp"
+          },
+          {
+            "id": "05-aya-dinner",
+            "label": "Eaten yet?",
+            "gif": "https://aya.lazying.art/media/cantonese/en/05-aya-dinner.gif",
+            "poster": "/previews/cantonese/en/05-aya-dinner.webp"
+          },
+          {
+            "id": "06-lala-yummy",
+            "label": "So yummy",
+            "gif": "https://aya.lazying.art/media/cantonese/en/06-lala-yummy.gif",
+            "poster": "/previews/cantonese/en/06-lala-yummy.webp"
+          },
+          {
+            "id": "07-aya-tired",
+            "label": "So tired",
+            "gif": "https://aya.lazying.art/media/cantonese/en/07-aya-tired.gif",
+            "poster": "/previews/cantonese/en/07-aya-tired.webp"
+          },
+          {
+            "id": "08-sasa-wait",
+            "label": "Hang on",
+            "gif": "https://aya.lazying.art/media/cantonese/en/08-sasa-wait.gif",
+            "poster": "/previews/cantonese/en/08-sasa-wait.webp"
+          },
+          {
+            "id": "09-zhuangzi-okay",
+            "label": "No problem",
+            "gif": "https://aya.lazying.art/media/cantonese/en/09-zhuangzi-okay.gif",
+            "poster": "/previews/cantonese/en/09-zhuangzi-okay.webp"
+          },
+          {
+            "id": "10-lala-cheer",
+            "label": "Keep going",
+            "gif": "https://aya.lazying.art/media/cantonese/en/10-lala-cheer.gif",
+            "poster": "/previews/cantonese/en/10-lala-cheer.webp"
+          },
+          {
+            "id": "11-aya-congrats",
+            "label": "Congrats!",
+            "gif": "https://aya.lazying.art/media/cantonese/en/11-aya-congrats.gif",
+            "poster": "/previews/cantonese/en/11-aya-congrats.webp"
+          },
+          {
+            "id": "12-zhuangzi-tea",
+            "label": "Tea sometime?",
+            "gif": "https://aya.lazying.art/media/cantonese/en/12-zhuangzi-tea.gif",
+            "poster": "/previews/cantonese/en/12-zhuangzi-tea.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-aya-morning",
+            "label": "おはよう",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/01-aya-morning.gif",
+            "poster": "/previews/cantonese/ja/01-aya-morning.webp"
+          },
+          {
+            "id": "02-aya-please",
+            "label": "どうも",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/02-aya-please.gif",
+            "poster": "/previews/cantonese/ja/02-aya-please.webp"
+          },
+          {
+            "id": "03-zhuangzi-thanks",
+            "label": "ありがとう",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/03-zhuangzi-thanks.gif",
+            "poster": "/previews/cantonese/ja/03-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "04-aya-welcome",
+            "label": "どういたしまして",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/04-aya-welcome.gif",
+            "poster": "/previews/cantonese/ja/04-aya-welcome.webp"
+          },
+          {
+            "id": "05-aya-dinner",
+            "label": "ごはん食べた？",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/05-aya-dinner.gif",
+            "poster": "/previews/cantonese/ja/05-aya-dinner.webp"
+          },
+          {
+            "id": "06-lala-yummy",
+            "label": "おいしい",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/06-lala-yummy.gif",
+            "poster": "/previews/cantonese/ja/06-lala-yummy.webp"
+          },
+          {
+            "id": "07-aya-tired",
+            "label": "つかれた",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/07-aya-tired.gif",
+            "poster": "/previews/cantonese/ja/07-aya-tired.webp"
+          },
+          {
+            "id": "08-sasa-wait",
+            "label": "ちょっと待って",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/08-sasa-wait.gif",
+            "poster": "/previews/cantonese/ja/08-sasa-wait.webp"
+          },
+          {
+            "id": "09-zhuangzi-okay",
+            "label": "問題ないよ",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/09-zhuangzi-okay.gif",
+            "poster": "/previews/cantonese/ja/09-zhuangzi-okay.webp"
+          },
+          {
+            "id": "10-lala-cheer",
+            "label": "がんばれ",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/10-lala-cheer.gif",
+            "poster": "/previews/cantonese/ja/10-lala-cheer.webp"
+          },
+          {
+            "id": "11-aya-congrats",
+            "label": "おめでとう",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/11-aya-congrats.gif",
+            "poster": "/previews/cantonese/ja/11-aya-congrats.webp"
+          },
+          {
+            "id": "12-zhuangzi-tea",
+            "label": "今度お茶しよう",
+            "gif": "https://aya.lazying.art/media/cantonese/ja/12-zhuangzi-tea.gif",
+            "poster": "/previews/cantonese/ja/12-zhuangzi-tea.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sports",
+      "name": "运动五分钟",
+      "english": "Five minutes of motivation",
+      "tag": "daily",
+      "description": "先动五分钟，再休息一小会儿。举重、跳绳和一点点偷懒，都有人陪。",
+      "count": 12,
+      "wechat": "review",
+      "color": "coral",
+      "banner": "/previews/sports/banner.webp",
+      "cover": "/previews/sports/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-sasa-start",
+            "label": "开练啦",
+            "gif": "https://aya.lazying.art/media/sports/original/01-sasa-start.gif",
+            "poster": "/previews/sports/original/01-sasa-start.webp"
+          },
+          {
+            "id": "02-lala-heavy",
+            "label": "有点重",
+            "gif": "https://aya.lazying.art/media/sports/original/02-lala-heavy.gif",
+            "poster": "/previews/sports/original/02-lala-heavy.webp"
+          },
+          {
+            "id": "03-aya-curl",
+            "label": "再来一个",
+            "gif": "https://aya.lazying.art/media/sports/original/03-aya-curl.gif",
+            "poster": "/previews/sports/original/03-aya-curl.webp"
+          },
+          {
+            "id": "04-sasa-pingpong",
+            "label": "接招",
+            "gif": "https://aya.lazying.art/media/sports/original/04-sasa-pingpong.gif",
+            "poster": "/previews/sports/original/04-sasa-pingpong.webp"
+          },
+          {
+            "id": "05-lala-recharge",
+            "label": "补充能量",
+            "gif": "https://aya.lazying.art/media/sports/original/05-lala-recharge.gif",
+            "poster": "/previews/sports/original/05-lala-recharge.webp"
+          },
+          {
+            "id": "06-aya-rope",
+            "label": "跳起来",
+            "gif": "https://aya.lazying.art/media/sports/original/06-aya-rope.gif",
+            "poster": "/previews/sports/original/06-aya-rope.webp"
+          },
+          {
+            "id": "07-lala-sweat",
+            "label": "汗流浃背",
+            "gif": "https://aya.lazying.art/media/sports/original/07-lala-sweat.gif",
+            "poster": "/previews/sports/original/07-lala-sweat.webp"
+          },
+          {
+            "id": "08-zhuangzi-water",
+            "label": "喝口水",
+            "gif": "https://aya.lazying.art/media/sports/original/08-zhuangzi-water.gif",
+            "poster": "/previews/sports/original/08-zhuangzi-water.webp"
+          },
+          {
+            "id": "09-lala-rest",
+            "label": "躺会儿",
+            "gif": "https://aya.lazying.art/media/sports/original/09-lala-rest.gif",
+            "poster": "/previews/sports/original/09-lala-rest.webp"
+          },
+          {
+            "id": "10-lala-eat",
+            "label": "练完开吃",
+            "gif": "https://aya.lazying.art/media/sports/original/10-lala-eat.gif",
+            "poster": "/previews/sports/original/10-lala-eat.webp"
+          },
+          {
+            "id": "11-aya-rest",
+            "label": "再歇五分",
+            "gif": "https://aya.lazying.art/media/sports/original/11-aya-rest.gif",
+            "poster": "/previews/sports/original/11-aya-rest.webp"
+          },
+          {
+            "id": "12-duo-continue",
+            "label": "明天继续",
+            "gif": "https://aya.lazying.art/media/sports/original/12-duo-continue.gif",
+            "poster": "/previews/sports/original/12-duo-continue.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-sasa-start",
+            "label": "Let's train!",
+            "gif": "https://aya.lazying.art/media/sports/en/01-sasa-start.gif",
+            "poster": "/previews/sports/en/01-sasa-start.webp"
+          },
+          {
+            "id": "02-lala-heavy",
+            "label": "Bit heavy!",
+            "gif": "https://aya.lazying.art/media/sports/en/02-lala-heavy.gif",
+            "poster": "/previews/sports/en/02-lala-heavy.webp"
+          },
+          {
+            "id": "03-aya-curl",
+            "label": "One more!",
+            "gif": "https://aya.lazying.art/media/sports/en/03-aya-curl.gif",
+            "poster": "/previews/sports/en/03-aya-curl.webp"
+          },
+          {
+            "id": "04-sasa-pingpong",
+            "label": "Bring it on",
+            "gif": "https://aya.lazying.art/media/sports/en/04-sasa-pingpong.gif",
+            "poster": "/previews/sports/en/04-sasa-pingpong.webp"
+          },
+          {
+            "id": "05-lala-recharge",
+            "label": "Refueling",
+            "gif": "https://aya.lazying.art/media/sports/en/05-lala-recharge.gif",
+            "poster": "/previews/sports/en/05-lala-recharge.webp"
+          },
+          {
+            "id": "06-aya-rope",
+            "label": "Jump!",
+            "gif": "https://aya.lazying.art/media/sports/en/06-aya-rope.gif",
+            "poster": "/previews/sports/en/06-aya-rope.webp"
+          },
+          {
+            "id": "07-lala-sweat",
+            "label": "So sweaty",
+            "gif": "https://aya.lazying.art/media/sports/en/07-lala-sweat.gif",
+            "poster": "/previews/sports/en/07-lala-sweat.webp"
+          },
+          {
+            "id": "08-zhuangzi-water",
+            "label": "Water break",
+            "gif": "https://aya.lazying.art/media/sports/en/08-zhuangzi-water.gif",
+            "poster": "/previews/sports/en/08-zhuangzi-water.webp"
+          },
+          {
+            "id": "09-lala-rest",
+            "label": "Lying down",
+            "gif": "https://aya.lazying.art/media/sports/en/09-lala-rest.gif",
+            "poster": "/previews/sports/en/09-lala-rest.webp"
+          },
+          {
+            "id": "10-lala-eat",
+            "label": "Earned a snack",
+            "gif": "https://aya.lazying.art/media/sports/en/10-lala-eat.gif",
+            "poster": "/previews/sports/en/10-lala-eat.webp"
+          },
+          {
+            "id": "11-aya-rest",
+            "label": "Five more mins",
+            "gif": "https://aya.lazying.art/media/sports/en/11-aya-rest.gif",
+            "poster": "/previews/sports/en/11-aya-rest.webp"
+          },
+          {
+            "id": "12-duo-continue",
+            "label": "Again tomorrow",
+            "gif": "https://aya.lazying.art/media/sports/en/12-duo-continue.gif",
+            "poster": "/previews/sports/en/12-duo-continue.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-sasa-start",
+            "label": "運動スタート",
+            "gif": "https://aya.lazying.art/media/sports/ja/01-sasa-start.gif",
+            "poster": "/previews/sports/ja/01-sasa-start.webp"
+          },
+          {
+            "id": "02-lala-heavy",
+            "label": "ちょっと重い",
+            "gif": "https://aya.lazying.art/media/sports/ja/02-lala-heavy.gif",
+            "poster": "/previews/sports/ja/02-lala-heavy.webp"
+          },
+          {
+            "id": "03-aya-curl",
+            "label": "もう一回",
+            "gif": "https://aya.lazying.art/media/sports/ja/03-aya-curl.gif",
+            "poster": "/previews/sports/ja/03-aya-curl.webp"
+          },
+          {
+            "id": "04-sasa-pingpong",
+            "label": "勝負だ",
+            "gif": "https://aya.lazying.art/media/sports/ja/04-sasa-pingpong.gif",
+            "poster": "/previews/sports/ja/04-sasa-pingpong.webp"
+          },
+          {
+            "id": "05-lala-recharge",
+            "label": "エネルギー補給",
+            "gif": "https://aya.lazying.art/media/sports/ja/05-lala-recharge.gif",
+            "poster": "/previews/sports/ja/05-lala-recharge.webp"
+          },
+          {
+            "id": "06-aya-rope",
+            "label": "ジャンプ！",
+            "gif": "https://aya.lazying.art/media/sports/ja/06-aya-rope.gif",
+            "poster": "/previews/sports/ja/06-aya-rope.webp"
+          },
+          {
+            "id": "07-lala-sweat",
+            "label": "汗だく",
+            "gif": "https://aya.lazying.art/media/sports/ja/07-lala-sweat.gif",
+            "poster": "/previews/sports/ja/07-lala-sweat.webp"
+          },
+          {
+            "id": "08-zhuangzi-water",
+            "label": "水分補給",
+            "gif": "https://aya.lazying.art/media/sports/ja/08-zhuangzi-water.gif",
+            "poster": "/previews/sports/ja/08-zhuangzi-water.webp"
+          },
+          {
+            "id": "09-lala-rest",
+            "label": "ごろーん",
+            "gif": "https://aya.lazying.art/media/sports/ja/09-lala-rest.gif",
+            "poster": "/previews/sports/ja/09-lala-rest.webp"
+          },
+          {
+            "id": "10-lala-eat",
+            "label": "運動後のごはん",
+            "gif": "https://aya.lazying.art/media/sports/ja/10-lala-eat.gif",
+            "poster": "/previews/sports/ja/10-lala-eat.webp"
+          },
+          {
+            "id": "11-aya-rest",
+            "label": "あと五分",
+            "gif": "https://aya.lazying.art/media/sports/ja/11-aya-rest.gif",
+            "poster": "/previews/sports/ja/11-aya-rest.webp"
+          },
+          {
+            "id": "12-duo-continue",
+            "label": "明日も続けよう",
+            "gif": "https://aya.lazying.art/media/sports/ja/12-duo-continue.gif",
+            "poster": "/previews/sports/ja/12-duo-continue.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "research",
+      "name": "实验室小心情",
+      "english": "Life in the lab",
+      "tag": "work",
+      "description": "实验、论文、等待消息。让小伙伴陪你熬过卡住的一天，也陪你庆祝好消息。",
+      "count": 12,
+      "wechat": "review",
+      "color": "blue",
+      "banner": "/previews/research/banner.webp",
+      "cover": "/previews/research/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-aya-microscope",
+            "label": "做实验",
+            "gif": "https://aya.lazying.art/media/research/original/01-aya-microscope.gif",
+            "poster": "/previews/research/original/01-aya-microscope.webp"
+          },
+          {
+            "id": "02-zhuangzi-pipette",
+            "label": "再测一次",
+            "gif": "https://aya.lazying.art/media/research/original/02-zhuangzi-pipette.gif",
+            "poster": "/previews/research/original/02-zhuangzi-pipette.webp"
+          },
+          {
+            "id": "03-zhuangzi-review",
+            "label": "数据呢",
+            "gif": "https://aya.lazying.art/media/research/original/03-zhuangzi-review.gif",
+            "poster": "/previews/research/original/03-zhuangzi-review.webp"
+          },
+          {
+            "id": "04-lala-stuck",
+            "label": "写不动了",
+            "gif": "https://aya.lazying.art/media/research/original/04-lala-stuck.gif",
+            "poster": "/previews/research/original/04-lala-stuck.webp"
+          },
+          {
+            "id": "05-sasa-writing",
+            "label": "改稿中",
+            "gif": "https://aya.lazying.art/media/research/original/05-sasa-writing.gif",
+            "poster": "/previews/research/original/05-sasa-writing.webp"
+          },
+          {
+            "id": "06-aya-accepted",
+            "label": "接收啦",
+            "gif": "https://aya.lazying.art/media/research/original/06-aya-accepted.gif",
+            "poster": "/previews/research/original/06-aya-accepted.webp"
+          },
+          {
+            "id": "07-aya-rejected",
+            "label": "退稿了",
+            "gif": "https://aya.lazying.art/media/research/original/07-aya-rejected.gif",
+            "poster": "/previews/research/original/07-aya-rejected.webp"
+          },
+          {
+            "id": "08-duo-think",
+            "label": "再想想",
+            "gif": "https://aya.lazying.art/media/research/original/08-duo-think.gif",
+            "poster": "/previews/research/original/08-duo-think.webp"
+          },
+          {
+            "id": "09-aya-water",
+            "label": "歇一会",
+            "gif": "https://aya.lazying.art/media/research/original/09-aya-water.gif",
+            "poster": "/previews/research/original/09-aya-water.webp"
+          },
+          {
+            "id": "10-sasa-idea",
+            "label": "有了",
+            "gif": "https://aya.lazying.art/media/research/original/10-sasa-idea.gif",
+            "poster": "/previews/research/original/10-sasa-idea.webp"
+          },
+          {
+            "id": "11-zhuangzi-cheer",
+            "label": "冲顶刊",
+            "gif": "https://aya.lazying.art/media/research/original/11-zhuangzi-cheer.gif",
+            "poster": "/previews/research/original/11-zhuangzi-cheer.webp"
+          },
+          {
+            "id": "12-duo-friday",
+            "label": "终于收工",
+            "gif": "https://aya.lazying.art/media/research/original/12-duo-friday.gif",
+            "poster": "/previews/research/original/12-duo-friday.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-aya-microscope",
+            "label": "Lab time",
+            "gif": "https://aya.lazying.art/media/research/en/01-aya-microscope.gif",
+            "poster": "/previews/research/en/01-aya-microscope.webp"
+          },
+          {
+            "id": "02-zhuangzi-pipette",
+            "label": "Test it again",
+            "gif": "https://aya.lazying.art/media/research/en/02-zhuangzi-pipette.gif",
+            "poster": "/previews/research/en/02-zhuangzi-pipette.webp"
+          },
+          {
+            "id": "03-zhuangzi-review",
+            "label": "Where's the data?",
+            "gif": "https://aya.lazying.art/media/research/en/03-zhuangzi-review.gif",
+            "poster": "/previews/research/en/03-zhuangzi-review.webp"
+          },
+          {
+            "id": "04-lala-stuck",
+            "label": "Writer's block",
+            "gif": "https://aya.lazying.art/media/research/en/04-lala-stuck.gif",
+            "poster": "/previews/research/en/04-lala-stuck.webp"
+          },
+          {
+            "id": "05-sasa-writing",
+            "label": "Revising...",
+            "gif": "https://aya.lazying.art/media/research/en/05-sasa-writing.gif",
+            "poster": "/previews/research/en/05-sasa-writing.webp"
+          },
+          {
+            "id": "06-aya-accepted",
+            "label": "Accepted!",
+            "gif": "https://aya.lazying.art/media/research/en/06-aya-accepted.gif",
+            "poster": "/previews/research/en/06-aya-accepted.webp"
+          },
+          {
+            "id": "07-aya-rejected",
+            "label": "Rejected...",
+            "gif": "https://aya.lazying.art/media/research/en/07-aya-rejected.gif",
+            "poster": "/previews/research/en/07-aya-rejected.webp"
+          },
+          {
+            "id": "08-duo-think",
+            "label": "Think again",
+            "gif": "https://aya.lazying.art/media/research/en/08-duo-think.gif",
+            "poster": "/previews/research/en/08-duo-think.webp"
+          },
+          {
+            "id": "09-aya-water",
+            "label": "Take a break",
+            "gif": "https://aya.lazying.art/media/research/en/09-aya-water.gif",
+            "poster": "/previews/research/en/09-aya-water.webp"
+          },
+          {
+            "id": "10-sasa-idea",
+            "label": "Eureka!",
+            "gif": "https://aya.lazying.art/media/research/en/10-sasa-idea.gif",
+            "poster": "/previews/research/en/10-sasa-idea.webp"
+          },
+          {
+            "id": "11-zhuangzi-cheer",
+            "label": "Aim high!",
+            "gif": "https://aya.lazying.art/media/research/en/11-zhuangzi-cheer.gif",
+            "poster": "/previews/research/en/11-zhuangzi-cheer.webp"
+          },
+          {
+            "id": "12-duo-friday",
+            "label": "Finally done",
+            "gif": "https://aya.lazying.art/media/research/en/12-duo-friday.gif",
+            "poster": "/previews/research/en/12-duo-friday.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-aya-microscope",
+            "label": "実験中",
+            "gif": "https://aya.lazying.art/media/research/ja/01-aya-microscope.gif",
+            "poster": "/previews/research/ja/01-aya-microscope.webp"
+          },
+          {
+            "id": "02-zhuangzi-pipette",
+            "label": "もう一度測定",
+            "gif": "https://aya.lazying.art/media/research/ja/02-zhuangzi-pipette.gif",
+            "poster": "/previews/research/ja/02-zhuangzi-pipette.webp"
+          },
+          {
+            "id": "03-zhuangzi-review",
+            "label": "データは？",
+            "gif": "https://aya.lazying.art/media/research/ja/03-zhuangzi-review.gif",
+            "poster": "/previews/research/ja/03-zhuangzi-review.webp"
+          },
+          {
+            "id": "04-lala-stuck",
+            "label": "もう書けない",
+            "gif": "https://aya.lazying.art/media/research/ja/04-lala-stuck.gif",
+            "poster": "/previews/research/ja/04-lala-stuck.webp"
+          },
+          {
+            "id": "05-sasa-writing",
+            "label": "修正中",
+            "gif": "https://aya.lazying.art/media/research/ja/05-sasa-writing.gif",
+            "poster": "/previews/research/ja/05-sasa-writing.webp"
+          },
+          {
+            "id": "06-aya-accepted",
+            "label": "採択！",
+            "gif": "https://aya.lazying.art/media/research/ja/06-aya-accepted.gif",
+            "poster": "/previews/research/ja/06-aya-accepted.webp"
+          },
+          {
+            "id": "07-aya-rejected",
+            "label": "不採択…",
+            "gif": "https://aya.lazying.art/media/research/ja/07-aya-rejected.gif",
+            "poster": "/previews/research/ja/07-aya-rejected.webp"
+          },
+          {
+            "id": "08-duo-think",
+            "label": "もう一度考えよう",
+            "gif": "https://aya.lazying.art/media/research/ja/08-duo-think.gif",
+            "poster": "/previews/research/ja/08-duo-think.webp"
+          },
+          {
+            "id": "09-aya-water",
+            "label": "ひと休み",
+            "gif": "https://aya.lazying.art/media/research/ja/09-aya-water.gif",
+            "poster": "/previews/research/ja/09-aya-water.webp"
+          },
+          {
+            "id": "10-sasa-idea",
+            "label": "ひらめいた",
+            "gif": "https://aya.lazying.art/media/research/ja/10-sasa-idea.gif",
+            "poster": "/previews/research/ja/10-sasa-idea.webp"
+          },
+          {
+            "id": "11-zhuangzi-cheer",
+            "label": "トップ誌へ",
+            "gif": "https://aya.lazying.art/media/research/ja/11-zhuangzi-cheer.gif",
+            "poster": "/previews/research/ja/11-zhuangzi-cheer.webp"
+          },
+          {
+            "id": "12-duo-friday",
+            "label": "やっと終わった",
+            "gif": "https://aya.lazying.art/media/research/ja/12-duo-friday.gif",
+            "poster": "/previews/research/ja/12-duo-friday.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "outing",
+      "name": "小车开到你家",
+      "english": "A tiny ride to your side",
+      "tag": "daily",
+      "description": "一路平安，马上到！坐上小黄车，把想见你变成出发。",
+      "count": 12,
+      "wechat": "review",
+      "color": "yellow",
+      "banner": "/previews/outing/banner.webp",
+      "cover": "/previews/outing/cover.webp",
+      "editions": [
+        "original",
+        "en",
+        "ja"
+      ],
+      "stickers": {
+        "zh": [
+          {
+            "id": "01-lala-leaving",
+            "label": "一路平安",
+            "gif": "https://aya.lazying.art/media/outing/original/01-lala-leaving.gif",
+            "poster": "/previews/outing/original/01-lala-leaving.webp"
+          },
+          {
+            "id": "02-lala-bye",
+            "label": "拜拜",
+            "gif": "https://aya.lazying.art/media/outing/original/02-lala-bye.gif",
+            "poster": "/previews/outing/original/02-lala-bye.webp"
+          },
+          {
+            "id": "03-duo-together",
+            "label": "一起走呀",
+            "gif": "https://aya.lazying.art/media/outing/original/03-duo-together.gif",
+            "poster": "/previews/outing/original/03-duo-together.webp"
+          },
+          {
+            "id": "04-sasa-coming",
+            "label": "马上到",
+            "gif": "https://aya.lazying.art/media/outing/original/04-sasa-coming.gif",
+            "poster": "/previews/outing/original/04-sasa-coming.webp"
+          },
+          {
+            "id": "05-aya-waiting",
+            "label": "等你呢",
+            "gif": "https://aya.lazying.art/media/outing/original/05-aya-waiting.gif",
+            "poster": "/previews/outing/original/05-aya-waiting.webp"
+          },
+          {
+            "id": "06-zhuangzi-follow",
+            "label": "跟我走",
+            "gif": "https://aya.lazying.art/media/outing/original/06-zhuangzi-follow.gif",
+            "poster": "/previews/outing/original/06-zhuangzi-follow.webp"
+          },
+          {
+            "id": "07-sasa-photo",
+            "label": "看镜头",
+            "gif": "https://aya.lazying.art/media/outing/original/07-sasa-photo.gif",
+            "poster": "/previews/outing/original/07-sasa-photo.webp"
+          },
+          {
+            "id": "08-lala-hungry",
+            "label": "闻着就饿",
+            "gif": "https://aya.lazying.art/media/outing/original/08-lala-hungry.gif",
+            "poster": "/previews/outing/original/08-lala-hungry.webp"
+          },
+          {
+            "id": "09-aya-saved",
+            "label": "给你留了",
+            "gif": "https://aya.lazying.art/media/outing/original/09-aya-saved.gif",
+            "poster": "/previews/outing/original/09-aya-saved.webp"
+          },
+          {
+            "id": "10-zhuangzi-thanks",
+            "label": "谢谢招待",
+            "gif": "https://aya.lazying.art/media/outing/original/10-zhuangzi-thanks.gif",
+            "poster": "/previews/outing/original/10-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "11-lala-home",
+            "label": "到家报到",
+            "gif": "https://aya.lazying.art/media/outing/original/11-lala-home.gif",
+            "poster": "/previews/outing/original/11-lala-home.webp"
+          },
+          {
+            "id": "12-sasa-again",
+            "label": "下次还约",
+            "gif": "https://aya.lazying.art/media/outing/original/12-sasa-again.gif",
+            "poster": "/previews/outing/original/12-sasa-again.webp"
+          }
+        ],
+        "en": [
+          {
+            "id": "01-lala-leaving",
+            "label": "Safe travels",
+            "gif": "https://aya.lazying.art/media/outing/en/01-lala-leaving.gif",
+            "poster": "/previews/outing/en/01-lala-leaving.webp"
+          },
+          {
+            "id": "02-lala-bye",
+            "label": "Bye-bye!",
+            "gif": "https://aya.lazying.art/media/outing/en/02-lala-bye.gif",
+            "poster": "/previews/outing/en/02-lala-bye.webp"
+          },
+          {
+            "id": "03-duo-together",
+            "label": "Come with me",
+            "gif": "https://aya.lazying.art/media/outing/en/03-duo-together.gif",
+            "poster": "/previews/outing/en/03-duo-together.webp"
+          },
+          {
+            "id": "04-sasa-coming",
+            "label": "Almost there",
+            "gif": "https://aya.lazying.art/media/outing/en/04-sasa-coming.gif",
+            "poster": "/previews/outing/en/04-sasa-coming.webp"
+          },
+          {
+            "id": "05-aya-waiting",
+            "label": "Waiting for you",
+            "gif": "https://aya.lazying.art/media/outing/en/05-aya-waiting.gif",
+            "poster": "/previews/outing/en/05-aya-waiting.webp"
+          },
+          {
+            "id": "06-zhuangzi-follow",
+            "label": "Follow me",
+            "gif": "https://aya.lazying.art/media/outing/en/06-zhuangzi-follow.gif",
+            "poster": "/previews/outing/en/06-zhuangzi-follow.webp"
+          },
+          {
+            "id": "07-sasa-photo",
+            "label": "Say cheese",
+            "gif": "https://aya.lazying.art/media/outing/en/07-sasa-photo.gif",
+            "poster": "/previews/outing/en/07-sasa-photo.webp"
+          },
+          {
+            "id": "08-lala-hungry",
+            "label": "Smells tasty",
+            "gif": "https://aya.lazying.art/media/outing/en/08-lala-hungry.gif",
+            "poster": "/previews/outing/en/08-lala-hungry.webp"
+          },
+          {
+            "id": "09-aya-saved",
+            "label": "Saved you some",
+            "gif": "https://aya.lazying.art/media/outing/en/09-aya-saved.gif",
+            "poster": "/previews/outing/en/09-aya-saved.webp"
+          },
+          {
+            "id": "10-zhuangzi-thanks",
+            "label": "Thanks for having me",
+            "gif": "https://aya.lazying.art/media/outing/en/10-zhuangzi-thanks.gif",
+            "poster": "/previews/outing/en/10-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "11-lala-home",
+            "label": "Home safe!",
+            "gif": "https://aya.lazying.art/media/outing/en/11-lala-home.gif",
+            "poster": "/previews/outing/en/11-lala-home.webp"
+          },
+          {
+            "id": "12-sasa-again",
+            "label": "Let's go again",
+            "gif": "https://aya.lazying.art/media/outing/en/12-sasa-again.gif",
+            "poster": "/previews/outing/en/12-sasa-again.webp"
+          }
+        ],
+        "ja": [
+          {
+            "id": "01-lala-leaving",
+            "label": "気をつけてね",
+            "gif": "https://aya.lazying.art/media/outing/ja/01-lala-leaving.gif",
+            "poster": "/previews/outing/ja/01-lala-leaving.webp"
+          },
+          {
+            "id": "02-lala-bye",
+            "label": "バイバイ",
+            "gif": "https://aya.lazying.art/media/outing/ja/02-lala-bye.gif",
+            "poster": "/previews/outing/ja/02-lala-bye.webp"
+          },
+          {
+            "id": "03-duo-together",
+            "label": "一緒に行こう",
+            "gif": "https://aya.lazying.art/media/outing/ja/03-duo-together.gif",
+            "poster": "/previews/outing/ja/03-duo-together.webp"
+          },
+          {
+            "id": "04-sasa-coming",
+            "label": "もうすぐ着く",
+            "gif": "https://aya.lazying.art/media/outing/ja/04-sasa-coming.gif",
+            "poster": "/previews/outing/ja/04-sasa-coming.webp"
+          },
+          {
+            "id": "05-aya-waiting",
+            "label": "待ってるよ",
+            "gif": "https://aya.lazying.art/media/outing/ja/05-aya-waiting.gif",
+            "poster": "/previews/outing/ja/05-aya-waiting.webp"
+          },
+          {
+            "id": "06-zhuangzi-follow",
+            "label": "ついてきて",
+            "gif": "https://aya.lazying.art/media/outing/ja/06-zhuangzi-follow.gif",
+            "poster": "/previews/outing/ja/06-zhuangzi-follow.webp"
+          },
+          {
+            "id": "07-sasa-photo",
+            "label": "こっち見て",
+            "gif": "https://aya.lazying.art/media/outing/ja/07-sasa-photo.gif",
+            "poster": "/previews/outing/ja/07-sasa-photo.webp"
+          },
+          {
+            "id": "08-lala-hungry",
+            "label": "おなかすいた",
+            "gif": "https://aya.lazying.art/media/outing/ja/08-lala-hungry.gif",
+            "poster": "/previews/outing/ja/08-lala-hungry.webp"
+          },
+          {
+            "id": "09-aya-saved",
+            "label": "取っといたよ",
+            "gif": "https://aya.lazying.art/media/outing/ja/09-aya-saved.gif",
+            "poster": "/previews/outing/ja/09-aya-saved.webp"
+          },
+          {
+            "id": "10-zhuangzi-thanks",
+            "label": "おじゃましました",
+            "gif": "https://aya.lazying.art/media/outing/ja/10-zhuangzi-thanks.gif",
+            "poster": "/previews/outing/ja/10-zhuangzi-thanks.webp"
+          },
+          {
+            "id": "11-lala-home",
+            "label": "無事帰宅",
+            "gif": "https://aya.lazying.art/media/outing/ja/11-lala-home.gif",
+            "poster": "/previews/outing/ja/11-lala-home.webp"
+          },
+          {
+            "id": "12-sasa-again",
+            "label": "また行こう",
+            "gif": "https://aya.lazying.art/media/outing/ja/12-sasa-again.gif",
+            "poster": "/previews/outing/ja/12-sasa-again.webp"
+          }
+        ]
+      }
+    }
+  ],
+  "attribution": {
+    "owner": "LazyingArt",
+    "source": "https://aya.lazying.art",
+    "use": "personal-use previews; independent WeSticker subscriptions"
+  }
+}

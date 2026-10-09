@@ -1,0 +1,1 @@
+"""WeSticker application services."""

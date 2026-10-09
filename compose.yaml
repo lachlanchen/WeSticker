@@ -1,0 +1,32 @@
+services:
+  web:
+    build: .
+    image: westicker:local
+    restart: unless-stopped
+    ports: ["127.0.0.1:18644:8000"]
+    volumes: ["state:/data", "./.config/production.json:/run/secrets/westicker.json:ro"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=5)"]
+      interval: 30s
+      timeout: 6s
+      retries: 3
+  worker:
+    image: westicker:local
+    restart: unless-stopped
+    command: [python, -m, server.worker]
+    volumes: ["state:/data", "./.config/production.json:/run/secrets/westicker.json:ro"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on: [web]
+  retention:
+    image: westicker:local
+    restart: unless-stopped
+    command: [sh, -c, "while true; do python scripts/retention.py; sleep 3600; done"]
+    volumes: ["state:/data", "./.config/production.json:/run/secrets/westicker.json:ro"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on: [web]
+volumes:
+  state:

@@ -1,0 +1,11 @@
+{
+  "origin": "http://127.0.0.1:18642",
+  "state": "data",
+  "local_accounts": false,
+  "providers": {},
+  "image_model": "gpt-image-1.5",
+  "moderation_model": "omni-moderation-latest",
+  "font": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+  "creator_sales_enabled": false,
+  "wechat_worker_enabled": false
+}

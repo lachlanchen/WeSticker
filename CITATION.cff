@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use WeSticker, please cite this repository."
+type: software
+title: "WeSticker: A Personal Sticker Creation Studio"
+version: 0.1.0
+date-released: 2026-10-10
+abstract: "An independent personal sticker studio with a public character catalog, private creator workflows and draft-only upload assistance."
+authors:
+  - family-names: Chen
+    given-names: Lachlan
+    alias: lachlanchen
+repository-code: "https://github.com/lachlanchen/WeSticker"
+url: "https://lazying.art"
+keywords:
+  - stickers
+  - creator tools
+  - privacy
+  - PWA
+  - LazyingArt

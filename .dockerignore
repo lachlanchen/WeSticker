@@ -1,0 +1,14 @@
+.git
+.config
+.runtime
+data
+private
+.venv
+node_modules
+dist
+android
+ios
+docs/screenshots
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
