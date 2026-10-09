@@ -808,11 +808,13 @@ def create_app(override=None):
     from .billing import register_billing
     from .market import register_market
     from .wechat import register_wechat
+    from .native_billing import register_native_billing
 
     register_auth(app, cfg)
     register_billing(app, cfg)
     register_market(app, cfg)
     register_wechat(app, cfg)
+    register_native_billing(app, cfg)
 
     @app.get("/")
     @app.get("/<path:path>")

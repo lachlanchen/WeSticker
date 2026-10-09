@@ -52,7 +52,7 @@ React/Vite frontend, Python API and worker, SQLite, Capacitor Android/iOS and Ma
 
 ## Verification
 
-27 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.
+46 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.
 
 ```bash
 .venv/bin/pytest -q
@@ -64,7 +64,7 @@ npm run test:browser
 
 ## Release Status
 
-Working local prototype, not a launched service. Android debug APK compiled; iOS/macOS projects are unbuilt. Native IAP, live OAuth/payment qualification, production moderation and store submission remain. No public store release or customer charge occurred.
+Working local prototype, not a launched service. Android debug and iOS simulator builds pass. Native billing adapters are implemented but sales-disabled; Mac Catalyst is blocked by missing dependency binaries. Separate store records and a Stripe test catalog exist. Live login, billing lifecycle, moderation and store submission remain unqualified. No customer charge or store release occurred.
 
 ## Citation
 

@@ -52,7 +52,7 @@ React/Vite, API y worker Python, SQLite, proyectos Capacitor Android/iOS y confi
 
 ## Verificación
 
-Pasan 27 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.
+Pasan 46 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.
 
 ```bash
 .venv/bin/pytest -q
@@ -64,7 +64,7 @@ npm run test:browser
 
 ## Estado de publicación
 
-Prototipo local funcional, no un servicio lanzado. APK Android de depuración compilado; iOS/macOS sin compilar. Faltan compras nativas, validación OAuth/pagos, moderación operativa y envíos a tiendas. No hubo cobros ni publicación en tiendas.
+Prototipo local funcional, no un servicio lanzado. Compilan Android de depuración e iOS para simulador. Los adaptadores de compras nativas están implementados, con ventas desactivadas. Mac Catalyst está bloqueado por binarios de dependencias ausentes. Existen registros propios en las tiendas y un catálogo Stripe de prueba. Faltan validación del acceso real, ciclo de pagos, moderación y envío a tiendas. No hubo cobros ni publicación en tiendas.
 
 ## Cita
 

@@ -3,6 +3,21 @@
   "state": "data",
   "local_accounts": false,
   "providers": {},
+  "native_billing": {
+    "apple": {
+      "bundle_id": "art.lazying.westicker",
+      "purchase_enabled": false,
+      "accept_sandbox": false,
+      "products": {}
+    },
+    "google": {
+      "package": "art.lazying.westicker",
+      "base_plan": "monthly",
+      "purchase_enabled": false,
+      "accept_sandbox": false,
+      "products": {}
+    }
+  },
   "image_model": "gpt-image-1.5",
   "moderation_model": "omni-moderation-latest",
   "font": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",

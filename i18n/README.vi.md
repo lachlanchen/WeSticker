@@ -52,7 +52,7 @@ React/Vite, API và worker Python, SQLite, dự án Capacitor Android/iOS và c�
 
 ## Kiểm thử
 
-Đã qua 27 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.
+Đã qua 46 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.
 
 ```bash
 .venv/bin/pytest -q
@@ -64,7 +64,7 @@ npm run test:browser
 
 ## Trạng thái phát hành
 
-Bản mẫu cục bộ hoạt động, chưa phải dịch vụ ra mắt. Đã biên dịch APK Android gỡ lỗi; iOS/macOS chưa xây dựng. Còn mua hàng trong ứng dụng, xác thực OAuth/thanh toán, vận hành kiểm duyệt và gửi cửa hàng. Chưa thu tiền hay phát hành cửa hàng.
+Bản mẫu cục bộ hoạt động, chưa phải dịch vụ ra mắt. Bản Android gỡ lỗi và iOS cho trình mô phỏng đã biên dịch thành công. Đã triển khai bộ kết nối thanh toán gốc nhưng chưa bật bán hàng. Mac Catalyst bị chặn do thiếu tệp nhị phân phù hợp của thư viện phụ thuộc. Đã tạo hồ sơ cửa hàng riêng và danh mục Stripe thử nghiệm. Đăng nhập thật, vòng đời thanh toán, kiểm duyệt và gửi cửa hàng vẫn cần kiểm chứng. Chưa thu tiền hay phát hành cửa hàng.
 
 ## Trích dẫn
 

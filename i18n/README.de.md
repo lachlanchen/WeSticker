@@ -52,7 +52,7 @@ React/Vite, Python-API und Worker, SQLite, Capacitor-Projekte für Android/iOS u
 
 ## Prüfung
 
-27 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.
+46 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.
 
 ```bash
 .venv/bin/pytest -q
@@ -64,7 +64,7 @@ npm run test:browser
 
 ## Veröffentlichungsstand
 
-Funktionsfähiger lokaler Prototyp, kein veröffentlichter Dienst. Android-Debug-APK gebaut; iOS/macOS nicht gebaut. Native Käufe, OAuth-/Zahlungsqualifizierung, Produktionsmoderation und Store-Einreichung fehlen noch. Keine Kundenabbuchung oder Store-Veröffentlichung.
+Funktionsfähiger lokaler Prototyp, kein veröffentlichter Dienst. Android-Debug- und iOS-Simulator-Builds erfolgreich. Native Zahlungsadapter sind implementiert, Verkäufe aber deaktiviert. Mac Catalyst wird durch fehlende Plattform-Binärdateien der Abhängigkeiten blockiert. Eigene Store-Einträge und ein Stripe-Testkatalog existieren. Live-Anmeldung, Zahlungslebenszyklus, Moderation und Store-Einreichung sind noch nicht qualifiziert. Keine Kundenabbuchung oder Store-Veröffentlichung.
 
 ## Zitieren
 

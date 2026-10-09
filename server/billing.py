@@ -80,6 +80,12 @@ def register_billing(app, cfg):
                     description="Manage your existing subscription instead of buying twice.",
                 )
             else:
+                native_pending = db.execute(
+                    "SELECT 1 FROM native_intents WHERE user_id=? AND state IN ('prepared','pending')",
+                    (user["id"],),
+                ).fetchone()
+                if native_pending:
+                    abort(409, description="Restore the pending native purchase before starting another checkout.")
                 pending = db.execute(
                     "SELECT * FROM checkouts WHERE user_id=? AND kind='subscription' AND created>? ORDER BY created DESC LIMIT 1",
                     (user["id"], time.time() - 86400),

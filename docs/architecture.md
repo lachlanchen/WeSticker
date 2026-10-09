@@ -38,6 +38,7 @@ databases, WeChat cookies, store records, or browser profiles.
 | `server/local_video.py` | Protected local animation adapter with intent and provider receipt |
 | `server/auth.py` | Disabled-until-configured OAuth and custom LazyingArt PKCE adapters |
 | `server/billing.py`, `market_billing.py` | App-specific Stripe subscriptions and Connect marketplace |
+| `server/native_billing.py`, `src/NativePlans.tsx` | Account-bound Apple/Google verification and native-only purchase UI |
 | `server/market.py` | Frozen reviewed exports, preview and entitlement-gated ZIPs |
 | `server/wechat.py`, `worker/` | Draft-only ticket and isolated browser agent |
 | `android/`, `ios/` | Capacitor native projects; iOS includes Mac Catalyst configuration |
@@ -91,8 +92,10 @@ separately from source code; see `ARTWORK-LICENSE.md`.
 - No review-submit selector is present in the WeChat agent. Changed pages stop
   with evidence rather than guessing at buttons.
 
-Not yet implemented: native IAP, native OAuth return plumbing, live provider
-qualification, translated app UI, automated marketplace review, dispute/tax
+Native IAP bridges and server verification are implemented but sales-disabled;
+renewal/refund notification reconciliation and real store qualification remain.
+Not yet implemented: native OAuth return plumbing, translated app UI,
+automated marketplace review, dispute/tax
 operations, multi-tenant browser orchestration, full animation QA and version
 history browsing. The README languages describe the product; they are not app
 UI localization.

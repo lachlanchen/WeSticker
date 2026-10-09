@@ -22,13 +22,11 @@ try {
   });
   await context.setOffline(true);
   await page.reload();
+  await page.locator(".collection-link").first().waitFor();
+  assert.equal(await page.locator(".collection-link").count(), 10);
+  assert.equal(await page.locator(".sticker-card").count(), 24);
   await page
-    .getByRole("heading", { name: "Find your kind of cute." })
-    .waitFor();
-  await page.locator(".pack-card").first().waitFor();
-  assert.equal(await page.locator(".pack-card").count(), 10);
-  await page
-    .locator(".pack-art img")
+    .locator(".sticker-preview img")
     .first()
     .evaluate((img) => img.decode());
   const cached = await page.evaluate(async () => {

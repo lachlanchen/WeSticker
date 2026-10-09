@@ -52,7 +52,7 @@ React/Vite, API et worker Python, SQLite, projets Capacitor Android/iOS et confi
 
 ## Vérification
 
-27 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.
+46 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.
 
 ```bash
 .venv/bin/pytest -q
@@ -64,7 +64,7 @@ npm run test:browser
 
 ## État de publication
 
-Prototype local fonctionnel, pas un service lancé. APK Android de débogage compilé ; iOS/macOS non compilés. Achats natifs, qualification OAuth/paiements, modération de production et soumission aux boutiques restent à faire. Aucun client facturé ni publication en boutique.
+Prototype local fonctionnel, pas un service lancé. Les builds Android de débogage et iOS simulateur passent. Les adaptateurs d’achat natif sont implémentés, mais les ventes restent désactivées. Mac Catalyst est bloqué par des binaires de dépendances manquants. Les fiches propres à l’app et le catalogue Stripe de test existent. Connexion réelle, cycle de facturation, modération et soumission restent à valider. Aucun client facturé ni publication en boutique.
 
 ## Citation
 

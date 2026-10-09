@@ -44,6 +44,7 @@ paste secret configuration into a handoff, README, screenshot or issue.
 | `moderation_model` | Safety model used before image/animation requests |
 | `local_video_url` | Optional protected localhost LocalVideoGen service |
 | `stripe_key`, `stripe_webhook_secret`, `stripe_prices` | WeSticker-only billing and tier price IDs |
+| `native_billing` | Apple/Google provider credentials and product maps; purchases disabled until qualified, see [native billing](native-billing.md) |
 | `creator_sales_enabled` | Open only after Connect and moderation operations qualify |
 | `wechat_worker_enabled` | Open only after isolated draft-upload qualification |
 | `default_artifacts` | Optional read-only artifact root containing `artifacts.json` and `downloads/`, for subscriber ZIP delivery |

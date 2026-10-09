@@ -5,12 +5,18 @@
 Canonical checkout: `WeSticker` beside the existing `LALACHAN` project.
 Owned files are this repository only. Existing AYA storefront, EchoMind identity,
 Bunko adapters, store releases and billing products were not modified.
-No WeSticker OAuth client, subscription product or store record was created.
+Independent Apple and Google app records now exist. WeSticker Stripe test-mode
+prices were provisioned without any customer charge. Provider identifiers and
+receipts are private. No store binary was uploaded or submitted.
 
 ## Central LazyingArt account owner
 
-Request a **new** public PKCE client/audience for WeSticker after its production
-origin is assigned. The web callback is `<origin>/auth/lazyingart/callback`.
+Disabled onboarding files for client/audience `westicker` are staged using the
+maintained private onboarding tool, with proposed callback
+`https://westicker.lazying.art/auth/lazyingart/callback`. The domain is not yet
+provisioned, and the client is not registered on the live issuer. Coordinate
+registration and the client type with the identity owner; do not create another
+client from a stale handoff. The web callback is `<origin>/auth/lazyingart/callback`.
 General signup must not require an EchoMind invitation; application entitlements
 remain local to WeSticker. Preserve central ownership and other client records.
 
@@ -42,9 +48,12 @@ Existing local demo accounts are not automatically merged with social users.
 
 ## Stripe web pilot
 
-Create three monthly USD products/prices for Pocket99c, Creator999c, Studio2499c.
+Three monthly USD test-mode prices exist: Pocket99c, Creator999c, Studio2499c.
+`scripts/provision_stripe.py` reconciles app-owned products and prices using
+stable lookup/idempotency keys. It checks the expected merchant account, mode,
+currency, period and amount before reuse; it creates no customer or charge.
 Configure keys privately and set `stripe_prices` by tier ID. No live price was
-created; amounts in source are proposed and must match provider records.
+created; production amounts remain proposed and must match provider records.
 Webhook: POST `/api/billing/webhook`. Deliver invoice.paid,
 customer.subscription.deleted, checkout.session.completed,
 checkout.session.async_payment_succeeded, checkout.session.expired and
@@ -67,9 +76,11 @@ tests in this repository are not a substitute for real test-mode checkout.
 Use independent bundle/package `art.lazying.westicker` and store records. Apple
 and Google digital-service purchases need qualified native IAP, server-verified
 receipts, restore purchases, subscription management and store notifications.
-This implementation **does not contain native IAP**; Stripe buttons are disabled
-in native shells. Do not enable them as a shortcut. Native sign-in and download
-permissions also need physical-device tests. No submission has occurred.
+Native StoreKit 2 and Play Billing bridges, a separate native plans UI and fresh
+server verification now exist; see [native billing](native-billing.md).
+Purchases remain disabled until actual store lifecycle tests pass. Stripe
+checkout remains unavailable in native shells. Native sign-in and download
+permissions also need device tests. No submission has occurred.
 
 ## Sources checked
 

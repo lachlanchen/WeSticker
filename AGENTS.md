@@ -2,6 +2,7 @@
 
 Independent creator app. Do not mutate the AYA storefront, its orders or WeChat
 works. Public default artwork is read-only; private uploads are account-scoped.
+Use English for user-facing progress and explanations by default.
 Never commit credentials, browser profiles, customer photos, databases or builds.
 Use apply_patch for source edits. Run backend tests, frontend typecheck/build and
 browser tests before committing. Preserve other projects and active VMs.

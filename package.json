@@ -12,6 +12,7 @@
     "dev": "vite --host 127.0.0.1 --port 18642",
     "build": "tsc --noEmit && vite build && node scripts/asset_manifest.mjs",
     "test:browser": "node scripts/browser-test.mjs",
+    "test:billing-ui": "node scripts/native-billing-ui-test.mjs",
     "native:sync": "npm run build && cap sync"
   },
   "dependencies": {

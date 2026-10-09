@@ -7,14 +7,15 @@ deployed, not store-submitted, not ready to accept real customer payments.**
 | --- | --- | --- |
 | Public default catalog | 10 packs, 156 animations, three lettering languages, local posters | Licensed production delivery and availability monitoring |
 | Local creation | Real browser upload, lock, photo generation, edit/review, ZIP and deletion | Animation quality and model-provider qualification |
-| Backend | 27 pytest cases, signed payment fixtures, private ownership checks | Load/concurrency audit, full abuse/privacy lifecycle |
+| Backend | 46 pytest cases, signed payment fixtures, private ownership checks | Load audit, full abuse/privacy lifecycle |
 | WeChat agent | Two Node safety tests; save-only source | Docker/live-page customer login and save verification |
 | PWA | Vite build; offline browser reload keeps ten packs/posters and excludes API/auth caches | Installed physical-device review |
-| Android | Gradle debug APK compiled, package art.lazying.westicker | Physical device, native auth/IAP, release signing, AAB and Play listing |
-| iOS | Capacitor source, icons and privacy manifest | Xcode compile, signing, devices, IAP, App Store record/review |
-| macOS | Mac Catalyst build settings | Mac compile, desktop UX, entitlement/signing and store review |
-| OAuth | Google/Apple/GitHub/LazyingArt web adapters | Own client registrations and live callback/revoke tests |
-| Stripe | Subscription/marketplace routes and webhook fixture tests | App-specific products, sandbox matrix, Connect/legal operations |
+| Android | Debug APK compiled with Billing Library 9.1.0 bridge; own Play record created | Native auth, real license-test purchases, release signing, AAB/internal upload |
+| iOS | Xcode 26.3 simulator build passed with StoreKit 2 bridge; own app/bundle and signing profile created | Native auth, device/sandbox purchases, signed archive and TestFlight upload |
+| macOS | Catalyst build attempted; pinned Capacitor/Cordova binaries lack a Catalyst slice | Source-framework or native Mac host decision, qualified desktop build and store review |
+| OAuth | Four web adapters; disabled LazyingArt onboarding files staged privately | Own live registrations, native callback/session delivery and revoke tests |
+| Stripe | App-specific test-mode catalog provisioned; webhook fixtures pass | Actual sandbox checkout matrix, live catalog/webhook, Connect/legal operations |
+| Native subscriptions | Account-bound provider verification, serialized restore, durable quota grants, purchase/restore/manage UI; six UI fixture scenarios | Notifications, periodic reconciliation, replacement lineage, real provider lifecycle matrix; sales remain disabled |
 | App language | English UI; Chinese/English/Japanese stickers | App interface localization; 11 README languages are documentation only |
 
 ## Reproduce tests
@@ -26,12 +27,13 @@ npm run build
 npm audit
 npm run test:browser
 node scripts/offline-test.mjs
+node scripts/native-billing-ui-test.mjs
 ```
 
 Browser tests require the local demo runtime and Chromium. They create a
 temporary account, use public approved artwork, and delete the test account.
 Screenshots/results go into ignored `.runtime/browser-qa/`; selected clean
-screenshots are copied into `docs/screenshots/`. They test 320/390/1440 widths,
+screenshots are copied into `docs/screenshots/`. Layout tests cover 320 through 1440 widths,
 not native devices. Nothing invokes a paid image/video provider.
 
 ## Android debug artifact
@@ -47,15 +49,29 @@ Requires Android SDK36 and a full JDK21, not a JRE. The APK appears at
 The built-in guest catalog can open without a backend; private creation and
 payments are not configured in this debug native build.
 
-Initial debug APK SHA-256:
-`a717d693331af263bcce43f0ebb7398bccac1105ab4873329774b4186bb207d3`.
-It is approximately 9.8 MiB. Rebuilding may change signing timestamps and hash.
+2026-10-10 native-billing debug APK SHA-256:
+`def6731fcae9a52dc2f8476995e5ccce183caf03b6b1e121a6d7d27917412375`.
+Rebuilding may change bundled web files, signing timestamps and hash.
+
+## Apple build findings
+
+The iOS simulator build passed for arm64 and x86_64 with Xcode 26.3, signing
+disabled. This is compile evidence, not a device purchase or TestFlight upload.
+The subsequent Catalyst build failed before app compilation because both
+Capacitor and Cordova 8.5.1 XCFrameworks omit the Mac Catalyst platform. Source
+is available in the installed Capacitor package, but switching dependency
+managers or adding a dedicated Mac host has not been qualified. Do not relabel
+the iOS-on-Mac build as a completed macOS distribution.
+
+Store name: **WeSticker: Aya & Friends**. The shorter name was unavailable on
+Apple. Provider IDs, signing routes and build logs stay in the private release
+handoff. App records are not submitted releases.
 
 ## Store submission checklist
 
-- Create separate WeSticker app records and required agreements, without editing
-  the AYA shop or another app's release/review state.
-- Implement and qualify native IAP/restore, server receipt verification and
+- Complete the existing WeSticker app records and required agreements, without
+  creating duplicate records or editing another app's release/review state.
+- Qualify native IAP/restore and server receipt verification; implement and test
   refund/revocation/subscription notification handling.
 - Complete native system-browser login and return links; verify Apple login and
   account/token deletion requirements.
@@ -71,7 +87,7 @@ It is approximately 9.8 MiB. Rebuilding may change signing timestamps and hash.
 
 ## Suggested store positioning
 
-Name: **WeSticker**. Subtitle: **Your character. Everyday expressions.**
+Name: **WeSticker: Aya & Friends**. Subtitle: **Your character. Everyday expressions.**
 
 Browse Aya and friends, turn your own photos into a personal sticker collection,
 and review each expression before sharing. Creator tools preserve character

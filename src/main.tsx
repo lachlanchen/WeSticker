@@ -46,6 +46,7 @@ import { CreatorActions } from "./CreatorActions";
 import { Community } from "./Community";
 import { AnimatedSticker } from "./AnimatedSticker";
 import { StickerBrowser } from "./StickerBrowser";
+import { NativePlans } from "./NativePlans";
 import { saveSticker } from "./native";
 
 const native = Capacitor.isNativePlatform();
@@ -984,75 +985,88 @@ function App() {
                   </p>
                 </div>
               </div>
-              <div className="plans-grid">
-                {boot?.plans.map((p, i) => (
-                  <section key={p.id} className={"plan plan-" + i}>
-                    <span className="plan-label">
-                      {i === 0
-                        ? "A LITTLE JOY"
-                        : i === 1
-                          ? "MAKE IT YOURS"
-                          : "YOUR OWN LITTLE STUDIO"}
-                    </span>
-                    <h2>{p.name}</h2>
-                    <div className="price">
-                      ${(p.cents / 100).toFixed(2)}
-                      <small>/ month</small>
-                    </div>
-                    <ul>
-                      {p.features.map((f) => (
-                        <li key={f}>
-                          <Check size={17} />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
+              {native && boot ? (
+                <NativePlans
+                  boot={boot}
+                  onSignIn={() => setAuth(true)}
+                  onRefresh={refresh}
+                />
+              ) : (
+                <>
+                  <div className="plans-grid">
+                    {boot?.plans.map((p, i) => (
+                      <section key={p.id} className={"plan plan-" + i}>
+                        <span className="plan-label">
+                          {i === 0
+                            ? "A LITTLE JOY"
+                            : i === 1
+                              ? "MAKE IT YOURS"
+                              : "YOUR OWN LITTLE STUDIO"}
+                        </span>
+                        <h2>{p.name}</h2>
+                        <div className="price">
+                          ${(p.cents / 100).toFixed(2)}
+                          <small>/ month</small>
+                        </div>
+                        <ul>
+                          {p.features.map((f) => (
+                            <li key={f}>
+                              <Check size={17} />
+                              {f}
+                            </li>
+                          ))}
+                        </ul>
+                        <button
+                          className={
+                            "button full " + (i === 1 ? "primary" : "outline")
+                          }
+                          disabled={
+                            busy || native || !boot.capabilities.web_checkout
+                          }
+                          onClick={() =>
+                            needAccount(() =>
+                              action(async () => {
+                                const r = await api("/api/billing/subscribe", {
+                                  plan: p.id,
+                                  attempt: crypto.randomUUID(),
+                                });
+                                location.href = r.url;
+                              }),
+                            )
+                          }
+                        >
+                          {!boot.capabilities.web_checkout || native
+                            ? "Purchase setup pending"
+                            : `Choose ${p.name}`}
+                        </button>
+                      </section>
+                    ))}
+                  </div>
+                  <p className="plan-note">
+                    Prices in USD. Monthly subscriptions renew until canceled.
+                    AI images consume one credit each; failed requests are
+                    reconciled before retry. Native purchases will use the
+                    platform store. No earnings or WeChat approval is
+                    guaranteed.
+                  </p>
+                  <div className="row">
                     <button
-                      className={
-                        "button full " + (i === 1 ? "primary" : "outline")
-                      }
-                      disabled={
-                        busy || native || !boot.capabilities.web_checkout
-                      }
+                      className="text-button"
                       onClick={() =>
                         needAccount(() =>
                           action(async () => {
-                            const r = await api("/api/billing/subscribe", {
-                              plan: p.id,
-                              attempt: crypto.randomUUID(),
-                            });
+                            const r = await api("/api/billing/manage", {});
                             location.href = r.url;
                           }),
                         )
                       }
                     >
-                      {!boot.capabilities.web_checkout || native
-                        ? "Purchase setup pending"
-                        : `Choose ${p.name}`}
+                      Manage subscription
                     </button>
-                  </section>
-                ))}
-              </div>
-              <p className="plan-note">
-                Prices in USD. Monthly subscriptions renew until canceled. AI
-                images consume one credit each; failed requests are reconciled
-                before retry. Native purchases will use the platform store. No
-                earnings or WeChat approval is guaranteed.
-              </p>
+                  </div>
+                </>
+              )}
               <div className="row">
-                <button
-                  className="text-button"
-                  onClick={() =>
-                    needAccount(() =>
-                      action(async () => {
-                        const r = await api("/api/billing/manage", {});
-                        location.href = r.url;
-                      }),
-                    )
-                  }
-                >
-                  Manage subscription
-                </button>
                 <button
                   className="text-button"
                   onClick={() => setLegal("terms")}
