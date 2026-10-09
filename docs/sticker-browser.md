@@ -20,3 +20,17 @@ visibility, playback, filtering, downloads, favorites, reduced motion, and
 
 AYA's shop has the corresponding layout, with its independent checkout and
 11-language interface. No AYA orders or WeChat submissions are modified.
+
+## Cross-project handoff acceptance
+
+```bash
+node scripts/layout-handoff-test.mjs
+```
+
+Runs read-only against the live AYA shop and local WeSticker by default.
+`AYA_URL`, `WESTICKER_URL` and `LAYOUT_EVIDENCE` override destinations.
+Checks keyboard pack selection, pause, preview/Escape, changing GIF pixels,
+stable paused pixels, reduced motion and five viewport widths. Verifies the
+twelve public pack/artwork paths used by the LazyingArt homepage IP panel.
+Writes desktop/mobile screenshots, motion frame samples and a JSON receipt.
+No login, checkout, generation or store/WeChat submission is performed.
