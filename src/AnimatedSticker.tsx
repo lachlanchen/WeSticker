@@ -1,20 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import type { Sticker } from "./api";
 
-export function AnimatedSticker({ sticker }: { sticker: Sticker }) {
+export function AnimatedSticker({
+  sticker,
+  playing = true,
+}: {
+  sticker: Sticker;
+  playing?: boolean;
+}) {
   const ref = useRef<HTMLImageElement>(null),
     [source, setSource] = useState(sticker.poster);
   useEffect(() => {
     let active = true;
     setSource(sticker.poster);
+    if (!playing) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
           const preload = new Image();
-          preload.src = sticker.gif;
           preload.onload = () => {
             if (active) setSource(sticker.gif);
           };
+          preload.src = sticker.gif;
           observer.disconnect();
         }
       },
@@ -25,7 +32,7 @@ export function AnimatedSticker({ sticker }: { sticker: Sticker }) {
       active = false;
       observer.disconnect();
     };
-  }, [sticker.gif, sticker.poster]);
+  }, [sticker.gif, sticker.poster, playing]);
   return (
     <img
       ref={ref}

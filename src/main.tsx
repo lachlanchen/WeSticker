@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowDownToLine,
-  ArrowLeft,
   ArrowRight,
   Check,
   CheckCheck,
@@ -20,7 +19,6 @@ import {
   Package,
   Palette,
   Plus,
-  Search,
   Settings,
   ShieldCheck,
   Sparkles,
@@ -47,20 +45,11 @@ import "./style.css";
 import { CreatorActions } from "./CreatorActions";
 import { Community } from "./Community";
 import { AnimatedSticker } from "./AnimatedSticker";
+import { StickerBrowser } from "./StickerBrowser";
 import { saveSticker } from "./native";
 
 const native = Capacitor.isNativePlatform();
 type View = "discover" | "studio" | "library" | "plans" | "account" | "market";
-const names: Record<string, string> = {
-  daily: "Everyday",
-  office: "At work",
-  couple: "Love notes",
-  sports: "Little victories",
-  phonetic: "Playful words",
-  cantonese: "Cantonese",
-  research: "Lab life",
-  outing: "On the way",
-};
 const themeNames: Record<string, string> = {
   daily: "Little everyday moments",
   office: "Work besties",
@@ -82,8 +71,6 @@ function App() {
     [view, setView] = useState<View>("discover"),
     [selected, setSelected] = useState<Pack | null>(null),
     [lang, setLang] = useState("zh"),
-    [query, setQuery] = useState(""),
-    [tag, setTag] = useState("all"),
     [preview, setPreview] = useState<{ sticker: Sticker; pack: Pack } | null>(
       null,
     ),
@@ -199,7 +186,6 @@ function App() {
     setView(v);
     setSelected(null);
     setMobile(false);
-    setQuery("");
     window.scrollTo(0, 0);
   }
   function needAccount(fn: () => void) {
@@ -212,13 +198,6 @@ function App() {
     );
   }
   const icon = (I: typeof Heart) => <I size={19} strokeWidth={1.8} />;
-  const filtered = packs.filter(
-    (p) =>
-      (tag === "all" || p.tag === tag) &&
-      `${p.name} ${p.english} ${p.description}`
-        .toLowerCase()
-        .includes(query.toLowerCase()),
-  );
   const user = boot?.user;
 
   async function upload(files: FileList | null) {
@@ -388,228 +367,32 @@ function App() {
           </div>
         </header>
         <main>
-          {view === "discover" && !selected && (
-            <>
-              <div className="page-heading">
-                <div>
-                  <div className="eyebrow coral">
-                    LITTLE EXPRESSIONS, BIG FEELINGS
-                  </div>
-                  <h1>Find your kind of cute.</h1>
-                  <p>
-                    Aya, Lala, Sasa & Zhuangzi. A tiny reply for every big
-                    feeling.
-                  </p>
-                </div>
-                <button
-                  className="button primary"
-                  onClick={() => navigate("studio")}
-                >
-                  <Plus size={18} />
-                  Make my stickers
-                </button>
-              </div>
-              <div className="filterbar">
-                <label className="search">
-                  <Search size={19} />
-                  <input
-                    aria-label="Search collections"
-                    placeholder="Find a feeling, a friend, a little hello…"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                  {query && (
-                    <button
-                      aria-label="Clear search"
-                      onClick={() => setQuery("")}
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
-                </label>
-                <span className="catalog-count">
-                  {packs.length} collections · 3 languages
-                </span>
-              </div>
-              <div className="tabs">
-                <button
-                  className={tag === "all" ? "selected" : ""}
-                  onClick={() => setTag("all")}
-                >
-                  All collections
-                </button>
-                {[...new Set(packs.map((p) => p.tag))].map((t) => (
-                  <button
-                    key={t}
-                    className={tag === t ? "selected" : ""}
-                    onClick={() => setTag(t)}
-                  >
-                    {names[t] || t}
-                  </button>
-                ))}
-              </div>
-              <div className="pack-grid">
-                {filtered.map((p, i) => (
-                  <article className={"pack-card tone-" + (i % 4)} key={p.id}>
-                    <button className="pack-art" onClick={() => setSelected(p)}>
-                      <img
-                        src={p.banner}
-                        alt={p.english}
-                        loading={i < 4 ? "eager" : "lazy"}
-                      />
-                      <span className="pack-badge">
-                        {p.count} animated stickers
-                      </span>
-                    </button>
-                    <div className="pack-content">
-                      <div>
-                        <button
-                          className="text-button"
-                          onClick={() => setSelected(p)}
-                        >
-                          <h2>{p.english}</h2>
-                        </button>
-                        <p>{p.name}</p>
-                      </div>
-                      <button
-                        className={
-                          "icon-button " +
-                          (saved.includes(p.id) ? "favorited" : "")
-                        }
-                        aria-label={"Save " + p.english}
-                        title="Save collection"
-                        onClick={() => favorite(p.id)}
-                      >
-                        <Heart
-                          size={19}
-                          fill={saved.includes(p.id) ? "currentColor" : "none"}
-                        />
-                      </button>
-                    </div>
-                    <div className="pack-footer">
-                      <span>中文 · EN · 日本語</span>
-                      <button onClick={() => setSelected(p)}>
-                        Explore <ArrowRight size={15} />
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-              {!filtered.length && (
-                <div className="empty">
-                  <Search size={32} />
-                  <h2>No little friends here yet.</h2>
-                  <button
-                    className="button outline"
-                    onClick={() => {
-                      setTag("all");
-                      setQuery("");
-                    }}
-                  >
-                    Show all collections
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-          {selected && view === "discover" && (
-            <>
-              <button className="back" onClick={() => setSelected(null)}>
-                <ArrowLeft size={16} />
-                All collections
-              </button>
-              <section className="collection-head">
-                <img src={selected.banner} alt={selected.english} />
-                <div>
-                  <span className="eyebrow teal">AYA & LALA ORIGINALS</span>
-                  <h1>{selected.english}</h1>
-                  <p>{selected.description}</p>
-                  <p className="subtle">
-                    {selected.count} animated GIFs · Chinese, English & Japanese
-                  </p>
-                  <div className="row">
-                    <button
-                      className="button primary"
-                      onClick={() =>
-                        needAccount(() => {
-                          if (user?.plan === "free") navigate("plans");
-                          else
-                            window.location.href =
-                              API +
-                              `/api/default/${selected.id}/download/${lang}`;
-                        })
-                      }
-                    >
-                      <ArrowDownToLine size={18} />
-                      Get the collection
-                    </button>
-                    <button
-                      aria-label="Save collection"
-                      className="icon-button border"
-                      onClick={() => favorite(selected.id)}
-                    >
-                      <Heart
-                        fill={
-                          saved.includes(selected.id) ? "currentColor" : "none"
-                        }
-                      />
-                    </button>
-                  </div>
-                  <small>
-                    Individual GIFs are free to save. All language ZIPs with
-                    Pocket.
-                  </small>
-                </div>
-              </section>
-              <div className="section-heading">
-                <h2>Say it your way</h2>
-                <div className="segmented">
-                  {languages.map(([id, label]) => (
-                    <button
-                      key={id}
-                      className={lang === id ? "selected" : ""}
-                      onClick={() => setLang(id)}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="sticker-grid">
-                {selected.stickers[lang]?.map((s) => (
-                  <article className="sticker-card" key={lang + s.id}>
-                    <button
-                      className="sticker-preview"
-                      onClick={() => setPreview({ sticker: s, pack: selected })}
-                    >
-                      <AnimatedSticker sticker={s} />
-                    </button>
-                    <div>
-                      <span>{s.label}</span>
-                      <a
-                        className="icon-button"
-                        title="Save GIF"
-                        aria-label={"Download " + s.label}
-                        onClick={
-                          native
-                            ? (e) => {
-                                e.preventDefault();
-                                action(() => saveSticker(selected, s, lang));
-                              }
-                            : undefined
-                        }
-                        href={
-                          API +
-                          `/api/default/${selected.id}/sticker/${lang}/${s.id}`
-                        }
-                      >
-                        <ArrowDownToLine size={16} />
-                      </a>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </>
+          {view === "discover" && (
+            <StickerBrowser
+              packs={packs}
+              selected={selected}
+              onSelect={setSelected}
+              lang={lang}
+              onLanguage={setLang}
+              saved={saved}
+              onFavorite={favorite}
+              onPreview={(sticker, pack) => setPreview({ sticker, pack })}
+              onCreate={() => navigate("studio")}
+              onDownload={(pack) =>
+                needAccount(() => {
+                  if (user?.plan === "free") navigate("plans");
+                  else
+                    window.location.href =
+                      API + `/api/default/${pack.id}/download/${lang}`;
+                })
+              }
+              onNativeSave={
+                native
+                  ? (pack, sticker) =>
+                      action(() => saveSticker(pack, sticker, lang))
+                  : undefined
+              }
+            />
           )}
           {view === "studio" && (
             <>

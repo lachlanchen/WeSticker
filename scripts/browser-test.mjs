@@ -30,12 +30,10 @@ async function fits() {
 }
 try {
   await page.goto(origin);
-  await page
-    .getByRole("heading", { name: "Find your kind of cute." })
-    .waitFor();
-  await page.locator(".pack-card").first().waitFor();
-  assert.equal(await page.locator(".pack-card").count(), 10);
-  await page.locator(".pack-art img").evaluateAll(async (images) => {
+  await page.locator(".collection-link").first().waitFor();
+  assert.equal(await page.locator(".collection-link").count(), 10);
+  assert.equal(await page.locator(".sticker-card").count(), 24);
+  await page.locator(".collection-list img").evaluateAll(async (images) => {
     await Promise.all(
       images.map((i) => {
         i.loading = "eager";
@@ -44,7 +42,7 @@ try {
     );
   });
   await page
-    .locator(".pack-art img")
+    .locator(".collection-list img")
     .first()
     .evaluate((image) => image.decode());
   await fits();
@@ -53,10 +51,28 @@ try {
     fullPage: true,
   });
   await page.getByLabel("Save Little everyday joys").click();
+  await page.waitForFunction(() =>
+    document.querySelector(".sticker-preview img")?.src.includes(".gif"),
+  );
   await page
-    .getByRole("button", { name: "Explore", exact: true })
-    .first()
+    .getByRole("button", { name: "Pause animations", exact: true })
     .click();
+  await page.waitForFunction(
+    () => !document.querySelector(".sticker-preview img")?.src.includes(".gif"),
+  );
+  await page.locator(".collection-link").nth(1).click();
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll(".sticker-preview img")].every(
+      (i) => !i.src.includes(".gif"),
+    ),
+  );
+  await page
+    .getByRole("button", { name: "Play animations", exact: true })
+    .click();
+  await page.locator(".collection-link").first().click();
+  await page.getByLabel("Search collections").fill("NO_RESULT_123");
+  assert.equal(await page.locator(".sticker-card").count(), 0);
+  await page.getByRole("button", { name: "Show all collections" }).click();
   await page
     .locator(".sticker-preview img")
     .first()
@@ -90,6 +106,23 @@ try {
   });
   await page.setViewportSize({ width: 320, height: 740 });
   await fits();
+  for (const width of [768, 1024, 1200]) {
+    await page.setViewportSize({ width, height: 900 });
+    await fits();
+  }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await page
+    .getByRole("button", { name: "Play animations", exact: true })
+    .waitFor();
+  assert(
+    await page
+      .locator(".sticker-preview img")
+      .first()
+      .getAttribute("src")
+      .then((s) => !s.includes(".gif")),
+  );
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page
@@ -173,7 +206,8 @@ try {
       {
         ok: true,
         checks: [
-          "guest catalog",
+          "guest master-detail catalog",
+          "autoplay, pause, reduced motion, filtered selection",
           "three-language preview",
           "GIF download",
           "favorite",
