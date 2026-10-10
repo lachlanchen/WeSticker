@@ -64,11 +64,13 @@ for code, t in translations.items():
 
 | Android / Compose | iOS / SwiftUI |
 | --- | --- |
-| ![Native Android]({prefix}docs/screenshots/native-android.png) | ![Native iOS]({prefix}docs/screenshots/native-ios.png) |
+| ![Native Android]({prefix}docs/screenshots/native-android.png) | ![Native iOS]({prefix}docs/screenshots/animated-catalog-ios.png) |
 
 [Native beta scope]({prefix}docs/native-catalog-beta.md) · [Creator roadmap]({prefix}docs/native-creator-plan.md) · [Bandwidth]({prefix}docs/catalog-bandwidth.md)
 
 [Create / Agent beta update · 2026-10-10]({prefix}docs/creator-beta-20261010.md) · [Japanese LINE editions]({prefix}docs/line-japanese-editions.md)
+
+[GIF playback, new icon and test-build evidence]({prefix}docs/native-playback-20261010.md)
 
 ## {h[0]}
 

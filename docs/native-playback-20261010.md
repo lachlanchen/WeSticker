@@ -5,6 +5,15 @@ archive had the replacement artwork, but its installer export failed because
 the existing installer signing keychain was locked. A source icon change alone
 does not update an installed app.
 
+## Internal Delivery
+
+- macOS **1.0 (4)** is Apple-processed VALID and attached to the existing owner
+  internal TestFlight group, with status IN_BETA_TESTING.
+- iOS **1.0 (5)** is uploaded; processing/attachment is recorded in the private
+  release handoff before it is described as available to testers.
+- Android **1.0 (4)** is unchanged. This round verified the exact existing APK;
+  it did not make a new Play submission.
+
 ## Changes
 
 - macOS uses `GIFImageView`, an ImageIO frame player that respects each GIF's

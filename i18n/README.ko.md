@@ -18,11 +18,13 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 | Android / Compose | iOS / SwiftUI |
 | --- | --- |
-| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/animated-catalog-ios.png) |
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 [Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
+[GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
 ## 스튜디오
 
