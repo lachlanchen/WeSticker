@@ -9,8 +9,8 @@ does not update an installed app.
 
 - macOS **1.0 (4)** is Apple-processed VALID and attached to the existing owner
   internal TestFlight group, with status IN_BETA_TESTING.
-- iOS **1.0 (5)** is uploaded; processing/attachment is recorded in the private
-  release handoff before it is described as available to testers.
+- iOS **1.0 (5)** is Apple-processed VALID and attached to the same owner
+  internal TestFlight group, with status IN_BETA_TESTING.
 - Android **1.0 (4)** is unchanged. This round verified the exact existing APK;
   it did not make a new Play submission.
 
