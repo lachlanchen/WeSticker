@@ -76,7 +76,14 @@ try {
   await page.waitForFunction(n=>document.querySelectorAll('canvas.cm-apng-player-canvas').length===n,count+1,{timeout:30000});
   const errors=(await page.locator('.cm-product-image-error').allTextContents()).filter(s=>s.trim());
   if(errors.length) throw Error('Remote image validation: '+errors.join('; '));
-  await page.screenshot({path:args.receipt+'.png',fullPage:true,timeout:60000});
-  await write(args.receipt,{pack:args.pack,url,status:'uploaded-draft',count,remoteAnimatedImages:count+1,verifiedAt:new Date().toISOString()});
+  const verified={pack:args.pack,url,status:'uploaded-draft',count,remoteAnimatedImages:count+1,verifiedAt:new Date().toISOString()};
+  await write(args.receipt,verified);
+  try {
+    await page.bringToFront();
+    await page.screenshot({path:args.receipt+'.png',fullPage:false,timeout:10000});
+  } catch(error) {
+    verified.evidenceWarning=`Upload verified after reload; screenshot unavailable: ${error.name}`;
+    await write(args.receipt,verified);
+  }
   console.log(JSON.stringify({pack:args.pack,url,status:'uploaded-draft',count}));
 } finally {await browser.close();}

@@ -60,8 +60,14 @@ try {
   const actual = await status();
   if(!accepted.has(actual)) throw Error(`Review not confirmed: ${actual}`);
   await page.getByText('Start sales automatically',{exact:true}).waitFor();
-  await page.screenshot({path:result+'.png',fullPage:true,timeout:60000});
   const receipt={pack:source.pack,url:source.url,count:source.count,status:actual,price,autoRelease:true,verifiedAt:new Date().toISOString()};
   await saveJSON(result,receipt);
+  try {
+    await page.bringToFront();
+    await page.screenshot({path:result+'.png',fullPage:false,timeout:10000});
+  } catch(error) {
+    receipt.evidenceWarning=`Review status verified after reload; screenshot unavailable: ${error.name}`;
+    await saveJSON(result,receipt);
+  }
   console.log(JSON.stringify(receipt));
 } finally { await browser.close(); }

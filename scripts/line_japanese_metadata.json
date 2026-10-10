@@ -23,6 +23,36 @@
     "description_en": "Zhuangzi the robot, Aya, Lala and Sasa tackle work and take a break. Cute animated replies for teamwork and relaxing. Japanese lettering.",
     "description_ja": "ロボットの荘子とアヤ、ララ、ササ。仕事の返事や応援、ひと休みに。がんばる日も遊びたい日も、仲間と一緒。"
   },
+  "daily": {
+    "en": "Aya and Lala: Little Happy Moments",
+    "ja": "アヤとララ きらきら毎日",
+    "description_en": "Aya, Lala, Sasa and Zhuangzi the robot share little joys, kind replies and everyday encouragement. Animated stickers with Japanese lettering.",
+    "description_ja": "アヤ、ララ、ササ、ロボットの荘子。うれしい日も、ちょっと落ち込んだ日も。毎日の小さな気持ちを伝える16個の動くスタンプです。"
+  },
+  "cantonese": {
+    "en": "Aya and Lala: Come Sit With Us",
+    "ja": "アヤとララ 気軽なおしゃべり",
+    "description_en": "Come sit with Aya, Lala, Sasa and Zhuangzi the robot. Warm animated replies for chatting, taking it easy and staying close. Japanese lettering.",
+    "description_ja": "アヤ、ララ、ササ、ロボットの荘子と、のんびりおしゃべり。気づかいや親しみを伝える、やさしい日本語のスタンプです。"
+  },
+  "sports": {
+    "en": "Aya and Lala: Five-Minute Workout",
+    "ja": "アヤとララ 5分だけ運動",
+    "description_en": "Aya, Lala, Sasa and Zhuangzi the robot warm up, work out and celebrate small wins. A playful animated fitness set with Japanese lettering.",
+    "description_ja": "アヤ、ララ、ササ、ロボットの荘子と、まずは5分だけ運動。準備運動も休憩も、小さな達成も。楽しく使える運動スタンプです。"
+  },
+  "research": {
+    "en": "Aya and Lala: Little Lab Days",
+    "ja": "アヤとララ 研究室の毎日",
+    "description_en": "Aya, Lala, Sasa and Zhuangzi the robot read papers, run experiments and cheer each other on. Animated lab-life replies with Japanese lettering.",
+    "description_ja": "アヤ、ララ、ササ、ロボットの荘子が研究室で大奮闘。文献、実験、待ち時間にデータ保存。研究仲間と使いたい日常スタンプです。"
+  },
+  "outing": {
+    "en": "Aya and Lala: A Little Road Trip",
+    "ja": "アヤとララ 車で会いに行くよ",
+    "description_en": "Hop in with Aya, Lala, Sasa and Zhuangzi the robot. Cute animated messages for getting ready, finding the way and arriving. Japanese lettering.",
+    "description_ja": "アヤ、ララ、ササ、ロボットの荘子が小さな車でおでかけ。出発のあいさつ、道に迷ったとき、到着の連絡にも使えます。"
+  },
   "phonetic": {
     "en": "Aya and Lala: Happy Greetings",
     "ja": "アヤとララ たのしいあいさつ",

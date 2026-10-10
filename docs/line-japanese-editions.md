@@ -40,8 +40,9 @@ This is a separately encoded LINE edition, not a lossless GIF copy.
 | vol-04 | 24 | ロボット荘子と仕事仲間 |
 | phonetic | 16 | アヤとララ たのしいあいさつ |
 
-The five 12-sticker packs need their own LINE grouping decision. Do not pad with
-duplicates or silently discard four animations to satisfy a count.
+The owner then requested expanding the five remaining 12-sticker packs to 16.
+Each gained four new, theme-matched native animations; none was padded with
+another pack's animation or shortened by discarding originals.
 
 On 2026-10-10 the five editions above (96 stickers) were verified as **Waiting
 for Review**, not yet on sale. All use the lowest offered animated-sticker tier,
@@ -50,10 +51,27 @@ menu offered US$1.99+, 2.39+, 2.59+, 2.99+, 3.99+ and 4.99+. These are the
 account's displayed tiers, not a guaranteed Japanese checkout price: LINE says
 prices vary by sale region and by in-app shop versus LINE STORE.
 
-The catalog has ten selected packs and 156 distinct source animations. Archive
-editions, language exports and alternative candidates are not additional selected
-packs. The other five packs each have 12 stickers; their LINE grouping/expansion
-remains pending. Existing WeChat works and AYA shop editions remain unchanged.
+On the same date, these five expanded Japanese editions were also verified as
+**Waiting for Review**, at **US$1.99+**, with automatic release:
+
+| Pack | Count | Japanese title |
+| --- | ---: | --- |
+| daily | 16 | アヤとララ きらきら毎日 |
+| cantonese | 16 | アヤとララ 気軽なおしゃべり |
+| sports | 16 | アヤとララ 5分だけ運動 |
+| research | 16 | アヤとララ 研究室の毎日 |
+| outing | 16 | アヤとララ 車で会いに行くよ |
+
+The ten LINE editions now contain 176 stickers. All 20 additions passed native
+visual review; the combined source audit found 176 distinct native hashes and
+no missing files. Every new animation was rendered once locally. Archive
+editions, language exports and alternative candidates are not additional packs.
+Existing WeChat works and the 156-sticker AYA shop catalog remain unchanged.
+The separate LINE catalog preserves the original 12 before appending four.
+
+The portable review bundle includes the 20 new GIFs, five full pack pages and
+five APNG ZIPs. The owner's local sync-folder copy has verified hashes; it does
+not contain account receipts. Public store links still require LINE approval.
 
 Suggested Japanese description, adjusted to each theme:
 
@@ -95,6 +113,11 @@ lowest price, automatic release and final confirmation. It saves submission
 intent before clicking OK and verifies status again after navigation. An
 ambiguous review intent blocks automatic retries; already-submitted items are
 read back without another request. Unexpected pricing requires inspection.
+
+Persist the verified upload/review receipt before attempting an evidence
+screenshot. Background-page screenshot timeouts are not upload failures. Bring
+the tab forward, capture a bounded viewport, and record a screenshot warning
+without repeating the successful upload or review request.
 
 The observed review dialog includes a rights agreement; read it and verify the
 owner's authority before using the review command. Registration/payout setup is
