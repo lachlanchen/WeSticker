@@ -22,6 +22,8 @@
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## 创作工坊
 
 - 10 套默认作品、156 个独立动画，中英日三种文字版本，打开即可预览。

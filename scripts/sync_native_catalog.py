@@ -8,6 +8,8 @@ root = Path(__file__).resolve().parents[1]
 source = root / "public"
 for destination, apple in [(root / "android/app/src/main/native-assets", False), (root / "apple/CatalogAssets", True)]:
     destination.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source / "creator-plans.json", destination / "creator-plans.json")
+    shutil.copy2(source / "icon-512.png", destination / "app-icon.png")
     data = json.loads((source / "catalog.json").read_text())
     for pack in data["packs"]:
         for item in [pack] + [s for group in pack["stickers"].values() for s in group]:

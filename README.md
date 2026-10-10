@@ -22,6 +22,8 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 [Native beta scope](docs/native-catalog-beta.md) · [Creator roadmap](docs/native-creator-plan.md) · [Bandwidth](docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](docs/creator-beta-20261010.md) · [Japanese LINE editions](docs/line-japanese-editions.md)
+
 ## The Studio
 
 - 10 default packs, 156 animations, Chinese/English/Japanese sticker versions and instant previews.

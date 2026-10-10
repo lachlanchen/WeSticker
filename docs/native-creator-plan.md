@@ -7,6 +7,10 @@ complete this milestone.
 
 ## Current boundary
 
+The next increment is implemented: see [the creator beta](creator-beta-20261010.md)
+for actual local photo, caption planner and draft-persistence capabilities. It
+does not complete the live AI, account, billing or upload-assistant roadmap below.
+
 - Public PWA and native beta: browse, preview, favorites, lettering language,
   animation pause and individual GIF download/share.
 - Local web prototype: photo upload, reference approval, caption editing,

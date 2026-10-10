@@ -22,6 +22,8 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## Xưởng sáng tạo
 
 - 10 bộ, 156 hoạt ảnh riêng biệt, chữ Trung/Anh/Nhật và xem trước tức thì.

@@ -146,18 +146,22 @@ struct NativeImage: NSViewRepresentable {
     let data: Data
     class Coordinator { var last: Data? }
     func makeCoordinator() -> Coordinator { Coordinator() }
-    func makeNSView(context: Context) -> NSImageView {
-        let view = NSImageView()
+    func makeNSView(context: Context) -> GIFImageView {
+        let view = GIFImageView()
         view.imageScaling = .scaleProportionallyUpOrDown
-        view.animates = true
+        view.animates = false
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         return view
     }
-    func updateNSView(_ view: NSImageView, context: Context) {
+    func updateNSView(_ view: GIFImageView, context: Context) {
         guard context.coordinator.last != data else { return }
         context.coordinator.last = data
-        view.image = NSImage(data: data)
+        view.load(data)
+    }
+    static func dismantleNSView(_ view: GIFImageView, coordinator: Coordinator) {
+        view.stop()
+        coordinator.last = nil
     }
 }
 #endif
@@ -179,7 +183,7 @@ struct SharedFile: Identifiable { let url: URL; var id: String { url.path } }
 @main
 struct WeStickerApp: App {
     var body: some Scene {
-        WindowGroup { CatalogView().tint(Color(red: 0.79, green: 0.19, blue: 0.37)) }
+        WindowGroup { StudioRootView().tint(Color(red: 0.79, green: 0.19, blue: 0.37)) }
         #if os(macOS)
         .defaultSize(width: 1120, height: 800)
         #endif
@@ -187,6 +191,7 @@ struct WeStickerApp: App {
 }
 
 struct CatalogView: View {
+    init(showSaved: Bool = false) { _onlySaved = State(initialValue: showSaved) }
     private let packs: [Pack] = {
         guard let url = bundled("catalog.json"), let data = try? Data(contentsOf: url),
               let value = try? JSONDecoder().decode(Catalog.self, from: data) else { return [] }
@@ -198,7 +203,8 @@ struct CatalogView: View {
     @State private var selected = "vol-01"
     @State private var query = ""
     @State private var onlySaved = false
-    @State private var playing = true
+    @State private var playbackOverride: Bool?
+    private var playing: Bool { playbackOverride ?? !reduceMotion }
     @State private var preview: Preview?
     @State private var info = false
     @State private var busy = false
@@ -257,7 +263,7 @@ struct CatalogView: View {
                         Spacer()
                         Button { preview = nil } label: { Image(systemName: "xmark") }.accessibilityLabel("Close preview")
                     }
-                    AnimatedArtwork(sticker: value.sticker, playing: playing && !reduceMotion).aspectRatio(1, contentMode: .fit)
+                    AnimatedArtwork(sticker: value.sticker, playing: playing).aspectRatio(1, contentMode: .fit)
                     Button { download(value.pack, value.sticker) } label: { Label("Save GIF", systemImage: "square.and.arrow.up") }
                         .buttonStyle(.borderedProminent).disabled(busy)
                 }.padding(24).frame(idealWidth: 420, idealHeight: 520)
@@ -278,7 +284,7 @@ struct CatalogView: View {
             .alert("WeSticker · Catalog beta", isPresented: $info) {
                 Button("Done", role: .cancel) {}
             } message: {
-                Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavourites stay on this device. GIF downloads connect to aya.lazying.art. No account, analytics or payment is required.\n\nAI creation, login and subscriptions are not part of this test build.")
+                Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavorites and creator drafts stay on this device. GIF downloads connect to aya.lazying.art.\n\nCreate exports photo stickers. Agent uses on-device caption templates. Cloud AI, accounts, purchases and automated upload are not connected in this beta.")
             }
             .alert("Could not save sticker", isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })) {
                 Button("OK", role: .cancel) { failure = nil }
@@ -314,7 +320,7 @@ struct CatalogView: View {
                     Picker("Sticker language", selection: $language) {
                         Text("English").tag("en"); Text("日本語").tag("ja"); Text("中文").tag("zh")
                     }.pickerStyle(.segmented)
-                    Button { playing.toggle() } label: { Image(systemName: playing ? "pause.fill" : "play.fill") }
+                    Button { playbackOverride = !playing } label: { Image(systemName: playing ? "pause.fill" : "play.fill") }
                         .accessibilityLabel(playing ? "Pause animations" : "Play animations")
                 }
                 ScrollView {
@@ -322,7 +328,7 @@ struct CatalogView: View {
                         ForEach(pack.stickers[language] ?? []) { sticker in
                             VStack(spacing: 0) {
                                 Button { preview = Preview(pack: pack, sticker: sticker) } label: {
-                                    AnimatedArtwork(sticker: sticker, playing: playing && !reduceMotion).aspectRatio(1, contentMode: .fit).contentShape(Rectangle())
+                                    AnimatedArtwork(sticker: sticker, playing: playing).aspectRatio(1, contentMode: .fit).contentShape(Rectangle())
                                 }.buttonStyle(.plain).accessibilityLabel("Preview " + sticker.label)
                                 HStack {
                                     Text(sticker.label).font(.caption).lineLimit(2)

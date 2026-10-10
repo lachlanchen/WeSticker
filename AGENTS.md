@@ -15,6 +15,11 @@ Uncertain paid requests must not be retried automatically. Preview/export is not
 AI generation. Never claim mocked billing, OAuth, native builds or store review
 as live verification. WeChat automation saves drafts only, never submits review.
 
+Native GIF checks must compare successive sticker pixels and exercise pause and
+resume, not just assert that an image URL loaded. Respect reduced-motion defaults
+while allowing explicit Play. Verify icons inside the compiled app and the exact
+distributed build; changing source artwork alone does not update installed apps.
+
 Keep subscriptions app-specific. Web Stripe checkout is not native IAP. Never
 expose web checkout from native store builds before their applicable rules and
 native purchase path are qualified. Creators cannot sell before moderation and

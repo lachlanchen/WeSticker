@@ -1,0 +1,170 @@
+{
+  "version": 1,
+  "mode": "on-device-template-planner",
+  "themes": {
+    "daily": {
+      "zh": [
+        "早呀",
+        "谢谢",
+        "抱抱",
+        "好耶",
+        "收到",
+        "晚安",
+        "加油",
+        "想你"
+      ],
+      "en": [
+        "Morning",
+        "Thank you",
+        "Hug?",
+        "Yay!",
+        "Got it",
+        "Night night",
+        "You got this",
+        "Miss you"
+      ],
+      "ja": [
+        "おはよう",
+        "ありがとう",
+        "ぎゅっ",
+        "やった",
+        "了解",
+        "おやすみ",
+        "がんばれ",
+        "会いたい"
+      ]
+    },
+    "office": {
+      "zh": [
+        "收到",
+        "辛苦啦",
+        "我来吧",
+        "没问题",
+        "下班啦",
+        "听不懂",
+        "好想玩",
+        "明天见"
+      ],
+      "en": [
+        "On it",
+        "Great work",
+        "I got this",
+        "No problem",
+        "Clocking out",
+        "Huh?",
+        "Play time?",
+        "See you"
+      ],
+      "ja": [
+        "了解",
+        "おつかれ",
+        "任せて",
+        "大丈夫",
+        "退勤",
+        "わからない",
+        "遊ぼう",
+        "また明日"
+      ]
+    },
+    "couple": {
+      "zh": [
+        "想你",
+        "抱抱",
+        "亲亲",
+        "哼",
+        "和好吧",
+        "给你",
+        "陪着你",
+        "晚安"
+      ],
+      "en": [
+        "Miss you",
+        "Hugs",
+        "Kiss kiss",
+        "Hmph",
+        "Friends again?",
+        "For you",
+        "Here for you",
+        "Sweet dreams"
+      ],
+      "ja": [
+        "会いたい",
+        "ぎゅっ",
+        "ちゅっ",
+        "ふん",
+        "仲直り",
+        "どうぞ",
+        "そばにいる",
+        "おやすみ"
+      ]
+    },
+    "sports": {
+      "zh": [
+        "出发",
+        "加油",
+        "有点重",
+        "歇一下",
+        "再来",
+        "好棒",
+        "饿了",
+        "躺平"
+      ],
+      "en": [
+        "Let’s go",
+        "You got this",
+        "So heavy",
+        "Tiny break",
+        "Again!",
+        "Well done",
+        "Hungry",
+        "Rest day"
+      ],
+      "ja": [
+        "行こう",
+        "がんばれ",
+        "重い",
+        "ひと休み",
+        "もう一回",
+        "すごい",
+        "おなかすいた",
+        "休もう"
+      ]
+    }
+  },
+  "keywords": {
+    "daily": [
+      "daily",
+      "everyday",
+      "日常",
+      "毎日"
+    ],
+    "office": [
+      "work",
+      "office",
+      "boss",
+      "工作",
+      "上班",
+      "仕事",
+      "職場"
+    ],
+    "couple": [
+      "couple",
+      "love",
+      "hug",
+      "情侣",
+      "恋爱",
+      "恋人",
+      "カップル"
+    ],
+    "sports": [
+      "sport",
+      "exercise",
+      "gym",
+      "workout",
+      "运动",
+      "健身",
+      "運動",
+      "スポーツ"
+    ]
+  }
+}

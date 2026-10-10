@@ -1,0 +1,243 @@
+.local-studio {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px;
+  color: #193b4d;
+}
+.studio-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.studio-heading h1 {
+  font-size: 28px;
+  margin: 0 0 6px;
+}
+.studio-heading span,
+.studio-preview small {
+  color: #526c7b;
+  font-size: 14px;
+}
+.studio-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+  gap: 40px;
+  align-items: start;
+}
+.studio-fields,
+.agent-workspace {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.local-studio label:not(.button) {
+  display: grid;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.local-studio
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.local-studio select,
+.local-studio textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid #a9c8d5;
+  border-radius: 6px;
+  background: #fff;
+  padding: 11px;
+  font: inherit;
+  color: inherit;
+}
+.local-studio .check-row {
+  display: flex !important;
+  flex-direction: row;
+  text-align: left;
+  align-items: center;
+  font-weight: 400 !important;
+}
+.local-studio input[type="checkbox"],
+.local-studio input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: #146e90;
+}
+.character-photo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.character-photo img {
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #d9f1fc;
+}
+.character-photo input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.character-photo label:focus-within {
+  outline: 3px solid #2286ac;
+  outline-offset: 3px;
+}
+.local-studio fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.local-studio legend {
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.caption-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.studio-preview {
+  position: sticky;
+  top: 90px;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  background: #e4f6fc;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #c3e4ef;
+}
+.studio-preview canvas {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  aspect-ratio: 1;
+  background: repeating-conic-gradient(#fff 0% 25%, #edf2f5 0% 50%) 50%/16px
+    16px;
+}
+.local-studio .button {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.local-studio button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.agent-workspace {
+  max-width: 680px;
+}
+.agent-workspace h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.studio-themes {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.studio-themes label {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+}
+.caption-plan {
+  border-top: 1px solid #c5dce5;
+  padding-top: 16px;
+}
+.caption-plan ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-left: 25px;
+}
+.agent-workspace footer {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #526c7b;
+  font-size: 13px;
+  border-top: 1px solid #c5dce5;
+  padding-top: 20px;
+}
+.studio-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  border-top: 1px solid #c5dce5;
+  padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+  gap: 12px;
+}
+.studio-bottom-nav button {
+  border: 0;
+  background: transparent;
+  color: #566b75;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font: inherit;
+  font-size: 12px;
+  min-height: 46px;
+  min-width: 64px;
+  max-width: 160px;
+  flex: 1;
+  cursor: pointer;
+}
+.studio-bottom-nav button.active {
+  color: #086a91;
+  background: #e1f3ff;
+  border-radius: 8px;
+  font-weight: 700;
+}
+.public-catalog .main-shell {
+  padding-bottom: 90px;
+}
+@media (min-width: 761px) {
+  .studio-bottom-nav {
+    left: 194px;
+  }
+}
+@media (min-width: 1151px) {
+  .studio-bottom-nav {
+    left: 224px;
+  }
+}
+@media (max-width: 680px) {
+  .local-studio {
+    padding: 18px 12px;
+  }
+  .studio-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .studio-preview {
+    position: static;
+  }
+  .studio-heading h1 {
+    font-size: 24px;
+  }
+  .studio-bottom-nav {
+    gap: 0;
+  }
+  .studio-bottom-nav button {
+    min-width: 0;
+  }
+  .caption-plan ol {
+    grid-template-columns: 1fr;
+  }
+}

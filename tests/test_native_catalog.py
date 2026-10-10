@@ -1,8 +1,22 @@
 from pathlib import Path
 import importlib.util
 import plistlib
+from PIL import Image, ImageChops
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_native_icons_use_selected_aya_lala_master():
+    with Image.open(ROOT / 'assets/icons/aya-lala-sky-blue-v2.png') as source:
+        master = source.convert('RGB')
+        for path, side in [
+            ('public/icon-512.png', 512),
+            ('macos/Assets.xcassets/AppIcon.appiconset/icon-512-2.png', 1024),
+            ('ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', 1024),
+        ]:
+            with Image.open(ROOT / path) as icon:
+                expected = master.resize((side, side), Image.Resampling.LANCZOS)
+                assert ImageChops.difference(icon.convert('RGB'), expected).getbbox() is None, path
 
 
 def test_native_release_hosts_not_webviews():

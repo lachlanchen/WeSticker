@@ -22,6 +22,8 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## El estudio
 
 - 10 paquetes, 156 animaciones distintas y versiones en chino, inglés y japonés con vista previa inmediata.

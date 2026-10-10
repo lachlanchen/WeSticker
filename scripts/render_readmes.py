@@ -68,6 +68,8 @@ for code, t in translations.items():
 
 [Native beta scope]({prefix}docs/native-catalog-beta.md) · [Creator roadmap]({prefix}docs/native-creator-plan.md) · [Bandwidth]({prefix}docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10]({prefix}docs/creator-beta-20261010.md) · [Japanese LINE editions]({prefix}docs/line-japanese-editions.md)
+
 ## {h[0]}
 
 {chr(10).join("- " + line for line in t["features"])}

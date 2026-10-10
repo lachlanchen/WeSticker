@@ -22,6 +22,8 @@
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## 創作工坊
 
 - 10 套預設作品、156 個獨立動畫，中英日三種文字版本，可直接預覽。

@@ -22,6 +22,8 @@
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## Студия
 
 - 10 наборов, 156 отдельных анимаций, китайские, английские и японские подписи с быстрым просмотром.

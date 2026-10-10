@@ -41,13 +41,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("platform", choices=["ios", "macos"])
     parser.add_argument("--root", required=True, type=Path)
-    parser.add_argument("--p12", required=True, type=Path)
-    parser.add_argument("--p12-password-file", required=True, type=Path)
+    parser.add_argument("--p12", type=Path, help="Import a distribution identity; omit to reuse the app's keychain")
+    parser.add_argument("--p12-password-file", type=Path)
     parser.add_argument("--version", default="1.0")
     parser.add_argument("--build", default="1")
     parser.add_argument("--installer-keychain", type=Path)
     parser.add_argument("--installer-password-file", type=Path)
     args = parser.parse_args()
+    if bool(args.p12) != bool(args.p12_password_file):
+        parser.error("--p12 and --p12-password-file must be supplied together")
     root = args.root.expanduser().resolve()
     signing = root / "store-signing"
     chain, password_file = signing / "westicker-release.keychain-db", signing / "keychain.pass"
@@ -63,9 +65,10 @@ def main():
         command("create-keychain", "-p", password, chain)
     command("unlock-keychain", "-p", password, chain)
     command("set-keychain-settings", "-lut", "14400", chain)
-    command("import", args.p12.expanduser(), "-k", chain, "-P",
-            args.p12_password_file.expanduser().read_text().strip(),
-            "-T", "/usr/bin/codesign", "-T", "/usr/bin/security")
+    if args.p12:
+        command("import", args.p12.expanduser(), "-k", chain, "-P",
+                args.p12_password_file.expanduser().read_text().strip(),
+                "-T", "/usr/bin/codesign", "-T", "/usr/bin/security")
     command("set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s", "-k", password, chain)
     # security -i echoes commands; capture and never publish that output.
     response = subprocess.run(["security", "-i"], input="\n".join(commands) + "\n",

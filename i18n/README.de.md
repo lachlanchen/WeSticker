@@ -22,6 +22,8 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## Das Studio
 
 - 10 Pakete, 156 eigenständige Animationen, chinesische, englische und japanische Beschriftungen mit sofortiger Vorschau.

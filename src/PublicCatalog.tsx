@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Heart, Sticker as StickerIcon, X } from "lucide-react";
+import {
+  Heart,
+  Sticker as StickerIcon,
+  X,
+  ImagePlus,
+  MessageCircle,
+} from "lucide-react";
+import { LocalStudio } from "./LocalStudio";
 import { StickerBrowser } from "./StickerBrowser";
 import type { Pack, Sticker } from "./api";
 
@@ -18,7 +25,16 @@ export function PublicCatalog() {
       return [];
     }
   });
-  const [favorites, setFavorites] = useState(false);
+  const [view, setView] = useState<"stickers" | "create" | "agent" | "saved">(
+    "stickers",
+  );
+  const favorites = view === "saved";
+  const tabs = [
+    { id: "stickers", label: "Stickers", Icon: StickerIcon },
+    { id: "create", label: "Create", Icon: ImagePlus },
+    { id: "agent", label: "Agent", Icon: MessageCircle },
+    { id: "saved", label: "Saved", Icon: Heart },
+  ] as const;
   const [preview, setPreview] = useState<Sticker | null>(null);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -77,22 +93,22 @@ export function PublicCatalog() {
     <div className="app public-catalog">
       <aside className="sidebar">
         <a className="brand" href={base}>
-          <img src={base + "icon-192.png"} alt="Aya" />
+          <img src={base + "icon-192.png"} alt="Aya and Lala" />
           <span>
             WeSticker<small>BY LAZYINGART</small>
           </span>
         </a>
         <nav>
           <button
-            className={!favorites ? "active" : ""}
-            onClick={() => setFavorites(false)}
+            className={view === "stickers" ? "active" : ""}
+            onClick={() => setView("stickers")}
           >
             <StickerIcon size={20} />
             Discover
           </button>
           <button
             className={favorites ? "active" : ""}
-            onClick={() => setFavorites(true)}
+            onClick={() => setView("saved")}
           >
             <Heart size={20} />
             Saved<small>{saved.length}</small>
@@ -106,17 +122,19 @@ export function PublicCatalog() {
       <div className="main-shell">
         <header className="topbar">
           <strong>WeSticker</strong>
-          <span>Catalog beta</span>
+          <span>Creator beta</span>
           <button
             className="icon-button"
             aria-label="Saved collections"
-            onClick={() => setFavorites(!favorites)}
+            onClick={() => setView(favorites ? "stickers" : "saved")}
           >
             <Heart fill={favorites ? "currentColor" : "none"} />
           </button>
         </header>
         <main>
-          {error ? (
+          {view === "create" || view === "agent" ? (
+            <LocalStudio view={view} onView={setView} />
+          ) : error ? (
             <p role="alert">{error}</p>
           ) : (
             <StickerBrowser
@@ -143,6 +161,19 @@ export function PublicCatalog() {
           )}
         </main>
       </div>
+      <nav className="studio-bottom-nav" aria-label="App navigation">
+        {tabs.map(({ id, label, Icon }) => (
+          <button
+            key={id}
+            className={view === id ? "active" : ""}
+            aria-current={view === id ? "page" : undefined}
+            onClick={() => setView(id)}
+          >
+            <Icon size={22} />
+            <span>{label}</span>
+          </button>
+        ))}
+      </nav>
       {preview && (
         <div className="modal-backdrop" onClick={() => setPreview(null)}>
           <section

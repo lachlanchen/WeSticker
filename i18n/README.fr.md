@@ -22,6 +22,8 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## Le studio
 
 - 10 collections, 156 animations distinctes, versions chinoise, anglaise et japonaise avec aperçu immédiat.

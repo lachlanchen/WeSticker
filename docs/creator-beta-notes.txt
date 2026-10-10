@@ -1,0 +1,5 @@
+New Aya and Lala icon with a light-blue background. Four native tabs: Stickers, Create, Agent and Saved.
+
+Create a private on-device photo-sticker draft, confirm photo permission, lock its reference, edit captions and export a PNG. Agent is an offline template-based caption planner with English, Japanese and Chinese captions for daily, work, couple and sports packs. Drafts stay on this device and resume after reopening.
+
+The guest animated catalog, favorites and original GIF sharing remain available. Cloud AI generation, account sync, purchases and automated WeChat uploads are not connected in this beta. No photos are uploaded by the local creator.

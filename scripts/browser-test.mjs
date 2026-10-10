@@ -62,18 +62,18 @@ try {
   });
   await page.getByLabel("Save Little everyday joys").click();
   await page.waitForFunction(() =>
-    document.querySelector(".sticker-preview img")?.src.includes(".gif"),
+    /\.gif|\/motion\//.test(document.querySelector(".sticker-preview img")?.src || ""),
   );
   await page
     .getByRole("button", { name: "Pause animations", exact: true })
     .click();
   await page.waitForFunction(
-    () => !document.querySelector(".sticker-preview img")?.src.includes(".gif"),
+    () => !/\.gif|\/motion\//.test(document.querySelector(".sticker-preview img")?.src || ""),
   );
   await page.locator(".collection-link").nth(1).click();
   await page.waitForFunction(() =>
     [...document.querySelectorAll(".sticker-preview img")].every(
-      (i) => !i.src.includes(".gif"),
+      (i) => !/\.gif|\/motion\//.test(i.src),
     ),
   );
   await page
@@ -130,7 +130,7 @@ try {
       .locator(".sticker-preview img")
       .first()
       .getAttribute("src")
-      .then((s) => !s.includes(".gif")),
+      .then((s) => !/\.gif|\/motion\//.test(s)),
   );
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.setViewportSize({ width: 1440, height: 1000 });

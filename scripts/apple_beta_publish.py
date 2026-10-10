@@ -24,7 +24,11 @@ def main():
     p.add_argument("action", choices=["upload", "attach", "status"])
     p.add_argument("--config", required=True, type=Path)
     p.add_argument("--manifest", required=True, type=Path)
+    p.add_argument("--notes-file", type=Path, help="Reviewed release notes for this exact build")
     a = p.parse_args()
+    notes = a.notes_file.read_text().strip() if a.notes_file else NOTES
+    if not notes or len(notes) > 4000:
+        raise ValueError("Release notes must contain 1-4000 characters")
     config = json.loads(a.config.expanduser().read_text())
     manifest = json.loads(a.manifest.expanduser().read_text())
     root = a.manifest.expanduser().parent
@@ -108,10 +112,10 @@ def main():
     loc = next((v for v in locs if v["attributes"]["locale"] == "en-US"), None)
     if loc:
         api.call("/v1/betaBuildLocalizations/" + loc["id"], {"data": {"type": "betaBuildLocalizations", "id": loc["id"],
-                 "attributes": {"whatsNew": NOTES}}}, "PATCH")
+                 "attributes": {"whatsNew": notes}}}, "PATCH")
     else:
         api.call("/v1/betaBuildLocalizations", {"data": {"type": "betaBuildLocalizations",
-            "attributes": {"locale": "en-US", "whatsNew": NOTES},
+            "attributes": {"locale": "en-US", "whatsNew": notes},
             "relationships": {"build": {"data": {"type": "builds", "id": bid}}}}})
     if not any(x["id"] == bid for x in api.call("/v1/betaGroups/" + gid + "/builds")["data"]):
         api.call("/v1/betaGroups/" + gid + "/relationships/builds", {"data": [{"type": "builds", "id": bid}]})

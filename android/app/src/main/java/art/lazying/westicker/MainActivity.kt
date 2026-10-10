@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                 primaryContainer = Color(0xFFFFE4ED), onPrimaryContainer = Color(0xFF762340),
                 secondary = Color(0xFF007F79), surface = Color.White,
                 background = Color(0xFFFAFAFC))) {
-                Catalog(packs, loader, ::shareSticker)
+                StudioRoot(packs, loader, ::shareSticker)
             }
         }
     }
@@ -118,13 +118,13 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Catalog(packs: List<Pack>, loader: ImageLoader,
-    save: suspend (Pack, Sticker, String) -> Unit) {
+fun Catalog(packs: List<Pack>, loader: ImageLoader,
+    save: suspend (Pack, Sticker, String) -> Unit, savedOnly: Boolean = false) {
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("catalog", 0) }
     var language by remember { mutableStateOf(preferences.getString("language", "en") ?: "en") }
     var favorites by remember { mutableStateOf(preferences.getStringSet("favorites", emptySet())!!.toSet()) }
-    var onlySaved by remember { mutableStateOf(false) }
+    var onlySaved by remember(savedOnly) { mutableStateOf(savedOnly) }
     var query by remember { mutableStateOf("") }
     var selected by remember { mutableStateOf(packs.first().id) }
     var playing by remember { mutableStateOf(true) }
@@ -250,6 +250,6 @@ private fun Catalog(packs: List<Pack>, loader: ImageLoader,
             dismissButton = { TextButton(onClick = { preview = null }) { Text("Close") } })
     }
     if (info) AlertDialog(onDismissRequest = { info = false }, title = { Text("WeSticker · Catalog beta") },
-        text = { Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavourites stay on this device. GIF downloads connect to aya.lazying.art. No account, analytics or payment is required.\n\nAI creation, login and subscriptions are not part of this test build.") },
+        text = { Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavorites and creator drafts stay on this device. GIF downloads connect to aya.lazying.art.\n\nCreate exports photo stickers. Agent uses on-device caption templates. Cloud AI, accounts, purchases and automated upload are not connected in this beta.") },
         confirmButton = { TextButton(onClick = { info = false }) { Text("Done") } })
 }

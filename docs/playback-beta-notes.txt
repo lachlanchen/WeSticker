@@ -1,0 +1,5 @@
+New light-blue Aya-and-Lala icon. Animated stickers play automatically, with working pause and resume. The Play button also works when Reduce Motion is enabled.
+
+Native Stickers, Create, Agent and Saved tabs. Create lets you choose a photo, confirm permission, lock the character reference, edit captions and export a PNG photo sticker. Agent prepares local caption templates for daily, work, couple and sports packs; applying them requires confirmation. Drafts remain on this device.
+
+This beta does not connect cloud AI, shared login, purchases, creator sales or automated WeChat uploads. Please test animated GIF playback, language switching and native sharing.

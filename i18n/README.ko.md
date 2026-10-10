@@ -22,6 +22,8 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 [Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
+[Create / Agent beta update · 2026-10-10](../docs/creator-beta-20261010.md) · [Japanese LINE editions](../docs/line-japanese-editions.md)
+
 ## 스튜디오
 
 - 기본 10팩, 서로 다른 애니메이션 156개, 중국어·영어·일본어 문구 버전과 즉시 미리보기.
