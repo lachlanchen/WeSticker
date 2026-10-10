@@ -18,9 +18,9 @@
     ],
     "plans": "Proposed monthly subscriptions: Pocket $0.99 / 3 image credits; Creator $9.99 / 40 credits; Studio $24.99 / 120 credits and optional upload assistance. Photo mode is free; animation uses 3 credits. Billing is disabled until connected and qualified.",
     "start": "Python 3.12+, Node 22+, a CJK font and Chromium for browser tests. The script creates a private local demo configuration; it does not borrow another app's credentials. Open http://127.0.0.1:18642. Stop with `python3 scripts/dev.py stop`.",
-    "inside": "React/Vite frontend, Python API and worker, SQLite, Capacitor Android/iOS and Mac Catalyst configuration. Source and private runtime data are separate. The interface is currently English; sticker lettering supports three languages.",
+    "inside": "Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a separate React/Vite PWA. The private creator prototype uses Python and SQLite. The interface is English; sticker lettering supports Chinese, English and Japanese.",
     "tests": "46 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.",
-    "status": "Working local prototype, not a launched service. Android debug and iOS simulator builds pass. Native billing adapters are implemented but sales-disabled; Mac Catalyst is blocked by missing dependency binaries. Separate store records and a Stripe test catalog exist. Live login, billing lifecycle, moderation and store submission remain unqualified. No customer charge or store release occurred.",
+    "status": "The public catalog PWA is live at https://aya.lazying.art/westicker/. Native catalog builds are prepared for Google Play internal testing and Apple TestFlight; see the release record for exact availability and QA limits. Creator AI, login, subscriptions and marketplace sales remain unqualified and disabled in these betas. This is not a completed creator-service launch.",
     "cite": "Code is MIT; artwork has separate rights. Cite this repository when using the software in research."
   },
   "zh-Hans": {
@@ -42,9 +42,9 @@
     ],
     "plans": "月费拟定为 Pocket $0.99 / 3 图像额度、Creator $9.99 / 40 额度、Studio $24.99 / 120 额度及可选上传助手。照片模式免费，动画消耗 3 额度。支付接入与验证之前不开放收费。",
     "start": "需要 Python 3.12+、Node 22+、中日韩字体及浏览器测试用 Chromium。脚本只生成本项目的私有演示配置，不借用其他应用凭据。打开 http://127.0.0.1:18642；用 `python3 scripts/dev.py stop` 停止。",
-    "inside": "React/Vite 前端，Python API 与任务进程，SQLite 数据库，Capacitor Android/iOS 工程及 Mac Catalyst 配置。源代码与私有运行数据分离。目前应用界面为英文，表情文字支持三种语言。",
+    "inside": "Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 独立使用 React/Vite。私有创作原型使用 Python 和 SQLite。界面为英文，表情文字支持中英日三种语言。",
     "tests": "46 项后端测试及 2 项浏览器代理安全测试通过。真实浏览器完成访客下载、照片上传、角色确认、照片表情生成、文字审核、ZIP 导出和账号删除，并检查桌面与移动宽度。这不代表真实支付或模型服务已经验证。",
-    "status": "当前是可运行的本地原型，并非已上线服务。Android 调试版和 iOS 模拟器构建通过。原生支付适配已实现但未开放收费；Mac Catalyst 因依赖缺少对应二进制而受阻。独立商店记录和 Stripe 测试目录已建立，正式登录、支付生命周期、审核运营与商店提交仍待验证。没有向用户收费或发布商店版本。",
+    "status": "公开目录 PWA 已上线：https://aya.lazying.art/westicker/。原生目录版本面向 Google Play 内测与 Apple TestFlight，具体可用状态和测试限制见发布记录。这些测试版尚未开放 AI 创作、登录、订阅与创作者销售，不代表完整创作服务已经上线。",
     "cite": "源代码采用 MIT 协议，角色及美术资产单独授权。研究中使用本软件时请引用本仓库。"
   },
   "zh-Hant": {
@@ -66,9 +66,9 @@
     ],
     "plans": "月費擬定為 Pocket $0.99 / 3 影像額度、Creator $9.99 / 40 額度、Studio $24.99 / 120 額度及可選上傳助手。照片模式免費，動畫消耗 3 額度。付款串接與驗證之前不開放收費。",
     "start": "需要 Python 3.12+、Node 22+、中日韓字型及瀏覽器測試用 Chromium。腳本只建立本專案的私有示範設定，不借用其他應用憑證。開啟 http://127.0.0.1:18642；以 `python3 scripts/dev.py stop` 停止。",
-    "inside": "React/Vite 前端、Python API 與工作程序、SQLite 資料庫、Capacitor Android/iOS 工程及 Mac Catalyst 設定。原始碼與私有執行資料分離。目前應用介面為英文，貼圖文字支援三種語言。",
+    "inside": "Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 獨立使用 React/Vite。私人創作原型使用 Python 和 SQLite。介面為英文，貼圖文字支援中英日三種語言。",
     "tests": "46 項後端測試與 2 項瀏覽器代理安全測試通過。真實瀏覽器完成訪客下載、照片上傳、角色確認、照片貼圖生成、文字審核、ZIP 匯出與帳號刪除，並檢查桌面及行動寬度。這不代表真實付款或模型服務已驗證。",
-    "status": "目前是可執行的本機原型，並非已上線服務。Android 偵錯版及 iOS 模擬器建置通過。原生付款介接已實作但未開放收費；Mac Catalyst 因相依套件缺少對應二進位檔而受阻。獨立商店紀錄及 Stripe 測試目錄已建立，正式登入、付款生命週期、審核營運及商店提交仍待驗證。沒有向用戶收費或發布商店版本。",
+    "status": "公開目錄 PWA 已上線：https://aya.lazying.art/westicker/。原生目錄版本用於 Google Play 內部測試與 Apple TestFlight，具體可用狀態及測試限制見發布紀錄。測試版尚未開放 AI 創作、登入、訂閱與創作者銷售，並非完整創作服務上線。",
     "cite": "原始碼採用 MIT 授權，角色及美術資產另行授權。研究中使用本軟體時請引用本倉庫。"
   },
   "ja": {
@@ -90,9 +90,9 @@
     ],
     "plans": "月額案は Pocket $0.99 / 画像3クレジット、Creator $9.99 / 40、Studio $24.99 / 120 と任意のアップロード支援。写真モードは無料、アニメーションは3クレジット。決済の接続・検証までは販売しません。",
     "start": "Python 3.12+、Node 22+、CJK フォント、ブラウザーテスト用 Chromium が必要です。他アプリの認証情報は流用せず、専用の非公開デモ設定を作成します。http://127.0.0.1:18642 を開き、`python3 scripts/dev.py stop` で停止します。",
-    "inside": "React/Vite、Python API とワーカー、SQLite、Capacitor Android/iOS と Mac Catalyst 設定で構成。ソースと非公開データを分離しています。現状の画面言語は英語で、スタンプ文字は3言語です。",
+    "inside": "Android は Kotlin/Jetpack Compose、iOS/macOS は SwiftUI のネイティブ実装です。PWA は独立した React/Vite、非公開の制作試作版は Python と SQLite を使用。画面は英語、スタンプ文字は中国語・英語・日本語です。",
     "tests": "バックエンド46件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。",
-    "status": "動作するローカル試作版であり、公開サービスではありません。Android デバッグ版と iOS シミュレーターのビルドは成功しました。ネイティブ課金は実装済みですが販売は無効です。Mac Catalyst は依存ライブラリの対応バイナリ不足で停止しています。専用ストア登録と Stripe テストカタログは作成済みです。実ログイン、課金のライフサイクル、運用審査とストア提出は未検証で、請求やストア公開は行っていません。",
+    "status": "公開カタログ PWA は https://aya.lazying.art/westicker/ で利用できます。ネイティブ版は Google Play 内部テストと Apple TestFlight 向けです。正確な配信状況と検証範囲はリリース記録をご覧ください。AI 制作、ログイン、課金、販売はこのベータでは無効です。",
     "cite": "コードは MIT、キャラクターと画像は別の権利条件です。研究に利用する際は本リポジトリを引用してください。"
   },
   "ko": {
@@ -114,9 +114,9 @@
     ],
     "plans": "월 요금 제안: Pocket $0.99 / 이미지 3크레딧, Creator $9.99 / 40, Studio $24.99 / 120 및 선택형 업로드 지원. 사진 모드는 무료이며 애니메이션은 3크레딧입니다. 결제 연결과 검증 전에는 판매하지 않습니다.",
     "start": "Python 3.12+, Node 22+, CJK 글꼴, 브라우저 테스트용 Chromium이 필요합니다. 다른 앱의 인증 정보를 빌리지 않고 독립된 비공개 데모 설정을 만듭니다. http://127.0.0.1:18642에서 열고 `python3 scripts/dev.py stop`으로 중지합니다.",
-    "inside": "React/Vite, Python API와 워커, SQLite, Capacitor Android/iOS 및 Mac Catalyst 설정을 사용합니다. 소스와 비공개 실행 데이터를 분리합니다. 현재 화면은 영어이고 스티커 문구는 세 언어를 지원합니다.",
+    "inside": "Android는 Kotlin/Jetpack Compose, iOS/macOS는 SwiftUI 네이티브 앱입니다. 별도 PWA는 React/Vite, 비공개 제작 시제품은 Python과 SQLite를 사용합니다. 화면은 영어이며 스티커 문구는 중국어·영어·일본어입니다.",
     "tests": "백엔드 46개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.",
-    "status": "작동하는 로컬 프로토타입이며 출시된 서비스는 아닙니다. Android 디버그 및 iOS 시뮬레이터 빌드를 통과했습니다. 네이티브 결제 어댑터는 구현했지만 판매는 비활성화 상태입니다. Mac Catalyst는 지원 바이너리가 없는 의존성 때문에 차단되었습니다. 전용 스토어 기록과 Stripe 테스트 카탈로그는 생성했습니다. 실제 로그인·결제 수명 주기 검증, 운영 심사와 스토어 제출이 남아 있으며 고객 청구나 스토어 출시는 없었습니다.",
+    "status": "공개 카탈로그 PWA는 https://aya.lazying.art/westicker/ 에서 운영됩니다. 네이티브 카탈로그는 Google Play 내부 테스트와 Apple TestFlight용입니다. 정확한 배포 상태와 검증 제한은 릴리스 기록을 확인하세요. AI 제작, 로그인, 구독과 판매는 베타에서 비활성화되어 있습니다.",
     "cite": "코드는 MIT이며 캐릭터와 그림은 별도 권리가 적용됩니다. 연구에 사용할 때 이 저장소를 인용해 주세요."
   },
   "fr": {
@@ -138,9 +138,9 @@
     ],
     "plans": "Abonnements mensuels proposés : Pocket 0,99 $ / 3 crédits image ; Creator 9,99 $ / 40 ; Studio 24,99 $ / 120 et assistance d’envoi facultative. Le mode photo est gratuit ; une animation coûte 3 crédits. Aucun paiement avant connexion et validation.",
     "start": "Python 3.12+, Node 22+, police CJK et Chromium pour les tests navigateur. Le script crée une configuration de démonstration privée, sans emprunter les identifiants d’une autre application. Ouvrez http://127.0.0.1:18642. Arrêtez avec `python3 scripts/dev.py stop`.",
-    "inside": "React/Vite, API et worker Python, SQLite, projets Capacitor Android/iOS et configuration Mac Catalyst. Code et données privées sont séparés. L’interface est actuellement anglaise ; les textes des stickers existent en trois langues.",
+    "inside": "Android natif en Kotlin/Jetpack Compose, iOS/macOS en SwiftUI et PWA séparée en React/Vite. Le prototype privé de création utilise Python et SQLite. Interface anglaise, textes des stickers en chinois, anglais et japonais.",
     "tests": "46 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.",
-    "status": "Prototype local fonctionnel, pas un service lancé. Les builds Android de débogage et iOS simulateur passent. Les adaptateurs d’achat natif sont implémentés, mais les ventes restent désactivées. Mac Catalyst est bloqué par des binaires de dépendances manquants. Les fiches propres à l’app et le catalogue Stripe de test existent. Connexion réelle, cycle de facturation, modération et soumission restent à valider. Aucun client facturé ni publication en boutique.",
+    "status": "Le catalogue PWA est en ligne sur https://aya.lazying.art/westicker/. Les versions natives visent les tests internes Google Play et Apple TestFlight ; disponibilité et limites de validation figurent dans le suivi des versions. Création IA, connexion, abonnements et ventes restent désactivés dans ces bêtas.",
     "cite": "Code sous MIT ; illustrations sous droits distincts. Citez ce dépôt pour un usage scientifique."
   },
   "es": {
@@ -162,9 +162,9 @@
     ],
     "plans": "Suscripciones mensuales propuestas: Pocket 0,99 USD / 3 créditos de imagen; Creator 9,99 USD / 40; Studio 24,99 USD / 120 y asistencia opcional. El modo foto es gratuito; una animación cuesta 3 créditos. Cobros desactivados hasta conectar y validar.",
     "start": "Python 3.12+, Node 22+, fuente CJK y Chromium para pruebas. El script crea una configuración privada de demostración sin reutilizar credenciales ajenas. Abre http://127.0.0.1:18642. Detén con `python3 scripts/dev.py stop`.",
-    "inside": "React/Vite, API y worker Python, SQLite, proyectos Capacitor Android/iOS y configuración Mac Catalyst. Código y datos privados separados. La interfaz actual está en inglés; los textos de stickers tienen tres idiomas.",
+    "inside": "Android nativo con Kotlin/Jetpack Compose, iOS/macOS con SwiftUI y PWA separada con React/Vite. El prototipo privado de creación usa Python y SQLite. Interfaz en inglés; textos en chino, inglés y japonés.",
     "tests": "Pasan 46 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.",
-    "status": "Prototipo local funcional, no un servicio lanzado. Compilan Android de depuración e iOS para simulador. Los adaptadores de compras nativas están implementados, con ventas desactivadas. Mac Catalyst está bloqueado por binarios de dependencias ausentes. Existen registros propios en las tiendas y un catálogo Stripe de prueba. Faltan validación del acceso real, ciclo de pagos, moderación y envío a tiendas. No hubo cobros ni publicación en tiendas.",
+    "status": "El catálogo PWA está disponible en https://aya.lazying.art/westicker/. Las versiones nativas están destinadas a pruebas internas de Google Play y Apple TestFlight; consulte el registro de versiones para conocer su disponibilidad y límites. Creación con IA, acceso, suscripciones y ventas siguen desactivados en estas betas.",
     "cite": "Código MIT; ilustraciones con derechos separados. Cita el repositorio si lo usas en investigación."
   },
   "de": {
@@ -186,9 +186,9 @@
     ],
     "plans": "Monatliche Preisvorschläge: Pocket 0,99 USD / 3 Bild-Credits; Creator 9,99 USD / 40; Studio 24,99 USD / 120 und optionaler Upload-Assistent. Fotomodus kostenlos, Animation 3 Credits. Abrechnung bleibt bis zur Anbindung und Prüfung deaktiviert.",
     "start": "Python 3.12+, Node 22+, CJK-Schrift und Chromium für Browsertests. Das Skript erstellt eine private Demo-Konfiguration ohne fremde App-Zugangsdaten. http://127.0.0.1:18642 öffnen; mit `python3 scripts/dev.py stop` beenden.",
-    "inside": "React/Vite, Python-API und Worker, SQLite, Capacitor-Projekte für Android/iOS und Mac-Catalyst-Konfiguration. Quellcode und private Laufzeitdaten sind getrennt. Oberfläche derzeit Englisch, Stickertexte in drei Sprachen.",
+    "inside": "Native Android-App mit Kotlin/Jetpack Compose, iOS/macOS mit SwiftUI und separate React/Vite-PWA. Der private Erstellungsprototyp nutzt Python und SQLite. Oberfläche Englisch; Stickertexte Chinesisch, Englisch und Japanisch.",
     "tests": "46 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.",
-    "status": "Funktionsfähiger lokaler Prototyp, kein veröffentlichter Dienst. Android-Debug- und iOS-Simulator-Builds erfolgreich. Native Zahlungsadapter sind implementiert, Verkäufe aber deaktiviert. Mac Catalyst wird durch fehlende Plattform-Binärdateien der Abhängigkeiten blockiert. Eigene Store-Einträge und ein Stripe-Testkatalog existieren. Live-Anmeldung, Zahlungslebenszyklus, Moderation und Store-Einreichung sind noch nicht qualifiziert. Keine Kundenabbuchung oder Store-Veröffentlichung.",
+    "status": "Die öffentliche Katalog-PWA ist unter https://aya.lazying.art/westicker/ verfügbar. Native Katalogversionen sind für interne Google-Play-Tests und Apple TestFlight vorgesehen. Verfügbarkeit und Testgrenzen stehen im Release-Protokoll. KI-Erstellung, Anmeldung, Abonnements und Verkauf bleiben in diesen Betas deaktiviert.",
     "cite": "Code unter MIT; Bildmaterial mit eigenen Rechten. Bei wissenschaftlicher Nutzung bitte dieses Repository zitieren."
   },
   "ru": {
@@ -210,9 +210,9 @@
     ],
     "plans": "Предлагаемые месячные тарифы: Pocket $0.99 / 3 кредита изображений; Creator $9.99 / 40; Studio $24.99 / 120 и дополнительная помощь с загрузкой. Фоторежим бесплатен, анимация стоит 3 кредита. Оплата отключена до подключения и проверки.",
     "start": "Нужны Python 3.12+, Node 22+, шрифт CJK и Chromium для тестов. Скрипт создаёт закрытые настройки демо без чужих учётных данных. Откройте http://127.0.0.1:18642; остановка: `python3 scripts/dev.py stop`.",
-    "inside": "React/Vite, Python API и worker, SQLite, проекты Capacitor Android/iOS и настройки Mac Catalyst. Код отделён от закрытых данных. Интерфейс пока английский, тексты стикеров доступны на трёх языках.",
+    "inside": "Нативный Android на Kotlin/Jetpack Compose, iOS/macOS на SwiftUI и отдельная PWA на React/Vite. Закрытый прототип создания использует Python и SQLite. Интерфейс английский; тексты стикеров на китайском, английском и японском.",
     "tests": "Пройдены 46 серверных тестов и два теста безопасности агента. Реальный браузер проверил скачивание, загрузку фото, подтверждение персонажа, фоторежим, тексты, ZIP и удаление аккаунта на мобильной и настольной ширине. Это не проверка реальной оплаты или AI-сервиса.",
-    "status": "Рабочий локальный прототип, не запущенный сервис. Сборки Android debug и симулятора iOS проходят. Адаптеры встроенных покупок реализованы, но продажи отключены. Mac Catalyst заблокирован отсутствием нужных бинарных зависимостей. Созданы отдельные записи магазинов и тестовый каталог Stripe. Рабочий вход, жизненный цикл платежей, модерация и отправка в магазины ещё не проверены. Списаний и публикаций в магазинах не было.",
+    "status": "Публичная PWA каталога доступна: https://aya.lazying.art/westicker/. Нативные версии предназначены для внутренних тестов Google Play и Apple TestFlight; точный статус и ограничения указаны в журнале выпуска. Создание с ИИ, вход, подписки и продажи в этих бета-версиях отключены.",
     "cite": "Код MIT; права на изображения отдельные. При исследовательском использовании ссылайтесь на репозиторий."
   },
   "vi": {
@@ -234,9 +234,9 @@
     ],
     "plans": "Giá tháng đề xuất: Pocket 0,99 USD / 3 tín dụng ảnh; Creator 9,99 USD / 40; Studio 24,99 USD / 120 và hỗ trợ tải lên tùy chọn. Chế độ ảnh miễn phí; hoạt ảnh tốn 3 tín dụng. Thanh toán chưa bật trước khi kết nối và kiểm chứng.",
     "start": "Cần Python 3.12+, Node 22+, phông CJK và Chromium để kiểm thử. Lệnh tạo cấu hình demo riêng, không dùng thông tin đăng nhập của ứng dụng khác. Mở http://127.0.0.1:18642; dừng bằng `python3 scripts/dev.py stop`.",
-    "inside": "React/Vite, API và worker Python, SQLite, dự án Capacitor Android/iOS và cấu hình Mac Catalyst. Mã nguồn tách khỏi dữ liệu riêng. Giao diện hiện bằng tiếng Anh; chữ nhãn dán hỗ trợ ba ngôn ngữ.",
+    "inside": "Android thuần Kotlin/Jetpack Compose, iOS/macOS dùng SwiftUI và PWA React/Vite riêng. Bản mẫu sáng tạo riêng tư dùng Python và SQLite. Giao diện tiếng Anh; chữ nhãn dán có tiếng Trung, Anh và Nhật.",
     "tests": "Đã qua 46 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.",
-    "status": "Bản mẫu cục bộ hoạt động, chưa phải dịch vụ ra mắt. Bản Android gỡ lỗi và iOS cho trình mô phỏng đã biên dịch thành công. Đã triển khai bộ kết nối thanh toán gốc nhưng chưa bật bán hàng. Mac Catalyst bị chặn do thiếu tệp nhị phân phù hợp của thư viện phụ thuộc. Đã tạo hồ sơ cửa hàng riêng và danh mục Stripe thử nghiệm. Đăng nhập thật, vòng đời thanh toán, kiểm duyệt và gửi cửa hàng vẫn cần kiểm chứng. Chưa thu tiền hay phát hành cửa hàng.",
+    "status": "PWA danh mục công khai đã hoạt động tại https://aya.lazying.art/westicker/. Các bản gốc dành cho thử nghiệm nội bộ Google Play và Apple TestFlight; xem hồ sơ phát hành để biết trạng thái và giới hạn kiểm chứng. Tạo bằng AI, đăng nhập, đăng ký trả phí và bán hàng chưa được bật trong các bản beta này.",
     "cite": "Mã nguồn MIT; hình ảnh có quyền riêng. Vui lòng trích dẫn kho mã khi dùng trong nghiên cứu."
   },
   "ar": {
@@ -258,9 +258,9 @@
     ],
     "plans": "الاشتراكات الشهرية المقترحة: Pocket بسعر 0.99 دولار و3 أرصدة صور؛ Creator بسعر 9.99 و40 رصيداً؛ Studio بسعر 24.99 و120 رصيداً مع مساعدة رفع اختيارية. وضع الصور مجاني والتحريك يستهلك 3 أرصدة. الدفع معطل حتى الربط والتحقق.",
     "start": "يتطلب Python 3.12+ وNode 22+ وخط CJK وChromium لاختبارات المتصفح. ينشئ البرنامج إعداد عرض خاصاً دون استعارة بيانات اعتماد تطبيق آخر. افتح http://127.0.0.1:18642 وأوقفه عبر `python3 scripts/dev.py stop`.",
-    "inside": "واجهة React/Vite وAPI وعامل Python وقاعدة SQLite ومشروعا Capacitor Android/iOS وإعداد Mac Catalyst. المصدر منفصل عن بيانات التشغيل الخاصة. الواجهة حالياً بالإنجليزية ونصوص الملصقات بثلاث لغات.",
+    "inside": "تطبيق Android أصلي باستخدام Kotlin/Jetpack Compose وتطبيقا iOS/macOS باستخدام SwiftUI، مع PWA منفصلة بـ React/Vite. نموذج الإنشاء الخاص يستخدم Python وSQLite. الواجهة بالإنجليزية ونصوص الملصقات بالصينية والإنجليزية واليابانية.",
     "tests": "نجح 46 اختباراً للخادم واختبارا أمان للوكيل. تحقق متصفح حقيقي من التنزيل والرفع وتأكيد الشخصية وإنشاء ملصقات الصور ومراجعة النص وZIP وحذف الحساب على أحجام الهاتف والحاسوب. ليست هذه اختبارات دفع فعلي أو مزود ذكاء اصطناعي حي.",
-    "status": "نموذج محلي يعمل، وليس خدمة منشورة. نجح بناء Android للتصحيح وiOS للمحاكي. نُفذت موصلات الشراء الأصلية لكن البيع معطل. بناء Mac Catalyst متوقف بسبب غياب ملفات ثنائية متوافقة في التبعيات. أُنشئت سجلات مستقلة في المتاجر وكتالوج Stripe للاختبار. ما زال الدخول الفعلي ودورة الدفع والإشراف والتقديم للمتاجر بحاجة إلى التحقق. لم تُفرض رسوم على العملاء ولم يصدر التطبيق في المتاجر.",
+    "status": "كتالوج PWA العام متاح على https://aya.lazying.art/westicker/. الإصدارات الأصلية مخصصة لاختبارات Google Play الداخلية وApple TestFlight؛ سجل الإصدار يوضح التوفر وحدود التحقق. إنشاء الذكاء الاصطناعي وتسجيل الدخول والاشتراكات والمبيعات معطلة في هذه النسخ التجريبية.",
     "cite": "الكود بترخيص MIT، والرسوم لها حقوق منفصلة. يرجى الاستشهاد بالمستودع عند استخدامه في البحث."
   }
 }

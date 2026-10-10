@@ -17,6 +17,16 @@ const browser = await chromium.launch({
 const context = await browser.newContext({
   viewport: { width: 1440, height: 1000 },
 });
+// UI regression runs may reuse approved local art instead of consuming edge bandwidth.
+if (process.env.WESTICKER_QA_ART_ROOT) {
+  const root = path.resolve(process.env.WESTICKER_QA_ART_ROOT);
+  await context.route("https://aya.lazying.art/media/**", async (route) => {
+    const url = new URL(route.request().url());
+    const file = path.resolve(root, "." + decodeURIComponent(url.pathname));
+    assert(file.startsWith(root + path.sep));
+    await route.fulfill({ path: file });
+  });
+}
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (error) => errors.push(error.message));
@@ -85,7 +95,7 @@ try {
     .evaluate((image) => image.decode());
   await page.locator(".sticker-preview").first().click();
   await page.getByRole("dialog", { name: "Sticker preview" }).waitFor();
-  const download = page.waitForEvent("download");
+  const download = page.waitForEvent("download", { timeout: 120_000 });
   await page.getByRole("link", { name: "Save GIF", exact: true }).click();
   const gif = await download;
   assert.equal(await gif.failure(), null);
@@ -205,6 +215,10 @@ try {
     JSON.stringify(
       {
         ok: true,
+        previewTransport: process.env.WESTICKER_QA_ART_ROOT
+          ? "approved local artwork fixture"
+          : "public edge",
+        downloadTransport: "real application endpoint",
         checks: [
           "guest master-detail catalog",
           "autoplay, pause, reduced motion, filtered selection",

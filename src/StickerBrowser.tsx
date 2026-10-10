@@ -37,7 +37,7 @@ type Props = {
   onFavorite: (id: string) => void;
   onPreview: (sticker: Sticker, pack: Pack) => void;
   onDownload: (pack: Pack) => void;
-  onCreate: () => void;
+  onCreate?: () => void;
   onNativeSave?: (pack: Pack, sticker: Sticker) => void;
 };
 
@@ -64,10 +64,12 @@ export function StickerBrowser(props: Props) {
         <h1>
           Sticker collections <span>{packs.length}</span>
         </h1>
-        <button className="button primary small" onClick={props.onCreate}>
-          <Plus size={17} />
-          Create
-        </button>
+        {props.onCreate && (
+          <button className="button primary small" onClick={props.onCreate}>
+            <Plus size={17} />
+            Create
+          </button>
+        )}
       </header>
       <div className="browse-filters">
         <label className="search">

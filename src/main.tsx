@@ -48,6 +48,7 @@ import { AnimatedSticker } from "./AnimatedSticker";
 import { StickerBrowser } from "./StickerBrowser";
 import { NativePlans } from "./NativePlans";
 import { saveSticker } from "./native";
+import { PublicCatalog } from "./PublicCatalog";
 
 const native = Capacitor.isNativePlatform();
 type View = "discover" | "studio" | "library" | "plans" | "account" | "market";
@@ -1575,6 +1576,6 @@ function App() {
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    {import.meta.env.VITE_PUBLIC_CATALOG_ONLY === "true" ? <PublicCatalog /> : <App />}
   </React.StrictMode>,
 );

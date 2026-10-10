@@ -6,7 +6,7 @@
 
 *Nhân vật của bạn. Cảm xúc mỗi ngày.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân vật do người dùng tạo. Xem bộ mặc định không cần đăng nhập; ảnh cá nhân được xử lý trong không gian riêng. Cửa hàng AYA hiện tại không thay đổi.
 
@@ -15,6 +15,12 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## Xưởng sáng tạo
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## Cấu trúc
 
-React/Vite, API và worker Python, SQLite, dự án Capacitor Android/iOS và cấu hình Mac Catalyst. Mã nguồn tách khỏi dữ liệu riêng. Giao diện hiện bằng tiếng Anh; chữ nhãn dán hỗ trợ ba ngôn ngữ.
+Android thuần Kotlin/Jetpack Compose, iOS/macOS dùng SwiftUI và PWA React/Vite riêng. Bản mẫu sáng tạo riêng tư dùng Python và SQLite. Giao diện tiếng Anh; chữ nhãn dán có tiếng Trung, Anh và Nhật.
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## Kiểm thử
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## Trạng thái phát hành
 
-Bản mẫu cục bộ hoạt động, chưa phải dịch vụ ra mắt. Bản Android gỡ lỗi và iOS cho trình mô phỏng đã biên dịch thành công. Đã triển khai bộ kết nối thanh toán gốc nhưng chưa bật bán hàng. Mac Catalyst bị chặn do thiếu tệp nhị phân phù hợp của thư viện phụ thuộc. Đã tạo hồ sơ cửa hàng riêng và danh mục Stripe thử nghiệm. Đăng nhập thật, vòng đời thanh toán, kiểm duyệt và gửi cửa hàng vẫn cần kiểm chứng. Chưa thu tiền hay phát hành cửa hàng.
+PWA danh mục công khai đã hoạt động tại https://aya.lazying.art/westicker/. Các bản gốc dành cho thử nghiệm nội bộ Google Play và Apple TestFlight; xem hồ sơ phát hành để biết trạng thái và giới hạn kiểm chứng. Tạo bằng AI, đăng nhập, đăng ký trả phí và bán hàng chưa được bật trong các bản beta này.
 
 ## Trích dẫn
 

@@ -1,5 +1,24 @@
 # Local preview and deployment
 
+## Public catalog PWA
+
+The read-only catalog is live at <https://aya.lazying.art/westicker/>. Install it
+with the browser's Add to Home Screen / Install command. It has its own scoped
+manifest and service worker; no API, account, payment or private-photo endpoint
+is exposed by this deployment. The existing AYA shop remains the checkout owner.
+
+```bash
+python3 scripts/animated_previews.py /path/to/approved-shop/build/public
+WESTICKER_BASE=/westicker/ VITE_PUBLIC_CATALOG_ONLY=true npm run build
+node scripts/public_catalog_test.mjs
+```
+
+`scripts/deploy_catalog_edge.py` stages a checksum-pinned static archive, changes
+only the marked AYA Caddy block, preserves the previous release/config and
+rolls back on failed probes. It requires an exact current ingress checksum.
+See [bandwidth and operations](catalog-bandwidth.md). The authenticated creator
+service below still requires its own reviewed origin and production qualification.
+
 ## Reproducible local preview
 
 Requires Python 3.12+, Node 22+, a CJK font, and Chromium for browser tests.
@@ -71,7 +90,8 @@ Docker build/runtime has not been qualified in the initial implementation.
 TLS ingress must preserve Host/Origin, allow bounded 21 MB image requests, and
 route both `/api/` and `/auth/` to the same application. Do not share AYA's
 origin, database or cookies. LazyEdge may provide the protected tunnel/HTTPS
-edge after an independent domain is chosen; no new public route was installed.
+edge after an independent domain is chosen. Only the read-only catalog route
+above is public; do not expose this prototype's API through that route.
 LocalVideoGen on host localhost is not reachable from an ordinary bridge
 container. Keep that optional adapter disabled until a protected route is
 explicitly designed and tested; do not solve it by exposing a public GPU API.

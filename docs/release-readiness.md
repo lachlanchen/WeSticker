@@ -1,18 +1,22 @@
 # Release readiness: 2026-10-10
 
-**Status: local working prototype / integration foundation. Not publicly
-deployed, not store-submitted, not ready to accept real customer payments.**
+**Status: public catalog PWA and native catalog betas. The creator service is
+still a local integration prototype, not ready for real customer payments.**
+
+The owner installed iOS build 3. Creation and the assistant are intentionally
+not claimed as available in that binary. They are the next milestone in the
+[native creator plan](native-creator-plan.md), not a completed delivery.
 
 | Area | Evidence | Remaining gate |
 | --- | --- | --- |
-| Public default catalog | 10 packs, 156 animations, three lettering languages, local posters | Licensed production delivery and availability monitoring |
+| Public default catalog | 10 packs, 156 animations, three lettering languages, local posters; live at `aya.lazying.art/westicker/` | Installed-device monitoring |
 | Local creation | Real browser upload, lock, photo generation, edit/review, ZIP and deletion | Animation quality and model-provider qualification |
-| Backend | 46 pytest cases, signed payment fixtures, private ownership checks | Load audit, full abuse/privacy lifecycle |
+| Backend and release contracts | 49 pytest cases, signed payment fixtures, private ownership checks | Load audit, full abuse/privacy lifecycle |
 | WeChat agent | Two Node safety tests; save-only source | Docker/live-page customer login and save verification |
-| PWA | Vite build; offline browser reload keeps ten packs/posters and excludes API/auth caches | Installed physical-device review |
-| Android | Debug APK compiled with Billing Library 9.1.0 bridge; own Play record created | Native auth, real license-test purchases, release signing, AAB/internal upload |
-| iOS | Xcode 26.3 simulator build passed with StoreKit 2 bridge; own app/bundle and signing profile created | Native auth, device/sandbox purchases, signed archive and TestFlight upload |
-| macOS | Catalyst build attempted; pinned Capacitor/Cordova binaries lack a Catalyst slice | Source-framework or native Mac host decision, qualified desktop build and store review |
+| PWA | Public static deployment; 390/1360 browser checks, offline shell, scoped worker, no API/auth requests | Physical installed-PWA review |
+| Android | Native Compose 1.0 (3), signed APK/AAB, emulator catalog/preview/share smoke passed; Play internal track active with owner tester | Creator features, auth and real store purchases |
+| iOS | Native SwiftUI 1.0 (3), signed upload processed, internal TestFlight group; catalog/preview/share XCTest passed; owner reports installation | Creator features, auth and real store purchases |
+| macOS | Native SwiftUI 1.0 (2), universal signed package in internal TestFlight; native window launches | Shared Mac dialogs blocked automated UI/save-panel test; creator features and store purchases |
 | OAuth | Four web adapters; disabled LazyingArt onboarding files staged privately | Own live registrations, native callback/session delivery and revoke tests |
 | Stripe | App-specific test-mode catalog provisioned; webhook fixtures pass | Actual sandbox checkout matrix, live catalog/webhook, Connect/legal operations |
 | Native subscriptions | Account-bound provider verification, serialized restore, durable quota grants, purchase/restore/manage UI; six UI fixture scenarios | Notifications, periodic reconciliation, replacement lineage, real provider lifecycle matrix; sales remain disabled |
@@ -36,7 +40,19 @@ Screenshots/results go into ignored `.runtime/browser-qa/`; selected clean
 screenshots are copied into `docs/screenshots/`. Layout tests cover 320 through 1440 widths,
 not native devices. Nothing invokes a paid image/video provider.
 
-## Android debug artifact
+## Current native artifacts
+
+See [native catalog beta](native-catalog-beta.md) for build, testing, capability
+limits and artifact provenance. Android is Compose; iOS/macOS are SwiftUI.
+WebView/Capacitor wrappers are not the current test releases. Public App Store
+or Play Production review has not been requested for these catalog candidates.
+
+## Historical prototype findings
+
+The following debug/Catalyst findings describe the earlier prototype, preserved
+as evidence. They do not describe the current native release path.
+
+### Earlier Android debug artifact
 
 ```bash
 npm run native:sync
@@ -53,7 +69,7 @@ payments are not configured in this debug native build.
 `def6731fcae9a52dc2f8476995e5ccce183caf03b6b1e121a6d7d27917412375`.
 Rebuilding may change bundled web files, signing timestamps and hash.
 
-## Apple build findings
+### Earlier Apple build findings
 
 The iOS simulator build passed for arm64 and x86_64 with Xcode 26.3, signing
 disabled. This is compile evidence, not a device purchase or TestFlight upload.
@@ -65,7 +81,8 @@ the iOS-on-Mac build as a completed macOS distribution.
 
 Store name: **WeSticker: Aya & Friends**. The shorter name was unavailable on
 Apple. Provider IDs, signing routes and build logs stay in the private release
-handoff. App records are not submitted releases.
+handoff. At that earlier stage app records alone were not submitted releases;
+current internal distribution is recorded above.
 
 ## Store submission checklist
 

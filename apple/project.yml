@@ -1,0 +1,120 @@
+name: WeSticker
+options:
+  deploymentTarget:
+    iOS: "16.0"
+    macOS: "13.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "2"
+    CODE_SIGN_STYLE: Manual
+    PROVISIONING_PROFILE_SPECIFIER: $(WESTICKER_PROFILE)
+targetTemplates:
+  Catalog:
+    type: application
+    sources:
+      - Sources
+      - path: CatalogAssets
+        type: folder
+        buildPhase: resources
+      - path: PrivacyInfo.xcprivacy
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: art.lazying.westicker
+        PRODUCT_NAME: WeSticker
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: GeneratedInfo-$(platform).plist
+      properties:
+        CFBundleDisplayName: WeSticker
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        ITSAppUsesNonExemptEncryption: false
+targets:
+  WeStickerIOS:
+    templates: [Catalog]
+    platform: iOS
+    sources:
+      - path: ../ios/App/App/Assets.xcassets
+        buildPhase: resources
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1,2"
+    info:
+      path: Info-iOS.plist
+      properties:
+        CFBundleDisplayName: WeSticker
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+  WeStickerMac:
+    templates: [Catalog]
+    platform: macOS
+    sources:
+      - path: ../macos/Assets.xcassets
+        buildPhase: resources
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: ../macos/WeSticker.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+    info:
+      path: Info-macOS.plist
+      properties:
+        CFBundleDisplayName: WeSticker
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.graphics-design
+        NSHighResolutionCapable: true
+  WeStickerIOSTests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: UITests
+    dependencies:
+      - target: WeStickerIOS
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: art.lazying.westicker.ui-tests
+        TEST_TARGET_NAME: WeStickerIOS
+        CODE_SIGN_STYLE: Automatic
+        PROVISIONING_PROFILE_SPECIFIER: ""
+  WeStickerMacTests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources: UITests
+    dependencies:
+      - target: WeStickerMac
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: art.lazying.westicker.mac-ui-tests
+        TEST_TARGET_NAME: WeStickerMac
+        CODE_SIGN_STYLE: Automatic
+        PROVISIONING_PROFILE_SPECIFIER: ""
+schemes:
+  WeStickerIOS:
+    build:
+      targets:
+        WeStickerIOS: all
+    test:
+      targets: [WeStickerIOSTests]
+  WeStickerMac:
+    build:
+      targets:
+        WeStickerMac: all
+    test:
+      targets: [WeStickerMacTests]

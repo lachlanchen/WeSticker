@@ -34,3 +34,15 @@ ios/App/App/config.xml
 *.apk
 *.aab
 *.ipa
+*.pkg
+*.app/
+*.xcarchive/
+macos/WeSticker.xcodeproj/
+macos/public/
+apple/WeSticker.xcodeproj/
+apple/Resources/
+apple/CatalogAssets/
+apple/Info-iOS.plist
+apple/Info-macOS.plist
+android/app/src/main/native-assets/
+public/motion/

@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 export default defineConfig({
+  base: process.env.WESTICKER_BASE || "/",
   plugins: [react()],
   server: {
     strictPort: true,

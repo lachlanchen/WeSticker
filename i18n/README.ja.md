@@ -6,7 +6,7 @@
 
 *あなたのキャラクターで、毎日の気持ちを。*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 阿芽と仲間たちの作品を楽しみ、自分だけのキャラクターとスタンプを作る独立したスタジオです。標準作品はログインなしで閲覧でき、個人素材は非公開の作業領域で扱います。既存の AYA ショップは変更していません。
 
@@ -15,6 +15,12 @@
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## スタジオ
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## 構成
 
-React/Vite、Python API とワーカー、SQLite、Capacitor Android/iOS と Mac Catalyst 設定で構成。ソースと非公開データを分離しています。現状の画面言語は英語で、スタンプ文字は3言語です。
+Android は Kotlin/Jetpack Compose、iOS/macOS は SwiftUI のネイティブ実装です。PWA は独立した React/Vite、非公開の制作試作版は Python と SQLite を使用。画面は英語、スタンプ文字は中国語・英語・日本語です。
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## 検証
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## リリース状況
 
-動作するローカル試作版であり、公開サービスではありません。Android デバッグ版と iOS シミュレーターのビルドは成功しました。ネイティブ課金は実装済みですが販売は無効です。Mac Catalyst は依存ライブラリの対応バイナリ不足で停止しています。専用ストア登録と Stripe テストカタログは作成済みです。実ログイン、課金のライフサイクル、運用審査とストア提出は未検証で、請求やストア公開は行っていません。
+公開カタログ PWA は https://aya.lazying.art/westicker/ で利用できます。ネイティブ版は Google Play 内部テストと Apple TestFlight 向けです。正確な配信状況と検証範囲はリリース記録をご覧ください。AI 制作、ログイン、課金、販売はこのベータでは無効です。
 
 ## 引用
 

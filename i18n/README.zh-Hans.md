@@ -6,7 +6,7 @@
 
 *你的角色，日常的小表情。*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 独立的表情创作工坊：可以欣赏阿芽与伙伴们的作品，也能创建自己的角色与表情系列。默认作品无需登录即可浏览，个人素材在私有工作区处理。已有 AYA 商店保持不变。
 
@@ -15,6 +15,12 @@
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## 创作工坊
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## 项目结构
 
-React/Vite 前端，Python API 与任务进程，SQLite 数据库，Capacitor Android/iOS 工程及 Mac Catalyst 配置。源代码与私有运行数据分离。目前应用界面为英文，表情文字支持三种语言。
+Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 独立使用 React/Vite。私有创作原型使用 Python 和 SQLite。界面为英文，表情文字支持中英日三种语言。
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## 验证结果
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## 发布状态
 
-当前是可运行的本地原型，并非已上线服务。Android 调试版和 iOS 模拟器构建通过。原生支付适配已实现但未开放收费；Mac Catalyst 因依赖缺少对应二进制而受阻。独立商店记录和 Stripe 测试目录已建立，正式登录、支付生命周期、审核运营与商店提交仍待验证。没有向用户收费或发布商店版本。
+公开目录 PWA 已上线：https://aya.lazying.art/westicker/。原生目录版本面向 Google Play 内测与 Apple TestFlight，具体可用状态和测试限制见发布记录。这些测试版尚未开放 AI 创作、登录、订阅与创作者销售，不代表完整创作服务已经上线。
 
 ## 引用
 

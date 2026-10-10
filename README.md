@@ -6,7 +6,7 @@
 
 *Your character. Everyday expressions.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 An independent sticker studio for Aya and friends, personal characters and creator collections. Browse the default artwork without signing in; use a private workspace to prepare your own. The existing AYA shop is unchanged.
 
@@ -15,6 +15,12 @@ An independent sticker studio for Aya and friends, personal characters and creat
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](docs/screenshots/native-android.png) | ![Native iOS](docs/screenshots/native-ios.png) |
+
+[Native beta scope](docs/native-catalog-beta.md) · [Creator roadmap](docs/native-creator-plan.md) · [Bandwidth](docs/catalog-bandwidth.md)
 
 ## The Studio
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## Inside
 
-React/Vite frontend, Python API and worker, SQLite, Capacitor Android/iOS and Mac Catalyst configuration. Source and private runtime data are separate. The interface is currently English; sticker lettering supports three languages.
+Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a separate React/Vite PWA. The private creator prototype uses Python and SQLite. The interface is English; sticker lettering supports Chinese, English and Japanese.
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](docs/integration-handoff.md) |
 
 ## Verification
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## Release Status
 
-Working local prototype, not a launched service. Android debug and iOS simulator builds pass. Native billing adapters are implemented but sales-disabled; Mac Catalyst is blocked by missing dependency binaries. Separate store records and a Stripe test catalog exist. Live login, billing lifecycle, moderation and store submission remain unqualified. No customer charge or store release occurred.
+The public catalog PWA is live at https://aya.lazying.art/westicker/. Native catalog builds are prepared for Google Play internal testing and Apple TestFlight; see the release record for exact availability and QA limits. Creator AI, login, subscriptions and marketplace sales remain unqualified and disabled in these betas. This is not a completed creator-service launch.
 
 ## Citation
 

@@ -6,7 +6,7 @@
 
 *Votre personnage, vos petites expressions du quotidien.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Un studio indépendant pour Aya et ses amis, vos personnages et vos collections. Les créations par défaut sont visibles sans connexion ; les photos personnelles restent dans un espace privé. La boutique AYA existante est inchangée.
 
@@ -15,6 +15,12 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## Le studio
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## Architecture
 
-React/Vite, API et worker Python, SQLite, projets Capacitor Android/iOS et configuration Mac Catalyst. Code et données privées sont séparés. L’interface est actuellement anglaise ; les textes des stickers existent en trois langues.
+Android natif en Kotlin/Jetpack Compose, iOS/macOS en SwiftUI et PWA séparée en React/Vite. Le prototype privé de création utilise Python et SQLite. Interface anglaise, textes des stickers en chinois, anglais et japonais.
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## Vérification
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## État de publication
 
-Prototype local fonctionnel, pas un service lancé. Les builds Android de débogage et iOS simulateur passent. Les adaptateurs d’achat natif sont implémentés, mais les ventes restent désactivées. Mac Catalyst est bloqué par des binaires de dépendances manquants. Les fiches propres à l’app et le catalogue Stripe de test existent. Connexion réelle, cycle de facturation, modération et soumission restent à valider. Aucun client facturé ni publication en boutique.
+Le catalogue PWA est en ligne sur https://aya.lazying.art/westicker/. Les versions natives visent les tests internes Google Play et Apple TestFlight ; disponibilité et limites de validation figurent dans le suivi des versions. Création IA, connexion, abonnements et ventes restent désactivés dans ces bêtas.
 
 ## Citation
 

@@ -97,12 +97,18 @@ def private_write(path, data):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["status", "register-bundle", "profile"])
+    parser.add_argument("action", choices=["status", "register-bundle", "profile", "certificates"])
     parser.add_argument("--config", required=True, type=Path)
+    parser.add_argument("--platform", choices=["ios", "macos"], default="ios")
     args = parser.parse_args()
     config = json.loads(args.config.expanduser().read_text())
     root = Path(config["state"]).expanduser()
     api = Apple(config)
+    if args.action == "certificates":
+        print(json.dumps([{k: c["attributes"].get(k) for k in
+                           ["certificateType", "expirationDate", "serialNumber"]} | {"id": c["id"]}
+                          for c in api.list("certificates")], indent=2))
+        return
     bundles = api.list("bundleIds", identifier=BUNDLE)
     apps = api.list("apps", bundleId=BUNDLE)
     if len(bundles) > 1 or len(apps) > 1:
@@ -124,15 +130,16 @@ def main():
         certificate = api.call("/v1/certificates/" + certificate_id)["data"]
         if certificate["attributes"]["certificateType"] != "DISTRIBUTION":
             raise RuntimeError("Expected an Apple Distribution certificate")
-        name = "WeSticker App Store"
-        profiles = api.list("profiles", name=name, profileType="IOS_APP_STORE")
+        profile_type = "IOS_APP_STORE" if args.platform == "ios" else "MAC_APP_STORE"
+        name = "WeSticker App Store" if args.platform == "ios" else "WeSticker Mac App Store"
+        profiles = api.list("profiles", name=name, profileType=profile_type)
         if not profiles:
-            intent = root / "profile-intent.json"
+            intent = root / ("profile-intent.json" if args.platform == "ios" else "mac-profile-intent.json")
             if intent.exists():
                 raise RuntimeError("Earlier profile creation is unresolved")
             private_write(intent, {"bundle": BUNDLE, "created": time.time()})
             profile = api.call("/v1/profiles", {"data": {
-                "type": "profiles", "attributes": {"name": name, "profileType": "IOS_APP_STORE"},
+                "type": "profiles", "attributes": {"name": name, "profileType": profile_type},
                 "relationships": {"bundleId": {"data": {"type": "bundleIds", "id": bundles[0]["id"]}},
                                   "certificates": {"data": [{"type": "certificates", "id": certificate_id}]}}}})["data"]
         elif len(profiles) == 1:
@@ -144,8 +151,8 @@ def main():
             raise RuntimeError("Profile belongs to another app")
         if profile["attributes"]["profileState"] != "ACTIVE":
             raise RuntimeError("Profile is not active")
-        private_write(root / "profile.json", profile)
-        dest = root / (BUNDLE + ".mobileprovision")
+        private_write(root / ("profile.json" if args.platform == "ios" else "mac-profile.json"), profile)
+        dest = root / (BUNDLE + (".mobileprovision" if args.platform == "ios" else ".provisionprofile"))
         dest.write_bytes(base64.b64decode(profile["attributes"]["profileContent"]))
         dest.chmod(0o600)
     summary = {"bundle": BUNDLE, "bundle_ids": [b["id"] for b in bundles],

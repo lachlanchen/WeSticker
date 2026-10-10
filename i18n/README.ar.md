@@ -6,7 +6,7 @@
 
 *شخصيتك، وتعابيرك الصغيرة كل يوم.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 استوديو مستقل لملصقات Aya وأصدقائها ولشخصيات المستخدمين ومجموعاتهم. يمكن مشاهدة الأعمال الافتراضية دون تسجيل الدخول، بينما تُعالج الصور الشخصية في مساحة خاصة. متجر AYA الحالي لم يتغير.
 
@@ -15,6 +15,12 @@
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## الاستوديو
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## البنية
 
-واجهة React/Vite وAPI وعامل Python وقاعدة SQLite ومشروعا Capacitor Android/iOS وإعداد Mac Catalyst. المصدر منفصل عن بيانات التشغيل الخاصة. الواجهة حالياً بالإنجليزية ونصوص الملصقات بثلاث لغات.
+تطبيق Android أصلي باستخدام Kotlin/Jetpack Compose وتطبيقا iOS/macOS باستخدام SwiftUI، مع PWA منفصلة بـ React/Vite. نموذج الإنشاء الخاص يستخدم Python وSQLite. الواجهة بالإنجليزية ونصوص الملصقات بالصينية والإنجليزية واليابانية.
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## التحقق
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## حالة الإصدار
 
-نموذج محلي يعمل، وليس خدمة منشورة. نجح بناء Android للتصحيح وiOS للمحاكي. نُفذت موصلات الشراء الأصلية لكن البيع معطل. بناء Mac Catalyst متوقف بسبب غياب ملفات ثنائية متوافقة في التبعيات. أُنشئت سجلات مستقلة في المتاجر وكتالوج Stripe للاختبار. ما زال الدخول الفعلي ودورة الدفع والإشراف والتقديم للمتاجر بحاجة إلى التحقق. لم تُفرض رسوم على العملاء ولم يصدر التطبيق في المتاجر.
+كتالوج PWA العام متاح على https://aya.lazying.art/westicker/. الإصدارات الأصلية مخصصة لاختبارات Google Play الداخلية وApple TestFlight؛ سجل الإصدار يوضح التوفر وحدود التحقق. إنشاء الذكاء الاصطناعي وتسجيل الدخول والاشتراكات والمبيعات معطلة في هذه النسخ التجريبية.
 
 ## الاستشهاد
 

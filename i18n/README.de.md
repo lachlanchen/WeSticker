@@ -6,7 +6,7 @@
 
 *Deine Figur. Kleine Gefühle für jeden Tag.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creator-Sammlungen. Standardmotive sind ohne Anmeldung sichtbar; persönliche Fotos bleiben im privaten Arbeitsbereich. Der bestehende AYA-Shop wird nicht verändert.
 
@@ -15,6 +15,12 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## Das Studio
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## Aufbau
 
-React/Vite, Python-API und Worker, SQLite, Capacitor-Projekte für Android/iOS und Mac-Catalyst-Konfiguration. Quellcode und private Laufzeitdaten sind getrennt. Oberfläche derzeit Englisch, Stickertexte in drei Sprachen.
+Native Android-App mit Kotlin/Jetpack Compose, iOS/macOS mit SwiftUI und separate React/Vite-PWA. Der private Erstellungsprototyp nutzt Python und SQLite. Oberfläche Englisch; Stickertexte Chinesisch, Englisch und Japanisch.
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## Prüfung
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## Veröffentlichungsstand
 
-Funktionsfähiger lokaler Prototyp, kein veröffentlichter Dienst. Android-Debug- und iOS-Simulator-Builds erfolgreich. Native Zahlungsadapter sind implementiert, Verkäufe aber deaktiviert. Mac Catalyst wird durch fehlende Plattform-Binärdateien der Abhängigkeiten blockiert. Eigene Store-Einträge und ein Stripe-Testkatalog existieren. Live-Anmeldung, Zahlungslebenszyklus, Moderation und Store-Einreichung sind noch nicht qualifiziert. Keine Kundenabbuchung oder Store-Veröffentlichung.
+Die öffentliche Katalog-PWA ist unter https://aya.lazying.art/westicker/ verfügbar. Native Katalogversionen sind für interne Google-Play-Tests und Apple TestFlight vorgesehen. Verfügbarkeit und Testgrenzen stehen im Release-Protokoll. KI-Erstellung, Anmeldung, Abonnements und Verkauf bleiben in diesen Betas deaktiviert.
 
 ## Zitieren
 

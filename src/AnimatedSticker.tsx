@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Sticker } from "./api";
+import { previewTransfer } from "./previewQueue";
 
 export function AnimatedSticker({
   sticker,
@@ -12,16 +13,20 @@ export function AnimatedSticker({
     [source, setSource] = useState(sticker.poster);
   useEffect(() => {
     let active = true;
+    let cancel: (() => void) | undefined;
     setSource(sticker.poster);
     if (!playing) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
-          const preload = new Image();
-          preload.onload = () => {
-            if (active) setSource(sticker.gif);
-          };
-          preload.src = sticker.gif;
+          const bounds = ref.current?.getBoundingClientRect();
+          cancel = previewTransfer(
+            sticker.motion || sticker.gif,
+            () => {
+              if (active) setSource(sticker.motion || sticker.gif);
+            },
+            bounds ? Math.max(0, bounds.top) + bounds.left / 10_000 : 0,
+          );
           observer.disconnect();
         }
       },
@@ -30,9 +35,10 @@ export function AnimatedSticker({
     if (ref.current) observer.observe(ref.current);
     return () => {
       active = false;
+      cancel?.();
       observer.disconnect();
     };
-  }, [sticker.gif, sticker.poster, playing]);
+  }, [sticker.gif, sticker.motion, sticker.poster, playing]);
   return (
     <img
       ref={ref}

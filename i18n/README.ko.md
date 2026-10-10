@@ -6,7 +6,7 @@
 
 *나만의 캐릭터로 전하는 일상의 마음.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드는 독립 스튜디오입니다. 기본 작품은 로그인 없이 볼 수 있으며 개인 자료는 비공개 작업 공간에서 처리합니다. 기존 AYA 상점은 변경하지 않았습니다.
 
@@ -15,6 +15,12 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## 스튜디오
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## 구성
 
-React/Vite, Python API와 워커, SQLite, Capacitor Android/iOS 및 Mac Catalyst 설정을 사용합니다. 소스와 비공개 실행 데이터를 분리합니다. 현재 화면은 영어이고 스티커 문구는 세 언어를 지원합니다.
+Android는 Kotlin/Jetpack Compose, iOS/macOS는 SwiftUI 네이티브 앱입니다. 별도 PWA는 React/Vite, 비공개 제작 시제품은 Python과 SQLite를 사용합니다. 화면은 영어이며 스티커 문구는 중국어·영어·일본어입니다.
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## 검증
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## 출시 상태
 
-작동하는 로컬 프로토타입이며 출시된 서비스는 아닙니다. Android 디버그 및 iOS 시뮬레이터 빌드를 통과했습니다. 네이티브 결제 어댑터는 구현했지만 판매는 비활성화 상태입니다. Mac Catalyst는 지원 바이너리가 없는 의존성 때문에 차단되었습니다. 전용 스토어 기록과 Stripe 테스트 카탈로그는 생성했습니다. 실제 로그인·결제 수명 주기 검증, 운영 심사와 스토어 제출이 남아 있으며 고객 청구나 스토어 출시는 없었습니다.
+공개 카탈로그 PWA는 https://aya.lazying.art/westicker/ 에서 운영됩니다. 네이티브 카탈로그는 Google Play 내부 테스트와 Apple TestFlight용입니다. 정확한 배포 상태와 검증 제한은 릴리스 기록을 확인하세요. AI 제작, 로그인, 구독과 판매는 베타에서 비활성화되어 있습니다.
 
 ## 인용
 

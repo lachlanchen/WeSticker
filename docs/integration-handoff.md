@@ -7,7 +7,8 @@ Owned files are this repository only. Existing AYA storefront, EchoMind identity
 Bunko adapters, store releases and billing products were not modified.
 Independent Apple and Google app records now exist. WeSticker Stripe test-mode
 prices were provisioned without any customer charge. Provider identifiers and
-receipts are private. No store binary was uploaded or submitted.
+receipts are private. Native catalog betas have now been uploaded; their exact
+distribution status is in [release readiness](release-readiness.md).
 
 ## Central LazyingArt account owner
 
@@ -79,8 +80,10 @@ receipts, restore purchases, subscription management and store notifications.
 Native StoreKit 2 and Play Billing bridges, a separate native plans UI and fresh
 server verification now exist; see [native billing](native-billing.md).
 Purchases remain disabled until actual store lifecycle tests pass. Stripe
-checkout remains unavailable in native shells. Native sign-in and download
-permissions also need device tests. No submission has occurred.
+checkout remains unavailable in native builds. The bridge implementation belongs
+to the preserved prototype, not the current SwiftUI/Compose catalog beta.
+Port purchase UI and system-browser login to the native hosts, then perform
+real provider lifecycle tests before enabling creator subscriptions.
 
 ## Sources checked
 

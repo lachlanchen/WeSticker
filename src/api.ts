@@ -30,6 +30,7 @@ export type Sticker = {
   label: string;
   gif: string;
   poster: string;
+  motion?: string;
 };
 export type Pack = {
   id: string;

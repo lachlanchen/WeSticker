@@ -41,7 +41,15 @@ databases, WeChat cookies, store records, or browser profiles.
 | `server/native_billing.py`, `src/NativePlans.tsx` | Account-bound Apple/Google verification and native-only purchase UI |
 | `server/market.py` | Frozen reviewed exports, preview and entitlement-gated ZIPs |
 | `server/wechat.py`, `worker/` | Draft-only ticket and isolated browser agent |
-| `android/`, `ios/` | Capacitor native projects; iOS includes Mac Catalyst configuration |
+| `android/` | Native Kotlin/Jetpack Compose catalog beta |
+| `apple/`, `macos/` | Shared SwiftUI source with separate native iOS and macOS targets |
+| `ios/`, `prototype/` | Preserved earlier Capacitor prototype and billing bridges; not distributed as current native apps |
+
+The public `/westicker/` PWA and native beta expose only the approved catalog,
+preview, favorites and individual GIF save/share. The creator product loop
+above is the separate local web prototype and planned native expansion, not
+an assertion that all seven steps are available in build 3. See the
+[native creator plan](native-creator-plan.md).
 
 ## Proposed subscriptions
 

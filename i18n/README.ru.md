@@ -6,7 +6,7 @@
 
 *Ваш персонаж. Эмоции на каждый день.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)](../docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Независимая студия стикеров Aya и друзей, личных персонажей и авторских наборов. Стандартные работы доступны без входа; личные фотографии обрабатываются в закрытой рабочей области. Существующий магазин AYA не изменён.
 
@@ -15,6 +15,12 @@
 | [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=kofi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ![WeSticker](../docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android](../docs/screenshots/native-android.png) | ![Native iOS](../docs/screenshots/native-ios.png) |
+
+[Native beta scope](../docs/native-catalog-beta.md) · [Creator roadmap](../docs/native-creator-plan.md) · [Bandwidth](../docs/catalog-bandwidth.md)
 
 ## Студия
 
@@ -41,13 +47,13 @@ python3 scripts/dev.py start
 
 ## Архитектура
 
-React/Vite, Python API и worker, SQLite, проекты Capacitor Android/iOS и настройки Mac Catalyst. Код отделён от закрытых данных. Интерфейс пока английский, тексты стикеров доступны на трёх языках.
+Нативный Android на Kotlin/Jetpack Compose, iOS/macOS на SwiftUI и отдельная PWA на React/Vite. Закрытый прототип создания использует Python и SQLite. Интерфейс английский; тексты стикеров на китайском, английском и японском.
 
 | Path | Document |
 | --- | --- |
 | `src/`, `server/` | [Architecture](../docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](../docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness](../docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness](../docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](../docs/integration-handoff.md) |
 
 ## Проверки
@@ -64,7 +70,7 @@ npm run test:browser
 
 ## Статус выпуска
 
-Рабочий локальный прототип, не запущенный сервис. Сборки Android debug и симулятора iOS проходят. Адаптеры встроенных покупок реализованы, но продажи отключены. Mac Catalyst заблокирован отсутствием нужных бинарных зависимостей. Созданы отдельные записи магазинов и тестовый каталог Stripe. Рабочий вход, жизненный цикл платежей, модерация и отправка в магазины ещё не проверены. Списаний и публикаций в магазинах не было.
+Публичная PWA каталога доступна: https://aya.lazying.art/westicker/. Нативные версии предназначены для внутренних тестов Google Play и Apple TestFlight; точный статус и ограничения указаны в журнале выпуска. Создание с ИИ, вход, подписки и продажи в этих бета-версиях отключены.
 
 ## Цитирование
 

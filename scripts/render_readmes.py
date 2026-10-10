@@ -54,13 +54,19 @@ for code, t in translations.items():
 
 *{t["tag"]}*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Local_prototype-ED477A)]({prefix}docs/release-readiness.md) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)]({prefix}docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 {t["intro"]}
 
 {support}
 
 ![WeSticker]({prefix}docs/screenshots/discover.png)
+
+| Android / Compose | iOS / SwiftUI |
+| --- | --- |
+| ![Native Android]({prefix}docs/screenshots/native-android.png) | ![Native iOS]({prefix}docs/screenshots/native-ios.png) |
+
+[Native beta scope]({prefix}docs/native-catalog-beta.md) · [Creator roadmap]({prefix}docs/native-creator-plan.md) · [Bandwidth]({prefix}docs/catalog-bandwidth.md)
 
 ## {h[0]}
 
@@ -86,7 +92,7 @@ for code, t in translations.items():
 | --- | --- |
 | `src/`, `server/` | [Architecture]({prefix}docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment]({prefix}docs/deployment.md) |
-| `android/`, `ios/` | [Release readiness]({prefix}docs/release-readiness.md) |
+| `android/`, `apple/`, `macos/` | [Release readiness]({prefix}docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff]({prefix}docs/integration-handoff.md) |
 
 ## {h[4]}
