@@ -1,6 +1,6 @@
 # Native Guest Chat And Navigation
 
-Replacement candidates: iOS 1.0(10), macOS 1.0(8), Android 1.0(9).
+Delivered internal releases: iOS 1.0(10), macOS 1.0(8), Android 1.0(9).
 The preceding iOS/Android 8 UI is superseded. No formal review or purchases.
 
 ## Actual Delivery
@@ -15,8 +15,10 @@ The preceding iOS/Android 8 UI is superseded. No formal review or purchases.
 - iOS 1.0(9): uploaded before screenshot review found the composer occluded despite
   passing existence assertions. Provider readback confirms it is not in the
   internal group. Preserve the failed artifact; local source changes do not fix it.
-- macOS 1.0(8): corrected source archived; installer export is blocked by the
-  existing signing keychain being locked. No upload. Desktop GUI QA is unqualified:
+- macOS 1.0(8): corrected source archived/exported and installer signature verified;
+  Apple reports VALID, IN_BETA_TESTING, present in WeSticker Internal, one tester.
+  The existing installer credential resolved the locked keychain without replacing
+  any identity or changing security. Desktop GUI QA is unqualified:
   XCTest previously stalled and a bounded source-matched probe could not capture
   its window in the SSH GUI session. Failed probe evidence is preserved; it is
   not evidence of a product rendering defect. No app redesign was made for it.
@@ -25,6 +27,11 @@ Evidence is under `.runtime/releases/{android-1.0-9,ios-1.0-10,macos-1.0-8}`.
 Apple artifacts and full XCTest results are also retained on the existing build
 Mac under `~/Projects/WeSticker-build/releases`. No physical-device qualification
 or native purchase was performed in this round.
+All four binaries (APK, AAB, IPA, PKG) were copied to the owner's existing
+`Share/WeSticker/2026-10-11-clean-chat` sync folder and their hashes verified.
+This establishes local sync-folder copies, not independent cloud acknowledgement.
+Owned native build/test processes and simulators are stopped; shared store-browser
+sessions and other projects' devices remain untouched.
 
 ## Native Scope
 

@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Trạng thái phát hành
 
-Các bản dựng ứng viên thay thế cho ứng dụng native: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Chưa xác nhận việc phân phối cho đến khi có biên nhận xử lý của cửa hàng ứng dụng và phân phối nội bộ. Một lần thử nghiệm hoạt ảnh cục bộ đã thành công, nhưng tính năng tạo hoạt ảnh công khai vẫn ngoại tuyến cho đến khi vòng đời dịch vụ được kiểm chứng. Đăng nhập qua mạng xã hội, mua hàng trong ứng dụng native và thanh toán web vẫn bị tắt cho đến khi vượt qua kiểm chứng đầu cuối.
+Các bản thử nghiệm nội bộ: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Một lần thử nghiệm hoạt ảnh cục bộ đã thành công, nhưng tính năng tạo hoạt ảnh công khai vẫn ngoại tuyến cho đến khi vòng đời dịch vụ được kiểm chứng. Đăng nhập qua mạng xã hội, mua hàng trong ứng dụng native và thanh toán web vẫn bị tắt cho đến khi vượt qua kiểm chứng đầu cuối.
 
 ## Trích dẫn
 

@@ -1,7 +1,7 @@
 # Release Readiness
 
 Current web release: [clean guest chat and Library, 2026-10-11](clean-chat-release-20261011.md).
-The [native replacement candidates](native-guest-chat-20261011.md) track native
+The [native internal test builds](native-guest-chat-20261011.md) track native
 builds separately. The independent HTTPS creator origin has real password
 sign-in and conversational chat without login. AgInTi image generation passed
 one real-provider qualification and is enabled. A local animation canary passed,

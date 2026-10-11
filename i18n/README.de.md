@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Veröffentlichungsstand
 
-Neue native Build-Kandidaten als Ersatz: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Ihre Verteilung ist erst mit Belegen zur Store-Verarbeitung und internen Verteilung bestätigt. Ein lokaler Animationstest war erfolgreich; die öffentliche Animationserzeugung bleibt jedoch bis zur Qualifikation des Dienstlebenszyklus offline. Anmeldung über soziale Anbieter, native In-App-Käufe und Webzahlungen bleiben bis zur erfolgreichen Ende-zu-Ende-Prüfung deaktiviert.
+Interne Testversionen: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Ein lokaler Animationstest war erfolgreich; die öffentliche Animationserzeugung bleibt jedoch bis zur Qualifikation des Dienstlebenszyklus offline. Anmeldung über soziale Anbieter, native In-App-Käufe und Webzahlungen bleiben bis zur erfolgreichen Ende-zu-Ende-Prüfung deaktiviert.
 
 ## Zitieren
 

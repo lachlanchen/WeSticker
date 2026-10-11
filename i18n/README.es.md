@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Estado de publicación
 
-Compilaciones nativas candidatas de reemplazo: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Su distribución no está confirmada hasta disponer de los comprobantes de procesamiento en las tiendas y de distribución interna. Una prueba piloto local de animación fue satisfactoria, pero la animación pública sigue fuera de servicio hasta validar el ciclo de vida del servicio. El inicio de sesión con proveedores sociales, las compras integradas en las aplicaciones nativas y los pagos web siguen deshabilitados hasta superar la validación de extremo a extremo.
+Versiones de prueba internas: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Una prueba piloto local de animación fue satisfactoria, pero la animación pública sigue fuera de servicio hasta validar el ciclo de vida del servicio. El inicio de sesión con proveedores sociales, las compras integradas en las aplicaciones nativas y los pagos web siguen deshabilitados hasta superar la validación de extremo a extremo.
 
 ## Cita
 
