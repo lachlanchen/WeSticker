@@ -9,7 +9,7 @@ customer content and runtime addresses remain in private handoffs.
 | Default stickers visible without login | Live public catalog, 10 packs and 156 animations; three lettering languages | Preserve public access during creator changes |
 | Compact pack list with GIFs immediately visible | Implemented and browser-tested; native GIF play/pause/resume pixel checks passed; compact PWA headers deployed | Native compact-header verification |
 | Independent app and PWA | Independent HTTPS origin; native SwiftUI iOS/macOS and Compose Android | Keep platform parity; no WebView replacement |
-| Test-build delivery | Android 12 internal; iOS 13 and macOS 10 in internal TestFlight | One cumulative successor after current changes qualify |
+| Test-build delivery | Android 13 internal with compact toolbar; iOS 13 and macOS 10 in internal TestFlight | Apple compact-toolbar successors and ongoing service qualification |
 | One root login outside tabs | Implemented on web and native; intended destination and draft preserved | Retest after provider completion |
 | Google, Apple, GitHub and LazyingArt login | LazyingArt and Google-through-LazyingArt verified end to end | Central Apple existing-account linking and GitHub/provider routing qualification |
 | Create and Agent merged into chat | Conversation-first Create, references, editable revisioned sticker plan and explicit application | Keep chat uncluttered and complete real render delivery tests |
@@ -39,6 +39,7 @@ customer content and runtime addresses remain in private handoffs.
 
 - [Current release readiness](release-readiness.md)
 - [Native test-build delivery](native-protected-create-20261011.md)
+- [Compact native successor](compact-native-release-20261012.md)
 - [Social login qualification](social-auth-qualification-20261011.md)
 - [Stripe qualification](stripe-qualification.md)
 - [Chat-led studio](chat-studio-20261011.md)
