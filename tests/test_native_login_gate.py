@@ -139,6 +139,19 @@ def test_browser_cancellation_clears_root_gate_and_returns_to_catalog():
     assert "activity.clearAuthenticationResult();cloud.cancelLogin();authDestination=null;tab=0" in kotlin
 
 
+def test_android_callback_is_consumed_after_exchange_not_before_suspend():
+    root = (ANDROID / "CreatorStudio.kt").read_text()
+    activity = (ANDROID / "MainActivity.kt").read_text()
+    cloud = (ANDROID / "CloudStudio.kt").read_text()
+    result = root.split("if(activity?.authResult!=null)", 1)[1].split("else if", 1)[0]
+    assert result.index("cloud.finishLogin(uri)") < result.index("activity.clearAuthenticationResult()")
+    assert "if(activity.authResult==uri)" in result
+    assert "catch (e: kotlinx.coroutines.CancellationException) { throw e }" in cloud
+    assert "else if (awaitingAuthResult && authResult == null)" in activity
+    intent = activity.split("override fun onNewIntent", 1)[1].split("override fun onCreate", 1)[0]
+    assert intent.index("awaitingAuthResult = false") < intent.index("authResult = it")
+
+
 def test_authenticated_composer_keeps_explicit_layout_and_consent():
     swift = (APPLE / "CloudStudio.swift").read_text()
     kotlin = (ANDROID / "CloudStudio.kt").read_text()

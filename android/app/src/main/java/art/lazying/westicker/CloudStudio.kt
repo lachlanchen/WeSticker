@@ -154,7 +154,10 @@ class CloudStudioStore(val context: Context) {
     suspend fun api(path: String, body: JSONObject? = null, method: String? = null): JSONObject = JSONObject(String(bytes(path, body?.toString()?.toByteArray(), method), Charsets.UTF_8))
     suspend fun run(block: suspend () -> Unit) {
         if (busy) return; busy = true; error = null
-        try { block() } catch (e: Exception) { error = e.message ?: "Request failed" } finally { busy = false }
+        try { block() }
+        catch (e: kotlinx.coroutines.CancellationException) { throw e }
+        catch (e: Exception) { error = e.message ?: "Request failed" }
+        finally { busy = false }
     }
     suspend fun refresh() {
         providers = emptyList()

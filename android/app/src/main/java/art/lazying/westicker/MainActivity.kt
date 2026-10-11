@@ -56,18 +56,28 @@ class MainActivity : ComponentActivity() {
         private set
     var authCancelled by mutableStateOf(false)
         private set
+    private var awaitingAuthResult = false
     private val authLauncher = AuthTabIntent.registerActivityResultLauncher(this) { result ->
-        if (result.resultCode == AuthTabIntent.RESULT_OK) authResult = result.resultUri
-        else authCancelled = true
+        if (result.resultCode == AuthTabIntent.RESULT_OK && result.resultUri != null) {
+            awaitingAuthResult = false
+            authResult = result.resultUri
+        } else if (awaitingAuthResult && authResult == null) {
+            awaitingAuthResult = false
+            authCancelled = true
+        }
     }
     fun beginAuthentication(url: String) {
         authResult = null; authCancelled = false
+        awaitingAuthResult = true
         AuthTabIntent.Builder().build().launch(authLauncher, Uri.parse(url), "art.lazying.westicker")
     }
-    fun clearAuthenticationResult() { authResult = null; authCancelled = false }
+    fun clearAuthenticationResult() { awaitingAuthResult = false; authResult = null; authCancelled = false }
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent.data?.takeIf { it.scheme == "art.lazying.westicker" && it.host == "auth" && it.path == "/complete" }?.let { authResult = it }
+        intent.data?.takeIf { it.scheme == "art.lazying.westicker" && it.host == "auth" && it.path == "/complete" }?.let {
+            awaitingAuthResult = false
+            authResult = it
+        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

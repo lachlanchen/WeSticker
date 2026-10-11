@@ -146,7 +146,12 @@ class CreatorStore(private val context: Context) {
     val signIn: (StudioProvider) -> Unit = { provider -> scope.launch { cloud.run { requireNotNull(activity).beginAuthentication(cloud.startLogin(provider)) } } }
     LaunchedEffect(activity?.authResult, activity?.authCancelled) {
         while(cloud.busy) kotlinx.coroutines.delay(50)
-        if(activity?.authResult!=null){val uri=activity.authResult!!;activity.clearAuthenticationResult();cloud.run{cloud.finishLogin(uri)}}
+        if(activity?.authResult!=null){
+            val uri=activity.authResult!!
+            cloud.run{cloud.finishLogin(uri)}
+            // Consuming an effect key before the exchange suspends cancels it.
+            if(activity.authResult==uri) activity.clearAuthenticationResult()
+        }
         else if(activity?.authCancelled==true){activity.clearAuthenticationResult();cloud.cancelLogin();authDestination=null;tab=0}
     }
     LaunchedEffect(cloud.signedIn) {
