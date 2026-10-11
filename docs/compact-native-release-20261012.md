@@ -33,9 +33,21 @@ without downloading or duplicating an SDK.
 
 ## Apple
 
-The current delivered Apple builds remain iOS 13 and macOS 10 until their
-successor receipts are recorded here. Compact-toolbar source typechecks passed;
-the coordinated Apple runtime and TestFlight checks are in progress.
+iOS 1.0 (14) and macOS 1.0 (11) are VALID and IN_BETA_TESTING in the existing
+internal group. Corrected iOS 14 passed six simulator XCTest cases, zero
+failures, including full leading-title width and the visible chat composer.
+macOS 11 passed universal build/signature checks and its AppKit GIF pixel test
+(8 playing / 1 paused / 8 resumed); full packaged-window QA remains unqualified.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| iOS 14 IPA | `b8c0c22867422b191500177cda0a730a37c44f1687b302ec4aab81e422f3c905` |
+| macOS 11 PKG | `a5fd4a1f19667ff155c4f65700574e7b9618c97cea927024f2a31d71cfdef229` |
+
+Receipts are in `.runtime/releases/ios-1.0-14/testflight.json` and
+`macos-1.0-11/testflight.json`. The same verified artifacts are locally copied
+to Nutstore `Share/WeSticker/2026-10-12-compact-workspace/`. Provider delivery,
+local copying and cloud synchronization are distinct checks.
 
 See [the implementation and source checks](native-compact-toolbar-20261012.md),
 [previous delivery](native-protected-create-20261011.md), and

@@ -1,19 +1,44 @@
 # Native Protected Create
 
-Current unified-auth delivery, 2026-10-12. This supersedes the anonymous-chat
-entry policy and interim tab-level login UI, not their historical receipts.
-No formal review, purchases or sales activation are authorized.
+Current unified-auth and compact-toolbar delivery, 2026-10-12. This supersedes
+the anonymous-chat entry policy and interim tab-level login UI, not their
+historical receipts.
+These build-delivery checks did not include formal review, purchases or sales activation.
 
 ## Current Delivery
 
 | Platform | Current Build | Verified Delivery | Receipt under `.runtime/releases/` |
 | --- | --- | --- | --- |
-| Android | 1.0 (12) | Available to internal testers; not reviewed | `android-1.0-12/play-receipt.json` and `.png` |
-| iOS | 1.0 (13) | VALID / IN_BETA_TESTING; WeSticker Internal, one tester | `ios-1.0-13/testflight.json` |
-| macOS | 1.0 (10) | VALID / IN_BETA_TESTING; WeSticker Internal, one tester | `macos-1.0-10/testflight.json` |
+| Android | 1.0 (13) | Available to internal testers; not reviewed | `android-1.0-13/play-receipt.json` and `.png` |
+| iOS | 1.0 (14) | VALID / IN_BETA_TESTING; WeSticker Internal, one tester | `ios-1.0-14/testflight.json` |
+| macOS | 1.0 (11) | VALID / IN_BETA_TESTING; WeSticker Internal, one tester | `macos-1.0-11/testflight.json` |
 
-These are the only current candidates. Prior builds are explicitly historical
-below. Provider discovery changes do not require another binary.
+These are the current compact candidates; all three are internally available.
+Prior qualification is explicitly historical below. Provider discovery changes
+do not require another binary.
+
+## Current Qualification and Evidence
+
+[Native Compact Toolbar](native-compact-toolbar-20261012.md) records the exact
+artifact hashes, reviewed current screenshot paths, preserved first iOS14
+failure and Apple GUI limitations. Source checkpoint `f1848be` plus the tested
+three-file Apple title/harness correction is the final native input; its hashes
+are in `.runtime/native-compact-toolbar-20261012/apple-corrected-source-sha256.txt`.
+
+Current checks: 33 native source contracts passed; Android13 exact-APK QA passed
+with GIF 5/1/5; corrected iOS14 passed six simulator XCTest cases with zero
+failures in 263.863 seconds. macOS11 passed universal archive/export, signatures
+and the bounded native GIF component test (8/1/8). A full macOS layout pass is
+not claimed because peer keychain dialogs obstruct the shared GUI session.
+
+Current artifacts are locally copied and hash-verified in
+`Share/WeSticker/2026-10-12-compact-workspace/`, not the older unified-auth or
+protected-create folders. Cloud synchronization is not independently confirmed.
+Current iOS captures are under `ios-1.0-14/qa-images/`; Android captures are under
+`android-1.0-13/qa/`. Four-provider and authenticated Apple fixture screenshots
+are labelled fixtures, not live issuer qualification.
+The owned simulator, fixture and GIF helper are stopped; existing signing
+keychains are locked again. Shared browser, VM and peer GUI state are preserved.
 
 ## Current Source
 
@@ -37,9 +62,12 @@ below. Provider discovery changes do not require another binary.
 - The explicit SwiftUI scroll/composer VStack and Compose keyboard insets remain.
   There is no native Stripe checkout link. Native sales remain disabled.
 
-## Current Qualification
+## Historical Unified-Auth Qualification
 
-Final source checkpoint: `052f2f0de78660ba2b51ef46fe5cfbded4b2d240`.
+The remainder of this section records Android12/iOS13/macOS10, before compact
+toolbars. These receipts and screenshots are retained, not current UI evidence.
+
+Historical source checkpoint: `052f2f0de78660ba2b51ef46fe5cfbded4b2d240`.
 Native input hashes: `.runtime/native-shared-auth-20261012/source-sha256-052f2f0.txt`.
 The older checksum snapshot is retained for held-candidate provenance only.
 
@@ -48,8 +76,8 @@ native purchase contracts, fixture discovery and stopped-simulator cleanup.
 Receipt: `.runtime/native-shared-auth-20261012/source-contracts.xml`.
 Kotlin recovery42 and the cached-SDK Compose Account typecheck passed. Swift root,
 cloud and release-test parser checks passed. These checks are not runtime UI or
-live OAuth receipts. The final candidates are Android12, iOS13 and macOS10;
-All three are internally available. Additional qualified providers are a
+live OAuth receipts. That round's final candidates were Android12, iOS13 and
+macOS10; all three were internally available. Additional qualified providers are a
 server-discovery change and do not require another binary.
 
 Android12's exact signed APK passed the shared-root public navigation, dismissal,
@@ -67,7 +95,7 @@ Android12 APK SHA-256:
 `75ec7cec58f920050af9dc78604aa888d9a1cf0bc0e0b29b37ddca354483ae02`.
 Android12 AAB SHA-256:
 `2b8a263faed46fd37e8921e500ced4eac2fd43c178e97f7b6d130dc50a306eee`.
-Current reviewed captures: `android-1.0-12/qa/creator.png` (live root auth),
+That round's reviewed captures: `android-1.0-12/qa/creator.png` (live root auth),
 `qa/01-catalog.png` (public starting view), and `qa/library-to-login.png`.
 
 iOS13 is archived/exported from the final source. All six XCTest cases passed
@@ -97,10 +125,10 @@ No new Mac GUI-pass claim: the existing
 SSH AppKit/SwiftUI capture limitation remains, without another probe or redesign.
 Both existing app and installer keychains are locked again.
 
-## Current Screenshots
+## Historical Unified-Auth Screenshots
 
 Android12's reviewed root auth, catalog and Library-entry captures are under
-`android-1.0-12/qa/` as listed above. Current iOS13 captures, visually reviewed
+`android-1.0-12/qa/` as listed above. Historical iOS13 captures, visually reviewed
 under `ios-1.0-13/qa-images/`:
 
 - Live shared root auth: `E5C0E5F5-495D-4345-857D-2FB1224A0BC5.png`.
@@ -113,9 +141,9 @@ under `ios-1.0-13/qa-images/`:
 Live discovery advertised LazyingArt only at capture. Four-provider and
 authenticated layout screenshots are not live OAuth qualification receipts.
 
-## Current Sync and Cleanup
+## Historical Unified-Auth Sync and Cleanup
 
-Current Android12 APK/AAB, iOS13 IPA and macOS10 PKG are copied and hash-verified
+The Android12 APK/AAB, iOS13 IPA and macOS10 PKG were copied and hash-verified
 in the owner's `Share/WeSticker/2026-10-12-unified-auth/` Nutstore folder, alongside
 per-platform evidence. This proves local folder contents, not completed cloud
 synchronization. Final provider receipts are included in each release folder.
@@ -126,7 +154,7 @@ app and installer keychains are locked. No owned build, app, emulator, simulator
 or fixture server remains running. Shared store browser/VM and other projects
 are preserved. Final host check: 56 GiB available RAM; swap70/135 GiB.
 
-Current source hashes and both 28-test JUnit receipts are under
+That round's source hashes and both 28-test JUnit receipts are under
 `.runtime/native-shared-auth-20261012/`; the final repeat passed in 1.77 seconds.
 Reviewed capture hashes are in `reviewed-screenshots-sha256.txt` there.
 
@@ -134,16 +162,17 @@ Reviewed capture hashes are in `reviewed-screenshots-sha256.txt` there.
 .venv/bin/python -m pytest -q tests/test_native_login_gate.py tests/test_native_ui_fixture.py tests/test_native_purchase_clients.py tests/test_native_catalog.py
 ```
 
-Current UI runners: `scripts/android_smoke.py --creator --account` against the
+That round's UI runners: `scripts/android_smoke.py --creator --account` against the
 exact Android12 APK, and `scripts/apple_release_qa.py ios --build 13` against the
 source-matched Apple candidate. Complete logs and artifact manifests are retained
 under `.runtime/releases/<platform>-1.0-<build>/`.
 
 No real OAuth account, model call or purchase was used for this release QA. The
 previous disposable native identity was already deleted. Parent owns social
-qualification, web/backend, README/translations and all commits. Since source
-checkpoint `052f2f0`, this worker changed only this tracked delivery doc; runtime
-receipts are private and no worker commit was made.
+qualification, web/backend, README/translations and all commits. The close-out
+for that round changed only this tracked delivery doc after `052f2f0`; subsequent
+compact-toolbar changes and their test evidence are linked above. Runtime
+receipts remain private and no worker commit was made.
 
 ## Historical Held Candidates
 
@@ -237,7 +266,7 @@ its failed probe is retained, not relabeled as a product failure or GUI pass.
 The old `Share/WeSticker/2026-10-12-protected-create/` Nutstore folder contains
 only that earlier Android10/iOS11/macOS9 delivery. It is not the current folder.
 
-## Source Scope
+## Historical Unified-Auth Source Scope
 
 Exact cumulative worker file scope (20 paths, including removals):
 

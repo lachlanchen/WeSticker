@@ -7,9 +7,9 @@ customer content and runtime addresses remain in private handoffs.
 | Owner requirement | Verified state | Work still required |
 | --- | --- | --- |
 | Default stickers visible without login | Live public catalog, 10 packs and 156 animations; three lettering languages | Preserve public access during creator changes |
-| Compact pack list with GIFs immediately visible | Implemented and browser-tested; native GIF play/pause/resume pixel checks passed; compact PWA headers deployed | Native compact-header verification |
+| Compact pack list with GIFs immediately visible | Implemented and browser-tested; native GIF play/pause/resume pixel checks passed; compact PWA and native headers delivered | Full installed macOS window QA remains separate from its native GIF component test |
 | Independent app and PWA | Independent HTTPS origin; native SwiftUI iOS/macOS and Compose Android | Keep platform parity; no WebView replacement |
-| Test-build delivery | Android 13 internal with compact toolbar; iOS 13 and macOS 10 in internal TestFlight | Apple compact-toolbar successors and ongoing service qualification |
+| Test-build delivery | Android 13 internal; iOS 14 and macOS 11 VALID and in internal TestFlight with compact toolbars | Ongoing service qualification; not public store approval |
 | One root login outside tabs | Implemented on web and native; intended destination and draft preserved | Retest after provider completion |
 | Google, Apple, GitHub and LazyingArt login | LazyingArt, Google and Apple-through-LazyingArt verified end to end; Apple explicit linking and a separate Apple-only login retain the original account | GitHub activation and supported direct-provider routing qualification |
 | Create and Agent merged into chat | Conversation-first Create, references, editable revisioned sticker plan and explicit application | Keep chat uncluttered and complete real render delivery tests |
@@ -19,10 +19,10 @@ customer content and runtime addresses remain in private handoffs.
 | Real animated sticker generation | Local provider canary passed | Qualify available runtime lifecycle before public activation |
 | Web subscription payments | Live app-owned catalog/Portal/webhook and recovery timer active; web subscriptions enabled after actual sandbox lifecycle and live nonfinancial delivery tests | Ongoing monitoring; native IAP and advanced plan changes remain separate |
 | Subscriber default sticker downloads | Deployed app-owned access routing; all three language ZIPs, guest/expiry and network errors tested; 30 production archives pass CRC checks; live mobile login route verified | Keep AYA orders independent |
-| Native subscriptions | StoreKit/Play UI and server verification implemented; fixtures passed | Real app-specific store setup, purchase/restore/lifecycle qualification |
+| Native subscriptions | StoreKit/Play UI and server verification implemented; fixtures passed; genuine signed Apple Sandbox TEST delivery succeeded | Financial sandbox/license purchase, restore and lifecycle qualification; TEST is not a purchase |
 | User-created packs for sale | Moderation and payout gates implemented | Verified creator onboarding and commercial operations before enabling sales |
 | Optional WeChat draft uploader | Save-only safety contracts implemented | Customer-isolated browser/container lifecycle and live draft qualification |
-| Clean, lively tab layouts | Compact PWA top-left headers, restrained motion and reviewed mobile/desktop screenshots deployed | Native cumulative candidate |
+| Clean, lively tab layouts | Compact top-left headers, restrained motion and reviewed PWA/Android/iOS screenshots; exact Android APK and six iOS XCTest cases passed | Full installed macOS layout capture; preserve platform parity |
 | Multilingual app | Three sticker-lettering languages; English interface | Interface localization remains distinct from 11-language README documentation |
 | Commit, push, evidence and handoff | Previous verified source and release receipts retained | Update with each completed tested change; never label fixtures as live purchases |
 
