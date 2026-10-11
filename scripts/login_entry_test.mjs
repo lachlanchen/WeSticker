@@ -179,6 +179,21 @@ try {
     .click();
   await page.getByRole("heading", { name: "What shall we make?" }).waitFor();
   assert.equal(await page.locator(".sign-in-screen").count(), 0);
+  if (await page.locator(".public-catalog").count()) {
+    assert.equal(await page.locator(".topbar").count(), 0);
+    assert.equal(await page.locator("h1").count(), 1);
+    for (const width of [320, 390, 768, 1360]) {
+      await page.setViewportSize({ width, height: 900 });
+      const heading = await page.locator(".creator-heading h1").boundingBox();
+      const workspace = await page.locator(".creator-workspace").boundingBox();
+      assert(heading && workspace && heading.y < 70);
+      assert(Math.abs(heading.x - workspace.x) <= 1);
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+    }
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    assert.equal(await page.locator(".chat-welcome").evaluate(e => getComputedStyle(e).animationName), "none");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+  }
   const verifier = randomBytes(32).toString("base64url");
   const challenge = createHash("sha256").update(verifier).digest("base64url");
   const device = await browser.newContext({ serviceWorkers: "block" });
@@ -255,6 +270,7 @@ try {
           "native completion outside chat with real isolated PKCE exchange",
           "back to browsing",
           "registration returns to chat",
+          "single compact top-left workspace heading and reduced-motion support",
           "password visibility",
           "expired session returns to login",
           "no anonymous requests",

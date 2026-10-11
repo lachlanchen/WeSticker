@@ -13,13 +13,15 @@
   gap: 12px;
 }
 .creator-heading {
-  padding: 8px 0 20px;
+  min-height: 48px;
+  padding: 0 0 10px;
   border-bottom: 1px solid #dce7ea;
   margin-bottom: 16px;
 }
 .creator-heading h1 {
-  font-size: 25px;
-  margin: 0 0 4px;
+  font-size: 21px;
+  line-height: 1.3;
+  margin: 0;
 }
 .creator-heading span {
   font-size: 13px;
@@ -157,10 +159,10 @@
 .studio-login .button { min-height: 48px; text-decoration: none; }
 .login-legal { display: flex; gap: 20px; font-size: 13px; margin-top: 12px; }
 .login-legal a { color: #58727d; }
-.chat-welcome { max-width: 720px; margin: 48px auto 20px; }
-.chat-welcome h2 { font-size: 24px; }
-.chat-welcome > img { border-radius: 18px; }
-.chat-suggestions { display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0; }
+.chat-welcome { max-width: 720px; margin: 28px auto 20px; }
+.chat-welcome h2 { font-size: 22px; line-height: 1.35; margin: 16px 0; }
+.chat-welcome > img { width: 56px; height: 56px; border-radius: 12px; }
+.chat-suggestions { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0; }
 .chat-suggestions button { font-size: 13px; font-weight: 400; }
 .studio-pane-switch, .library-tabs { display: flex; gap: 4px; border-bottom: 1px solid #dce7ea; padding-bottom: 8px; }
 .library-tabs { margin-bottom: 20px; }

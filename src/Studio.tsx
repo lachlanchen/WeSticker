@@ -690,8 +690,8 @@ export function Studio({
                   <img
                     src={import.meta.env.BASE_URL + "icon-192.png"}
                     alt="Aya and Lala"
-                    width="80"
-                    height="80"
+                    width="56"
+                    height="56"
                   />
                   <h2>What shall we make?</h2>
                   <div className="chat-suggestions">

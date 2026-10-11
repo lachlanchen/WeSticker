@@ -199,17 +199,18 @@ export function PublicCatalog() {
           <a href="https://aya.lazying.art">Aya & Lala shop</a>
         </div>
       </aside>
-      <div className="main-shell">
-        <header className="topbar">
-          <strong>WeSticker</strong>
+      <div className={`main-shell ${protectedView ? "workspace-shell" : ""}`}>
+        {!protectedView && <header className="topbar catalog-toolbar">
+          <h1>{favorites ? "Saved" : "Stickers"}</h1>
           <button
             className="icon-button"
             aria-label="Saved collections"
+            title="Saved collections"
             onClick={() => setView(favorites ? "stickers" : "saved")}
           >
             <Heart fill={favorites ? "currentColor" : "none"} />
           </button>
-        </header>
+        </header>}
         <main>
           {view === "create" || view === "library" || view === "characters" ? (
             <Studio

@@ -207,6 +207,56 @@
 .public-catalog .main-shell {
   padding-bottom: 90px;
 }
+.public-catalog .catalog-toolbar {
+  height: 62px;
+}
+.catalog-toolbar h1 {
+  font-size: 21px;
+  line-height: 1.3;
+  margin: 0;
+}
+.workspace-shell > main {
+  padding-top: max(16px, env(safe-area-inset-top));
+  min-height: calc(100dvh - 90px);
+}
+.workspace-shell .account-workspace {
+  margin-left: 0;
+}
+.workspace-shell .creator-workspace:has(> .chat-welcome) {
+  min-height: calc(100dvh - 122px - env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+.workspace-shell .chat-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  flex: 1;
+  margin-bottom: 0;
+}
+.workspace-shell .chat-welcome .studio-composer {
+  width: 100%;
+  margin-top: auto;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .studio-bottom-nav button,
+  .creator-workspace button {
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  }
+  .studio-bottom-nav button:active > svg,
+  .creator-workspace .icon-button:active > svg {
+    transform: scale(0.92);
+  }
+  .chat-welcome,
+  .chat-exchange {
+    animation: workspace-arrive 180ms ease-out;
+  }
+  @keyframes workspace-arrive {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
 @media (min-width: 761px) {
   .studio-bottom-nav {
     left: 194px;

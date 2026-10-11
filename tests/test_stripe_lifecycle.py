@@ -294,6 +294,8 @@ def test_checkout_timeout_reuses_identical_durable_parameters(sandbox):
     assert call(s.client, "/api/billing/subscribe", body).status_code == 503
     assert call(s.client, "/api/billing/subscribe", body).status_code == 200
     assert attempts[0] == attempts[1]
+    assert attempts[0][0]["payment_method_types"] == ["card"]
+    assert "WeSticker Pocket: 3 credits each month." in attempts[0][0]["custom_text"]["submit"]["message"]
     assert call(s.client, "/api/billing/subscribe", body).status_code == 200
     assert len(attempts) == 2
 

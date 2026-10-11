@@ -20,13 +20,16 @@ def provision(api, mode):
         if error.code != "resource_missing":
             raise
         product = api.v1.products.create(
-            {"id": product_id, "name": "WeSticker Creator",
+            {"id": product_id, "name": "WeSticker",
              "metadata": {"app": "westicker", "catalog": "202610-v1"}},
             options={"idempotency_key": product_id},
         )
     if (product.metadata.to_dict().get("app") != "westicker" or not product.active
             or product.livemode != (mode == "live")):
         raise ValueError("Product ownership/mode mismatch")
+    if product.name == "WeSticker Creator":
+        # One shared product serves three tiers; show the selected tier at Checkout.
+        api.v1.products.update(product_id, {"name": "WeSticker"})
     prices = {}
     for plan in PLANS:
         lookup = "westicker_" + plan["id"] + "_monthly_202610_v1"

@@ -300,6 +300,24 @@ No production credential or sales flag changed.
 
 ## Remaining Release Gates
 
+### October 12 Production Preparation
+
+`scripts/prepare_stripe_runtime.py` now prepares only this app's three monthly
+Prices, dedicated Portal and exact webhook endpoint, recording the signing secret
+in a private receipt. It refuses an existing endpoint whose secret is unavailable
+instead of creating duplicates. Staged configuration keeps new sales closed and
+preserves unrelated authentication/native settings. The actual live preparation
+completed without creating customers, subscriptions or charges.
+
+The shared Product is named **WeSticker**, not **WeSticker Creator** for every
+tier. Checkout now states the selected plan and allowance explicitly. New Checkout
+attempts use the qualified card lane; pending attempts retain their original
+durable parameters. Prices and existing subscription terms do not change.
+
+`scripts/install_billing_reconciler.py` installs an app-owned bounded five-minute
+recovery timer. It does not create purchases and refuses to overwrite a different
+existing unit. Preparation is not yet a claim of activation or real-money receipt.
+
 The deployed runtime has no Stripe credentials. The isolated browser Checkout,
 Restore, Portal opening/cancellation and real-provider bounded-worker cases now
 passed; they do not qualify the deployed endpoint. Before sales authorization,

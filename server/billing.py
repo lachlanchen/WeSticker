@@ -625,7 +625,7 @@ def register_billing(app, cfg):
         if not price:
             abort(503, description="This plan is not on sale yet.")
         api = client()
-        verified_price(cfg, api, price, for_sale=True)
+        selected_plan = verified_price(cfg, api, price, for_sale=True)
         if user["customer"]:
             reconcile_customer(cfg, api, user["id"], user["customer"])
         with database(cfg) as db:
@@ -709,6 +709,7 @@ def register_billing(app, cfg):
         bind_customer(cfg, api, user["id"], customer)
         params = {
                 "mode": "subscription",
+                "payment_method_types": ["card"],
                 "customer": customer,
                 "line_items": [{"price": price, "quantity": 1}],
                 "client_reference_id": user["id"],
@@ -723,6 +724,11 @@ def register_billing(app, cfg):
                 "success_url": cfg["origin"] + "/?billing=return",
                 "cancel_url": cfg["origin"] + "/?billing=cancelled",
                 "adaptive_pricing": {"enabled": False},
+                "custom_text": {"submit": {"message": (
+                    f"WeSticker {selected_plan['name']}: "
+                    f"{selected_plan['credits']} credits each month. "
+                    "Renews monthly until cancelled. Saved creations remain after expiry."
+                )}},
                 "expires_at": int(time.time()) + 3600,
             }
         with database(cfg) as db:
