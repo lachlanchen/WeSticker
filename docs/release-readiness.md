@@ -7,12 +7,14 @@ and Google-through-LazyingArt sign-in, with login outside the conversation. AgIn
 one real-provider qualification and is enabled. A local animation canary passed,
 but public animation remains disabled until its runtime lifecycle is available.
 Social-provider app qualification is recorded [separately](social-auth-qualification-20261011.md).
-Payments remain gated; a real Stripe sandbox Checkout and
-Portal test passed, and genuine public signed webhook delivery passed against
-isolated test state. Production payment activation remains separate. The tables below preserve
+Web subscriptions are now enabled; actual Stripe sandbox Checkout, Portal and
+lifecycle tests passed, followed by genuine live nonfinancial signed webhook
+delivery and app-owned production activation. Native IAP remains gated pending its
+own store qualification. The tables below preserve
 the earlier October 10 release record, not the current build numbers or gates.
 
-**Status: public catalog and login/chat beta, not ready for customer payments.**
+**Status: public catalog, protected creator beta and live web subscriptions.
+Native IAP, public animation and creator marketplace are not yet fully qualified.**
 
 ## Current Entry Flow
 

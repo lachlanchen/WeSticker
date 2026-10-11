@@ -33,7 +33,8 @@ export function PublicCatalog() {
   const [view, setView] = useState<
     "stickers" | "create" | "library" | "characters" | "saved" | "account"
   >(
-    new URLSearchParams(location.search).get("view") === "account"
+    new URLSearchParams(location.search).get("view") === "account" ||
+      ["billing", "account"].some((key) => new URLSearchParams(location.search).has(key))
       ? "account"
       : new URLSearchParams(location.search).get("view") === "library"
         ? "library"

@@ -721,8 +721,8 @@ def register_billing(app, cfg):
                 "subscription_data": {
                     "metadata": {"app": "westicker", "owner": user["id"], "attempt": attempt}
                 },
-                "success_url": cfg["origin"] + "/?billing=return",
-                "cancel_url": cfg["origin"] + "/?billing=cancelled",
+                "success_url": cfg["origin"] + "/?view=account&billing=return",
+                "cancel_url": cfg["origin"] + "/?view=account&billing=cancelled",
                 "adaptive_pricing": {"enabled": False},
                 "custom_text": {"submit": {"message": (
                     f"WeSticker {selected_plan['name']}: "
@@ -763,7 +763,7 @@ def register_billing(app, cfg):
                     or portal_cfg.get("features", {}).get("subscription_update", {}).get("enabled")):
                 raise ValueError("Unqualified portal configuration")
             result = api.v1.billing_portal.sessions.create(
-                {"customer": user["customer"], "configuration": configuration, "return_url": cfg["origin"] + "/?account=1"}
+                {"customer": user["customer"], "configuration": configuration, "return_url": cfg["origin"] + "/?view=account"}
             )
         except (ValueError, stripe.StripeError):
             abort(503, description="Billing management needs configuration review.")

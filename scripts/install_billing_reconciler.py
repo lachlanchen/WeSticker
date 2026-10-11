@@ -16,7 +16,7 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-WorkingDirectory="{root}/.runtime/creator-current"
+WorkingDirectory={root}/.runtime/creator-current
 Environment="WESTICKER_CONFIG={config}"
 ExecStart="{root}/.venv/bin/python" -m server.reconcile
 TimeoutStartSec=150
@@ -56,6 +56,7 @@ def main():
         path.write_text(text)
     subprocess.run(["systemctl", "--user", "daemon-reload"], check=True)
     subprocess.run(["systemctl", "--user", "enable", "--now", "westicker-billing-reconcile.timer"], check=True)
+    subprocess.run(["systemctl", "--user", "is-active", "--quiet", "westicker-billing-reconcile.timer"], check=True)
     print("WeSticker recovery timer installed; no purchase is created.")
 
 

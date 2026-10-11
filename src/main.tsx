@@ -47,7 +47,8 @@ function App() {
   const [boot, setBoot] = useState<Boot | null>(null),
     [packs, setPacks] = useState<Pack[]>([]),
     [view, setView] = useState<View>(
-      new URLSearchParams(location.search).get("view") === "account"
+      new URLSearchParams(location.search).get("view") === "account" ||
+        ["billing", "account"].some((key) => new URLSearchParams(location.search).has(key))
         ? "account"
         : new URLSearchParams(location.search).get("view") === "library"
           ? "library"
@@ -391,11 +392,12 @@ function App() {
               <div className="page-heading">
                 <div>
                   <span className="eyebrow teal">YOUR SPACE</span>
-                  <h1>Hello, {user?.name || "friend"}.</h1>
+                  <h1>Account</h1>
                 </div>
               </div>
               <section className="account-section">
                 <h2>Account & privacy</h2>
+                {boot && <WebPlans key={user.id} boot={boot} onUpdated={setBoot} />}
                 <dl>
                   <dt>Plan</dt>
                   <dd>{user?.plan || "Guest"}</dd>

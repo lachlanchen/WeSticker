@@ -11,6 +11,7 @@ export function WebPlans({ boot, onUpdated }: { boot: Boot; onUpdated: (boot: Bo
   const key = `westicker-checkout:${owner || "guest"}`;
   const active = useRef(true);
   const running = useRef(false);
+  const checkedReturn = useRef(false);
   const [status, setStatus] = useState<Status | null>(null);
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [busy, setBusy] = useState(false);
@@ -32,7 +33,24 @@ export function WebPlans({ boot, onUpdated }: { boot: Boot; onUpdated: (boot: Bo
   }
   useEffect(() => {
     active.current = true;
-    if (owner && !native) readStatus().catch(e => { if (active.current) setError(e.message); });
+    if (owner && !native) {
+      if (new URLSearchParams(location.search).get("billing") === "return" && !checkedReturn.current) {
+        checkedReturn.current = true;
+        void run(async () => {
+          // The URL is only a prompt to reconcile provider truth, never a grant.
+          await api("/api/billing/restore", {});
+          await readStatus();
+          const next = await api<Boot>("/api/bootstrap");
+          if (active.current && next.user?.id === owner) {
+            onUpdated(next);
+            const url = new URL(location.href);
+            url.searchParams.delete("billing");
+            url.searchParams.set("view", "account");
+            history.replaceState(null, "", url);
+          }
+        });
+      } else readStatus().catch(e => { if (active.current) setError(e.message); });
+    }
     return () => { active.current = false; };
   }, []);
 
@@ -65,6 +83,7 @@ export function WebPlans({ boot, onUpdated }: { boot: Boot; onUpdated: (boot: Bo
     <h3>Plans & credits</h3>
     <p>{boot.user?.plan || "Free"} · {boot.user?.credits || 0} credits</p>
     {error && <p role="alert">{error}</p>}
+    {busy && <p role="status">Checking your billing status…</p>}
     {!boot.capabilities.web_checkout && <p>New subscriptions are not open yet.</p>}
     <div className="web-plan-list">
       {boot.plans.map(plan => <div className="web-plan-row" key={plan.id}>

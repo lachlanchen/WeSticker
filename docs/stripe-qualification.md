@@ -1,7 +1,8 @@
 # Stripe Subscription Qualification
 
-Updated 2026-10-11. This work does not authorize live charges, refunds, sales,
-native external-payment links, creator payouts, or another app's catalog changes.
+Updated 2026-10-12. The owner's request to complete payments now includes activation
+of the existing app-owned web subscription contract. Native external-payment links,
+creator payouts, and other app catalogs remain outside this rollout.
 
 ## Contract And Configuration
 
@@ -298,7 +299,7 @@ hashes and cleanup. The private `stripe_webhook_probe.py` and
 `stripe_webhook_edge.py` helpers preserve the exact-run and rollback guards.
 No production credential or sales flag changed.
 
-## Remaining Release Gates
+## Current Production State
 
 ### October 12 Production Preparation
 
@@ -316,18 +317,35 @@ durable parameters. Prices and existing subscription terms do not change.
 
 `scripts/install_billing_reconciler.py` installs an app-owned bounded five-minute
 recovery timer. It does not create purchases and refuses to overwrite a different
-existing unit. Preparation is not yet a claim of activation or real-money receipt.
+existing unit. The actual timer is active and its initial recovery completed with
+zero errors. Installation verifies active state, not just the enable command.
 
-The deployed runtime has no Stripe credentials. The isolated browser Checkout,
-Restore, Portal opening/cancellation and real-provider bounded-worker cases now
-passed; they do not qualify the deployed endpoint. Before sales authorization,
-configure/prove its exact app-owned test webhook/secret and schedule the parent's
-worker with qualified credentials. Public delivery has passed in isolation;
-the deployed production endpoint, plan changes, dispute resolution and
-asynchronous payment methods remain unqualified. Resolve
-the hosted Pocket/Creator label discrepancy before opening sales. Keep
-`stripe_purchase_enabled=false` until explicit approval for the exact deployed
-contract. Native IAP and creator sales remain separate.
+Live web sales are now enabled for the existing USD monthly Pocket/Creator/Studio
+contract. The ordinary bootstrap reports `web_checkout=true`; native sales are
+unchanged. The live merchant reports charges and payouts enabled. Configuration
+was merged only for `stripe_*` keys, preserving authentication and native settings.
+
+The exact production webhook was separately tested with a genuine Stripe-signed
+**live `product.updated` event**, using only a temporary metadata marker on the
+app-owned Product. Its durable inbox reached `done`, with zero grants. Temporary
+event subscription/metadata were restored. This proves live signature and routing,
+not a live financial purchase. Paid initial/renewal/refund behavior is supported by
+the earlier actual **sandbox** evidence; no real card was charged for testing.
+
+Checkout and Portal returns open Account. A successful-return URL triggers server
+reconciliation, never grants based on the URL itself. Browser fixtures cover paid,
+unpaid, cancelled and Portal returns, with zero new Checkout requests. Previously
+reserved operations preserve their original parameters and identity.
+
+Backend snapshot `d720d57b94b16f11`, static release `1988216d324926fb`. Private
+activation, rollback and nonfinancial delivery receipts remain under
+`.runtime/creator-deploy/` and `.runtime/stripe-live-route/`.
+
+Remaining qualification is separate: native IAP, creator sales, subscription
+proration/plan changes and dispute-resolution policy. New web Checkouts currently
+use cards only; Portal plan changes remain disabled. Rollback closes
+`stripe_purchase_enabled` without removing verification, management, recovery,
+customer bindings or existing paid access.
 
 Provider references: [webhooks](https://docs.stripe.com/webhooks),
 [idempotency](https://docs.stripe.com/api/idempotent_requests),

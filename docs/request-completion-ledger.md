@@ -17,7 +17,7 @@ customer content and runtime addresses remain in private handoffs.
 | Free single generation and bounded paid packs | Server tier limits and one-image trial; quote/idempotency guards implemented | Verify actual subscription-delivered limits on each payment lane |
 | Real image generation | AgInTi real-provider canary passed; enabled | Preserve reference identity and per-user consent |
 | Real animated sticker generation | Local provider canary passed | Qualify available runtime lifecycle before public activation |
-| Web subscription payments | Real sandbox Checkout/Portal and signed public webhook delivery passed; live app-owned catalog/Portal/webhook prepared | Runtime activation and monitoring; no real-money test charge |
+| Web subscription payments | Live app-owned catalog/Portal/webhook and recovery timer active; web subscriptions enabled after actual sandbox lifecycle and live nonfinancial delivery tests | Ongoing monitoring; native IAP and advanced plan changes remain separate |
 | Native subscriptions | StoreKit/Play UI and server verification implemented; fixtures passed | Real app-specific store setup, purchase/restore/lifecycle qualification |
 | User-created packs for sale | Moderation and payout gates implemented | Verified creator onboarding and commercial operations before enabling sales |
 | Optional WeChat draft uploader | Save-only safety contracts implemented | Customer-isolated browser/container lifecycle and live draft qualification |

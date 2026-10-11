@@ -8,23 +8,29 @@ const out = '.runtime/web-billing-ui';
 await mkdir(out, {recursive: true});
 const browser = await chromium.launch({executablePath: '/usr/bin/google-chrome', headless: true});
 try {
-  for (const scenario of ['closed', 'lost-reply', 'bad-destination']) {
+  for (const scenario of ['closed', 'lost-reply', 'bad-destination', 'return-paid', 'return-unpaid', 'cancel-return', 'portal-return']) {
     const context = await browser.newContext({viewport: {width: 1360, height: 1000}, serviceWorkers: 'block'});
     const page = await context.newPage();
     const errors = [], submitted = [];
     page.on('pageerror', error => errors.push(error.message));
-    let attempts = [];
+    let attempts = [], reconciled = false, restoreCalls = 0;
     await page.route('**/api/**', async route => {
       const pathname = new URL(route.request().url()).pathname;
       let data = {}, status = 200;
       if (pathname === '/api/bootstrap') data = {
-        user: {id: 'billing-ui-fixture', name: 'Creator', plan: 'free', credits: 0, expires: 0, consented: 1},
+        user: {id: 'billing-ui-fixture', name: 'Creator', plan: reconciled ? 'pocket' : 'free',
+          credits: reconciled ? 3 : 0, expires: reconciled ? Date.now() / 1000 + 3600 : 0, consented: 1},
         csrf: 'fixture', providers: [], local_accounts: false, themes: {},
         capabilities: {web_checkout: scenario !== 'closed'},
         plans: [{id: 'pocket', name: 'Pocket', cents: 99, credits: 3, features: []},
           {id: 'creator', name: 'Creator', cents: 999, credits: 50, features: []}],
       };
       else if (pathname === '/api/billing/status') data = {attempts, manage: false};
+      else if (pathname === '/api/billing/restore') {
+        restoreCalls++;
+        reconciled = scenario === 'return-paid';
+        data = {ok: true};
+      }
       else if (pathname === '/api/billing/subscribe') {
         const body = route.request().postDataJSON();
         submitted.push(body);
@@ -48,8 +54,23 @@ try {
       }
       await page.locator('.web-plan-row').first().waitFor();
     }
-    await openPlans();
-    if (scenario === 'closed') {
+    const returning = scenario.includes('return');
+    if (returning) {
+      const query = scenario === 'cancel-return' ? '?billing=cancelled' :
+        scenario === 'portal-return' ? '?account=1' : '?billing=return';
+      await page.goto(origin + query);
+      await page.getByRole('heading', {name: 'Account', exact: true}).waitFor();
+      await page.locator('.web-plan-row').first().waitFor();
+      if (scenario.startsWith('return-')) {
+        await page.waitForURL('**/?view=account');
+        assert.equal(restoreCalls, 1);
+      } else assert.equal(restoreCalls, 0);
+      assert(await page.locator('.web-plans').getByText(reconciled ? 'pocket · 3 credits' : 'free · 0 credits', {exact: true}).isVisible());
+      assert.deepEqual(submitted, []);
+    } else await openPlans();
+    if (returning) {
+      assert.equal(await page.locator('.sign-in-screen').count(), 0);
+    } else if (scenario === 'closed') {
       assert(await page.getByRole('button', {name: 'Choose', exact: true}).first().isDisabled());
     } else {
       await page.getByRole('button', {name: 'Choose', exact: true}).first().click();
@@ -74,6 +95,7 @@ try {
     await context.close();
   }
   await writeFile(`${out}/result.json`, JSON.stringify({passed: true, fixture_only: true,
-    tests: ['disabled sales', 'durable attempt after reload', 'no second checkout', 'URL pinning', 'mobile fit']}));
+    tests: ['disabled sales', 'durable attempt after reload', 'no second checkout', 'URL pinning', 'mobile fit',
+      'Checkout and Portal return to Account', 'return reconciles provider truth, not URL-based grants', 'cancellation never purchases']}));
   console.log('Web billing browser recovery passed; no provider payment made.');
 } finally {await browser.close();}
