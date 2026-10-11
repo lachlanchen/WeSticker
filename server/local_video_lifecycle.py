@@ -1,7 +1,7 @@
-"""Opt-in, cooperating-owner admission for the private canonical LocalVideoGen.
+"""Installed ownership and fenced admission for private canonical LocalVideoGen.
 
 No daemon, GPU import, automatic lease expiry/steal, or render POST lives here.
-The runtime owner must exclude non-cooperating Studio/API submitters separately.
+Canonical Studio/engine enforcement is required; a caller flock alone is not it.
 """
 
 from contextlib import contextmanager, nullcontext
@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
+import secrets
 import sqlite3
 import stat
 import subprocess
@@ -162,19 +163,24 @@ class Runtime:
         self.lock = self.private / "app-admission.lock"
         self.session = local_session()
 
-    def policy(self):
+    def policy(self, operation="admit"):
+        if operation not in {"admit", "observe", "drain"}:
+            raise ValueError("Unknown lifecycle permission")
         try:
             value = private_json(self.private / "westicker-lifecycle-policy.json")
             if (value.get("version") != 1 or value.get("owner") != "westicker"
-                    or value.get("enabled") is not True
                     or value.get("exclusive") is not True
                     or str(self.root) != value.get("root")
-                    or value.get("allow_start") is not True
-                    or value.get("allow_stop") is not True):
-                raise ValueError("Installation policy is absent or disabled")
-            return value
+                    or any(type(value.get(key)) is not bool
+                           for key in ("enabled", "allow_start", "allow_stop"))):
+                raise ValueError("Installation policy is invalid")
         except (OSError, ValueError) as error:
-            raise Deferred("offline", "owner_policy", "On-demand startup is not installed or is disabled; no service was adopted.") from error
+            raise Deferred("offline", "owner_policy", "Runtime ownership policy is absent or unverifiable; no service was adopted.") from error
+        if operation == "admit" and not all(value[key] for key in ("enabled", "allow_start", "allow_stop")):
+            raise Deferred("offline", "owner_policy", "New animation admission is disabled; existing receipts remain recoverable.")
+        if operation == "drain" and not value["allow_stop"]:
+            raise Deferred("draining", "drain_revoked", "Owned cleanup permission is revoked; preserve the runtime for its owner's manual handoff.")
+        return value
 
     def environment(self):
         policy = self.policy()
@@ -219,10 +225,10 @@ class Runtime:
                 raise Deferred("blocked_resources", "driver_identity", "The approved driver bundle no longer matches the loaded kernel and hashes.") from error
         return env
 
-    def command(self, args, *, env=None, timeout=30, check=True):
+    def command(self, args, *, env=None, timeout=30, check=True, input=None):
         try:
             return subprocess.run(args, cwd=self.root, env=env, timeout=timeout,
-                                  check=check, capture_output=True, text=True)
+                                  check=check, capture_output=True, text=True, input=input)
         except (OSError, subprocess.SubprocessError) as error:
             raise Deferred("error", "runtime_command", "Canonical runtime operation failed; preserve its state/log and reconcile ownership.") from error
 
@@ -284,17 +290,126 @@ class Runtime:
         if settings.get("version") != 1 or not isinstance(settings.get("system_prompt"), str) or settings["system_prompt"].strip():
             raise Deferred("busy", "shared_prompt", "Shared renderer instructions need owner review.")
 
-    def ready(self, owned, *, new_submission=True):
-        self.policy()
+    def observe(self, owned):
+        """Verify a captured origin/instance, not readiness for another render."""
+        self.policy("observe")
         current = self.identities()
         if current != owned or set(current) != set(PORTS):
             raise Deferred("busy", "ownership", "The expected complete runtime identity is unavailable; no service was adopted.")
-        if new_submission:
-            resources(self.environment(), {current["comfyui"]["pid"]})
-            idle(self.session)
+        return current
+
+    def ready(self, owned, *, new_submission=True):
+        if not new_submission:
+            return self.observe(owned)
+        self.policy()
+        current = self.observe(owned)
+        resources(self.environment(), {current["comfyui"]["pid"]})
+        idle(self.session)
         health = get_json(self.session, "http://127.0.0.1:8190/api/health?deep=1")
         if not (health.get("connected") is True and health.get("ready") is True and health.get("model_status") == "verified"):
             raise Deferred("starting", "not_ready", "Model-verified deep readiness is not established.")
+
+    def headers(self, owned, fence):
+        try:
+            generation, token = fence["generation"], fence["token"]
+            if str(uuid.UUID(generation)) != generation or not re.fullmatch(r"[a-f0-9]{64}", token):
+                raise ValueError("Invalid lease credentials")
+            instances = {name: owned[name]["instance"] for name in PORTS}
+            if any(not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", value)
+                   for value in instances.values()):
+                raise ValueError("Invalid instance")
+        except (KeyError, TypeError, ValueError, AttributeError) as error:
+            raise Deferred("error", "fence_record", "The private canonical lease binding needs owner reconciliation.") from error
+        return {"X-H3-Lease-Owner": "westicker", "X-H3-Lease-Generation": generation,
+                "X-H3-Lease-Token": token, "X-H3-Studio-Instance": instances["webapp"],
+                "X-H3-Engine-Instance": instances["comfyui"]}
+
+    def fenced(self, owned, fence, method, path, *, payload=None):
+        self.observe(owned)
+        headers = self.headers(owned, fence)
+        try:
+            response = self.session.request(method, "http://127.0.0.1:8190" + path,
+                                            headers=headers, timeout=10,
+                                            **({"json": payload} if method == "POST" else {}))
+            response.raise_for_status()
+            value = response.json()
+        except (requests.RequestException, ValueError) as error:
+            raise Deferred("error", "fence_observation", "Canonical lease outcome is unverified; preserve its binding and reconcile without a new mutation.") from error
+        self.observe(owned)
+        self.check_binding(value, owned, fence)
+        return value
+
+    @staticmethod
+    def check_binding(value, owned, fence):
+        expected = {"version": 1, "owner": "westicker", "generation": fence["generation"],
+                    "studio_instance": owned["webapp"]["instance"],
+                    "engine_instance": owned["comfyui"]["instance"]}
+        if not isinstance(value, dict) or any(value.get(key) != item for key, item in expected.items()):
+            raise Deferred("error", "fence_binding", "The canonical reply does not match the saved lease and runtime instances.")
+
+    def claim(self, owned, fence, *, recover=False):
+        self.policy("observe" if recover else "admit")
+        result = self.fenced(owned, fence, "GET" if recover else "POST",
+                             "/api/admission" if recover else "/api/admission/claim", payload={})
+        if result.get("state") != "held":
+            raise Deferred("busy", "fence_not_held", "Canonical submission ownership is not held by this batch.")
+
+    def unload(self, owned, fence, maintenance, save, *, recover=False):
+        self.policy("observe" if recover else "admit")
+        try:
+            if str(uuid.UUID(maintenance["id"])) != maintenance["id"]:
+                raise ValueError("Invalid maintenance ID")
+        except (KeyError, TypeError, ValueError, AttributeError) as error:
+            raise Deferred("error", "maintenance_binding", "The original maintenance identity needs owner reconciliation.") from error
+        def observed(result):
+            self.maintenance_status(result, maintenance)
+            save()
+            if maintenance["state"] == "failed":
+                raise Deferred("error", "maintenance_failed", "The engine could not confirm unload completion; preserve the maintenance request.")
+        if not recover:
+            result = self.fenced(owned, fence, "POST", "/api/maintenance/unload",
+                                 payload={"maintenance_id": maintenance["id"]})
+            observed(result)
+        deadline = time.monotonic() + 60
+        while time.monotonic() < deadline:
+            result = self.fenced(owned, fence, "GET", "/api/maintenance/" + maintenance["id"])
+            observed(result)
+            if maintenance["state"] == "completed":
+                # Completion is necessary but never replaces actual resources.
+                env = self.environment()
+                resources(env, {owned["comfyui"]["pid"]})
+                self.command([str(self.root / "scripts/check_resources.sh")], env=env)
+                self.ready(owned)
+                self.claim(owned, fence, recover=True)
+                return
+            time.sleep(1)
+        raise Deferred("busy", "maintenance_pending", "Unload completion is unverified; no next render is admitted.")
+
+    @staticmethod
+    def maintenance_status(result, maintenance):
+        state = result.get("state")
+        if result.get("maintenance_id") != maintenance["id"] or state not in {"queued", "running", "completed", "failed"}:
+            raise Deferred("error", "maintenance_binding", "Unload acknowledgment does not match the original maintenance request.")
+        maintenance["state"] = state
+
+    def drain(self, owned, fence):
+        self.policy("drain")
+        result = self.fenced(owned, fence, "POST", "/api/admission/drain", payload={})
+        if result.get("state") != "draining":
+            raise Deferred("draining", "fence_not_draining", "Canonical mutations are not confirmed closed; no runtime was signalled.")
+
+    def release(self, owned, fence):
+        self.policy("drain")
+        self.ports_free()
+        result = self.command(["/usr/bin/python3", str(self.root / "scripts/runtime_admission.py"), "release"],
+                              input=json.dumps(self.headers(owned, fence)))
+        try:
+            value = json.loads(result.stdout)
+        except (TypeError, ValueError) as error:
+            raise Deferred("draining", "release_unverified", "The canonical offline release was not confirmed.") from error
+        self.check_binding(value, owned, fence)
+        if value.get("state") != "released":
+            raise Deferred("draining", "release_unverified", "The canonical offline release was not confirmed.")
 
     def start(self, record, save):
         self.policy()
@@ -320,12 +435,11 @@ class Runtime:
             save()
         record["state"] = "preparing"
         save()
-        self.ready(record["owned"])
 
-    def stop(self, owned):
+    def stop(self, owned, fence=None):
         if not owned:
             return
-        self.policy()
+        self.policy("drain")
         # Keep canonical Studio launches out while draining, then use its pidfd
         # identity helper because stop_webapp.sh has no expected-owner contract.
         with exclusive(self.root / "runtime/webapp-lifecycle.lock"):
@@ -335,7 +449,9 @@ class Runtime:
                 raise Deferred("draining", "partial_start", "Partial startup requires owner reconciliation; no broad cleanup.")
             idle(self.session)
             self.persisted_idle()
+            self.drain(owned, fence)
             web = owned["webapp"]
+            self.policy("drain")
             self.identity_command("webapp", "signal", "--expect-pid", str(web["pid"]),
                                   "--expect-instance", web["instance"], "--signal", "INT")
             deadline = time.monotonic() + 15
@@ -348,15 +464,17 @@ class Runtime:
                 raise Deferred("draining", "ownership_changed", "Studio state changed; the engine was preserved.")
             self.identity_command("webapp", "clear")
             engine = owned["comfyui"]
+            self.policy("drain")
             self.command([str(self.root / "scripts/stop_comfyui.sh"), "--expect-pid", str(engine["pid"]),
                           "--expect-instance", engine["instance"]], timeout=60)
             self.ports_free()
+            self.release(owned, fence)
 
     def after_boot(self, record):
         """Recover only pre-POST/finished work, never an uncertain provider job."""
         if (not record.get("boot_id") or record["boot_id"] == BOOT.read_text().strip()
                 or record.get("state") not in {"offline", "idle", "preparing", "starting", "draining"}
-                or record.get("provider")):
+                or record.get("provider") or record.get("fence")):
             return record
         if self.identities():
             raise Deferred("busy", "existing_runtime", "A live runtime must remain with its owner.")
@@ -369,7 +487,7 @@ def read_record(path):
     record = private_json(path) if path.exists() else {"version": 1, "owned": {}}
     if (record.get("version") != 1 or not isinstance(record.get("owned"), dict)
             or record.get("state", "offline") not in
-            {"offline", "idle", "preparing", "starting", "submitting", "monitoring", "draining", "error"}):
+            {"offline", "idle", "preparing", "starting", "claiming", "maintenance", "submitting", "monitoring", "draining", "error"}):
         raise Deferred("error", "admission_record", "The saved admission record needs owner reconciliation.")
     return record
 
@@ -382,6 +500,8 @@ class Admission:
         self.attempt = {"key": key, "fingerprint": fingerprint}
         if prior and prior != self.attempt:
             raise Deferred("busy", "reconcile_attempt", "The previous attempt still owns admission; reconcile its existing ID, never resubmit.")
+        if resume and (prior != self.attempt or not self.record.get("owned")):
+            raise Deferred("busy", "receipt_ownership", "The receipt has no matching managed runtime ownership; no replacement will be started or observed.")
         if self.record.get("state") in {"starting", "draining", "error"}:
             raise Deferred(self.record["state"], "reconcile_runtime", "The prior lifecycle operation needs owner reconciliation.")
         if prior and self.record.get("state") in {"submitting", "monitoring"} and not resume:
@@ -399,6 +519,35 @@ class Admission:
     def prepare(self):
         if not self.record.get("owned"):
             self.runtime.start(self.record, self.save)
+        fence = self.record.get("fence")
+        if not fence or fence.get("state") != "held":
+            recover = bool(fence)
+            if not fence:
+                fence = {"generation": str(uuid.uuid4()), "token": secrets.token_hex(32), "state": "claiming"}
+                self.record["fence"] = fence
+            self.record["state"] = "claiming"
+            self.save()
+            self.runtime.claim(self.record["owned"], fence, recover=recover)
+            fence["state"] = "held"
+            self.record["state"] = "preparing"
+            self.save()
+        if self.record.get("needs_unload"):
+            maintenance = self.record.get("maintenance")
+            recover = bool(maintenance)
+            if not maintenance:
+                maintenance = {"id": str(uuid.uuid4()), "state": "intent"}
+                self.record["maintenance"] = maintenance
+            self.record["state"] = "maintenance"
+            self.save()
+            def save_maintenance():
+                # A confirmed unload is safe to drain if a later cold gate
+                # fails. Pending/failed cleanup must retain its held state.
+                if maintenance["state"] == "completed":
+                    self.record["state"] = "preparing"
+                self.save()
+            self.runtime.unload(self.record["owned"], fence, maintenance, save_maintenance, recover=recover)
+            self.record["needs_unload"] = False
+            self.record.pop("maintenance", None)
         self.runtime.ready(self.record["owned"])
         self.record["state"] = "preparing"
         self.save()
@@ -407,8 +556,16 @@ class Admission:
         if self.record["state"] != "preparing":
             raise Deferred("busy", "duplicate_post", "This lease cannot authorize another render POST.")
         self.runtime.ready(self.record["owned"])
+        self.runtime.claim(self.record["owned"], self.record["fence"], recover=True)
+        headers = self.mutation_headers()
         self.record["state"] = "submitting"
         self.save()
+        return headers
+
+    def mutation_headers(self):
+        self.runtime.policy()
+        self.runtime.observe(self.record["owned"])
+        return self.runtime.headers(self.record["owned"], self.record.get("fence"))
 
     def receipt(self, provider):
         if self.record.get("provider", provider) != provider:
@@ -416,7 +573,14 @@ class Admission:
         self.record.update(state="monitoring", provider=provider)
         self.save()
 
+    def observe(self):
+        if self.record["state"] != "monitoring" or not self.record.get("provider"):
+            raise Deferred("busy", "receipt_required", "Observation requires the original provider receipt.")
+        self.runtime.observe(self.record.get("owned", {}))
+
     def complete(self):
+        if self.record["state"] == "monitoring":
+            self.record["needs_unload"] = True
         self.record.pop("provider", None)
         self.record.update(state="idle", attempt=None)
         self.save()
@@ -430,8 +594,10 @@ class Admission:
         self.record["state"] = "draining"
         self.save()
         try:
-            self.runtime.stop(self.record.get("owned", {}))
+            self.runtime.stop(self.record.get("owned", {}), self.record.get("fence"))
             self.record.update(state="offline", owned={})
+            for key in ("fence", "maintenance", "needs_unload"):
+                self.record.pop(key, None)
         except Exception as error:
             self.record["cleanup"] = getattr(error, "status", {"state": "error", "code": "cleanup_unverified"})
         self.save()
@@ -451,7 +617,7 @@ class JobAdmission:
     def item(self, cfg, key, fingerprint, *, resume=False):
         if cfg is not self.cfg or self.active or self.closed:
             raise Deferred("error", "job_lease", "The animation job lease is not available for this item.")
-        self.runtime.policy()
+        self.runtime.policy("observe" if resume else "admit")
         lease = Admission(self.runtime, key, fingerprint, resume)
         self.last = lease
         self.active = True
@@ -472,7 +638,9 @@ class JobAdmission:
 def job_admission(cfg):
     runtime = Runtime(cfg)
     try:
-        runtime.policy()
+        # The batch itself grants no submit authority; each new item rechecks
+        # admission, while an original receipt can recover after closure.
+        runtime.policy("observe")
         with exclusive(runtime.lock):
             batch = JobAdmission(runtime, cfg)
             try:
@@ -495,7 +663,7 @@ def admission(cfg, key, fingerprint, *, resume=False, batch=None):
         return
     runtime = Runtime(cfg)
     try:
-        runtime.policy()
+        runtime.policy("observe" if resume else "admit")
         with exclusive(runtime.lock):
             lease = Admission(runtime, key, fingerprint, resume)
             try:

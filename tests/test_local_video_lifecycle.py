@@ -41,7 +41,7 @@ class FakeRuntime:
         self.started = self.stopped = self.checked = 0
         self.changed = False
 
-    def policy(self):
+    def policy(self, operation="admit"):
         return {}
 
     def after_boot(self, record):
@@ -58,7 +58,22 @@ class FakeRuntime:
         if self.changed:
             raise life.Deferred("busy", "ownership", "Replaced runtime")
 
-    def stop(self, owned):
+    def observe(self, owned):
+        if self.changed:
+            raise life.Deferred("busy", "ownership", "Replaced runtime")
+
+    def headers(self, owned, fence):
+        return {"X-H3-Lease-Generation": fence["generation"]}
+
+    def claim(self, owned, fence, *, recover=False):
+        self.observe(owned)
+
+    def unload(self, owned, fence, maintenance, save, *, recover=False):
+        self.observe(owned)
+        maintenance["state"] = "completed"
+        save()
+
+    def stop(self, owned, fence=None):
         if self.changed:
             raise life.Deferred("draining", "ownership", "Replaced runtime")
         if owned:
@@ -375,6 +390,8 @@ def test_cleanup_uses_captured_pidfd_identity_and_expected_engine_args(runtime, 
     monkeypatch.setattr(runtime, "persisted_idle", lambda: None)
     monkeypatch.setattr(runtime, "ports_free", lambda: None)
     monkeypatch.setattr(life, "idle", lambda session: None)
+    monkeypatch.setattr(runtime, "drain", lambda *a: None)
+    monkeypatch.setattr(runtime, "release", lambda *a: None)
     monkeypatch.setattr(runtime, "identity_command", lambda *args: calls.append(args))
     monkeypatch.setattr(runtime, "command", lambda args, **kw: calls.append(tuple(args)))
     runtime.stop(owned)

@@ -120,7 +120,8 @@ def _run(cfg, job, item, source, base, folder, intent, receipt, fingerprint, ses
             canvas.convert("RGB").save(folder / "reference.png")
         with (folder / "reference.png").open("rb") as stream:
             uploaded = session.post(
-                base + "/api/uploads?kind=image", files={"file": stream}, timeout=120
+                base + "/api/uploads?kind=image", files={"file": stream}, timeout=120,
+                headers=lease.mutation_headers(),
             )
         uploaded.raise_for_status()
         token = uploaded.json()["token"]
@@ -185,12 +186,12 @@ def _run(cfg, job, item, source, base, folder, intent, receipt, fingerprint, ses
         )
         # Recheck ownership/resources/queues under the shared admission lock,
         # then durably reserve the uncertain-outcome slot before the sole POST.
-        lease.submitting()
+        headers = lease.submitting()
         atomic_json(intent, {"created": time.time(), "job": job["id"], "item": item["id"],
                             "fingerprint": fingerprint, "request_sha256": hashlib.sha256(
                                 (folder / "request.json").read_bytes()).hexdigest()})
         try:
-            result = session.post(base + "/api/renders", json=payload, timeout=120)
+            result = session.post(base + "/api/renders", json=payload, headers=headers, timeout=120)
             result.raise_for_status()
             data = result.json()
             provider = data["id"]
@@ -205,9 +206,13 @@ def _run(cfg, job, item, source, base, folder, intent, receipt, fingerprint, ses
     deadline = time.monotonic() + 3600
     try:
         while time.monotonic() < deadline:
+            if lease:
+                lease.observe()
             response = session.get(base + "/api/jobs/" + provider, timeout=30)
             response.raise_for_status()
             state = response.json()
+            if lease:
+                lease.observe()
             (folder / "status.json").write_text(json.dumps(state, indent=2))
             if state.get("status") in {"completed", "done", "succeeded"}:
                 break
@@ -223,6 +228,8 @@ def _run(cfg, job, item, source, base, folder, intent, receipt, fingerprint, ses
         video = folder / "original.mp4"
         if not video.exists():
             output_id = video_output(state)
+            if lease:
+                lease.observe()
             with session.get(
                 base + f"/api/jobs/{provider}/outputs/{output_id}?download=1",
                 stream=True,
@@ -236,6 +243,8 @@ def _run(cfg, job, item, source, base, folder, intent, receipt, fingerprint, ses
                         if total > 100_000_000:
                             raise ValueError("Unexpectedly large render.")
                         stream.write(chunk)
+            if lease:
+                lease.observe()
             (folder / "download.part").replace(video)
         subprocess.run(
             ["ffmpeg", "-v", "error", "-i", str(video), "-f", "null", "-"],

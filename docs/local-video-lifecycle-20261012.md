@@ -1,22 +1,27 @@
 # LocalVideoGen On-Demand Lifecycle
 
-## Current Scope
+## Current Status
 
-Implemented, fixture-tested, **not activated or live-start qualified**. No model
-render, service startup/shutdown, policy installation, driver change or peer
-cleanup was performed. Parent owns activation, API integration and any canary.
+Implementation and CPU fixtures only. **Public animation remains off; the new
+fenced lifecycle has not passed live GPU qualification.** No runtime startup,
+render, policy installation, driver change or peer cleanup was performed by this
+implementation task. The native billing worker currently owns the heavyweight
+lane with Play-enabled emulator 5592. GPU qualification must wait for an explicit
+handoff and fresh resource checks, not merely an apparently idle GPU.
 
-Owned files: `server/local_video.py`, `server/local_video_lifecycle.py`,
-`tests/test_local_video_lifecycle.py`, and this document. Canonical LocalVideoGen
-scripts and configuration remain unchanged. No commit by this worker.
+This worker owns `server/local_video_lifecycle.py`, `server/local_video.py`,
+`tests/test_local_video_lifecycle.py`, `tests/test_local_video_recovery.py`,
+`tests/test_local_video_fence.py`, and this document. Parent owns worker/API
+integration, public activation, native documentation and commits. The existing
+LocalVideoGen owner is implementing the canonical changes in its own repository;
+this worker has not modified that shared service's source or running processes.
 
-## Durable Policy, Bounded Lease
+## Durable Policy, Bounded Job
 
-The initial boot-bound 24-hour grant draft is superseded. Installation approval
-is durable across time and reboots; no daily operator renewal is required.
-An explicit app-owned installation supplies `local_video_runtime_root` and the
-existing canonical loopback URL, then installs this private owner-controlled
-file under the canonical root (no policy has been created by this work):
+Installation approval is durable across time and reboots, not a daily or
+boot-scoped operator grant. An app installation must explicitly configure
+`local_video_runtime_root`, the canonical `http://127.0.0.1:8190` origin, and this
+private owner-controlled file under the canonical root:
 
 ```json
 {
@@ -31,116 +36,238 @@ file under the canonical root (no policy has been created by this work):
 ```
 
 Filename: `runtime/private/westicker-lifecycle-policy.json`, regular file owned
-by the service UID, mode 0600, no symlink. `enabled: false` revokes admission.
-`exclusive` records the installation's cooperating-owner arrangement, not a
-claim that unmodified Studio/API writers automatically honor this lock. Those
-writers must use the same admission protocol or be excluded during app work.
-Canonical saved jobs, runnable series, shared prompt and live owners are checked
-without adopting or modifying them. This is not a global scheduler.
+by the service UID, mode 0600, no symlink. All permission flags must be booleans.
+Missing, malformed or non-private policy fails closed.
 
-The worker holds a nonblocking `app-admission.lock` across a complete serial
-animation job, including the intervals between items. Each item still has its
-own preparation, sole render POST, observation and output recovery. Its journal binds
-attempt, fingerprint, provider receipt and exact process identities. Observation
-is bounded to one hour; uncertainty retains the journal, not a stolen/expired
-lease or automatic second POST. Original receipt recovery remains possible.
+- New work requires `enabled`, `allow_start` and `allow_stop` all true.
+- Closing `enabled` or `allow_start` blocks new work, not observation of an
+  already-owned receipt or permitted cleanup.
+- `allow_stop: false` explicitly revokes cleanup. Observation still works;
+  cleanup records a draining/manual-handoff condition and sends no signal.
+- Policy validation for observation does not probe free memory, deep readiness,
+  model state or queue idleness. An original job may legitimately be running.
 
-After a reboot, proven-dead pre-POST or finished leases can recover automatically
-after canonical identity, port and persisted-work checks. Submitted/monitoring
-or otherwise uncertain work remains bound to its original attempt. An expired
-PID alone never authorizes signalling a replacement. Canonical startup clears
-its own proven-dead state under its existing locks.
+The worker holds a nonblocking `app-admission.lock` over a whole serial worker
+job. Each item has its own fingerprint, durable submission intent and provider
+receipt, with one render POST. Uncertainty retains these IDs; no expiry, new
+lease generation or automatic render retry replaces them. The runtime remains
+owned between items and drains once after the job, with no idle daemon.
 
-The worker now shares a `job_admission()` context across its serial items and
-drains once after the job. Standalone item recovery retains its original behavior.
-The context rejects nested items, other configuration objects and reuse after
-closure. Uncertain items retain their original journal; remaining credits are not
-refunded or another render submitted merely because a response was lost. A known
-pre-submission failure refunds only unfinished items through the existing worker.
+## Exact Receipt Observation
 
-This removes per-item runtime restarts in the implementation, but **live warm-model
-batch admission remains unqualified**. Resource checks still use the conservative
-cold-start thresholds. Cached memory after the first item may hold a later item;
-the canonical owner must supply or approve warm-state admission or safe unloading.
-Do not reduce thresholds based only on fixture success. Public animation remains
-off pending owner cooperation and a real lifecycle/batch test.
+Managed recovery requires the same saved attempt/fingerprint, provider ID and
+complete captured process identities. Before and after every job GET and output
+download, `Runtime.observe()` verifies both original services using canonical
+identity checks and loopback listeners. A missing, partial or replaced runtime
+is never adopted. A downloaded partial file is not promoted after an identity
+mismatch. Recovery does not start a replacement runtime or perform a new POST.
 
-Batch handoff caveat: `Runtime.ready()` currently applies the same 48 GiB RAM
-and 20,000 MiB GPU-free cold-start gates before each POST. An idle model cached
-by this app may legitimately occupy those resources, so merely moving the lease
-around a whole pack would cause later items to fail admission. The canonical
-owner must define a verified warm-state gate or a supported exact-owner unload
-between serial items, without repeatedly restarting the whole runtime. Do not
-lower thresholds arbitrarily or treat any allocated GPU memory as app-owned.
-Parent has taken ownership of both lifecycle modules and their tests for this
-batch extension; this worker will make no further module/test changes.
+`ready(new_submission=False)` is identity-only observation. Normal `ready()`
+still applies all admission, resource, idle and deep-model checks. These paths
+must not be interchanged to admit warm-model work.
+
+Lost-claim and lost-unload GET recovery also use observation permission at entry.
+A closed admission policy can still recover the original binding or persist a
+matching unload acknowledgment, but cannot pass subsequent dispatch readiness.
+The canonical owner's follow-up identified this additional boundary; both paths
+have dedicated regressions and no new mutation authority.
+
+Unmanaged historical receipts retain their prior read-only adapter behavior;
+they do not authorize startup or submission. Managed receipts missing their
+ownership journal fail closed. A fenced journal is not automatically cleared
+across reboot: uncertain ownership requires reconciliation, not a new runtime
+silently serving the original receipt.
+
+## Canonical Fence And Unload
+
+The caller's flock alone does not exclude raw Studio/engine writers. The
+canonical owner is implementing actual mutation enforcement in Studio and
+ComfyUI, with a separate shared/exclusive mutation lock. Canonical HTTP handlers
+must never wait on the caller-held job flock.
+
+The client persists a random batch generation and 256-bit token before claim.
+Credentials stay in private state and request-local headers, never shared
+session defaults, token-bearing argv, public status or tracked evidence:
+
+```text
+X-H3-Lease-Owner: westicker
+X-H3-Lease-Generation: <canonical UUID>
+X-H3-Lease-Token: <64 lowercase hex characters>
+X-H3-Studio-Instance: <captured instance UUID>
+X-H3-Engine-Instance: <captured instance UUID>
+```
+
+The client protocol is:
+
+1. Start only through canonical scripts, capturing generated instance IDs before
+   launch. Pre-existing runtimes are not adopted. Persist `claiming`, then send
+   one `POST /api/admission/claim`. A lost reply recovers via same-binding
+   `GET /api/admission`, never a new generation or automatic second claim POST.
+   Claim precedes the post-start dispatch readiness check, allowing confirmed
+   ownership to drain safely if first-item readiness subsequently fails. The
+   unchanged startup resource checks still run before launching any process.
+2. Carry the binding on reference upload and the item's sole render POST.
+   Recheck resources, identity, queues, shared settings and held admission
+   immediately before submission.
+3. Between completed items, persist one maintenance ID before
+   `POST /api/maintenance/unload`. Poll only
+   `GET /api/maintenance/{id}` after a lost response. A 202 enqueue response,
+   empty queue, HTTP 200 or increased free memory is not completion evidence.
+4. Require an exact generation/instance/maintenance match and the engine
+   worker's `completed` acknowledgment after unload, executor reset, garbage
+   collection and allocator cleanup. Queued/running, failed, mismatched and
+   unverified outcomes retain the original maintenance request and block the
+   next render. The client wait is bounded to 60 seconds.
+5. After matching completion, rerun both the client resource check and canonical
+   `check_resources.sh`, unchanged. Then recheck identity, queues/settings,
+   deep model readiness and held admission before the next item's one POST.
+   If resources or new admission fail after confirmed completion, drain the
+   exact owned idle runtime without submitting item two. Pending or failed
+   maintenance is not treated as this safely completed case.
+6. After the job, require `POST /api/admission/drain` to confirm `draining`
+   before signalling any runtime. Only captured idle instances are stopped.
+   After both exit and ports are free, invoke canonical
+   `scripts/runtime_admission.py release` with the five-header JSON map on
+   stdin. Validate the same-binding `released` receipt before clearing the
+   client journal.
+
+This is explicit unload between items, not an invented lower warm-resource
+threshold. Processes remain running through the serial job, but model reload
+cost still applies after unloading. Live timing, correctness and resource
+behavior remain unqualified until the authorized two-item test.
 
 ## Gates And Cleanup
 
 - GPU 0 and auxiliary GPU 0 only; at least 48 GiB available RAM, swap at most
-  75%, and at least 20,000 MiB GPU0 free. Unknown NVML/identity is a hold.
-- Inherited GPU/profile/loader overrides are stripped. An optional approved
-  driver manifest checks loaded release, six file hashes and existing links.
-  A repaired native driver stack supersedes that fallback after reboot. No
-  system driver, loader settings, symlinks or global environment are changed.
-- Canonical resource check and start scripts only; generated instance IDs are
-  journaled before startup. Pre-existing runtimes are never adopted. Resources,
-  identity, engine/jobs/series queues, shared prompt and deep model readiness are
-  rechecked immediately before the sole POST. No automatic render retries.
-- Cleanup verifies captured identities and idle state, holds Studio's canonical
-  lifecycle lock, signals only its expected PID/instance through the canonical
-  pidfd helper, then uses ComfyUI's expected-owner stop flags. No force/KILL.
-  Partial, changed or unverifiable cleanup preserves evidence and shared work.
+  75%, and at least 20,000 MiB GPU0 free. Unknown NVML/identity or a foreign GPU0
+  compute owner holds admission. No arbitrary threshold reduction.
+- Strip inherited GPU/profile/loader overrides. An optional approved driver
+  manifest checks loaded release, six hashes and existing library links. A
+  repaired native stack supersedes that fallback. No global driver, symlink or
+  loader changes.
+- Verify captured identities, live queues and persisted jobs/series/settings
+  before cleanup; hold Studio's canonical lifecycle lock; use its expected
+  PID/instance pidfd helper and ComfyUI's expected-owner stop flags. Recheck
+  drain permission immediately before each signal. No force/KILL or peer stop.
+- Canonical drain must fail closed during uncertain maintenance. Failed or
+  partial cleanup keeps the private journal and exact original identities for
+  owner recovery; it is not labelled successful cleanup.
 
-The current canonical `stop_webapp.sh` lacks expected-owner and job checks;
-the helper uses its existing identity API instead. This exact cleanup sequence
-is fixture-tested, not yet exercised against a newly launched live runtime.
+## API Integration
 
-## API Handoff
+`server.local_video.lifecycle_status(cfg)` is the existing read-only preflight
+surface. All results include `state`, `code`, `message`, `can_submit`. Only
+`available` and `ready` return true; offline, disabled, busy, pending, resource,
+starting/draining and unverifiable conditions return false. Public messages do
+not expose credentials, private paths, process IDs or receipts.
 
-`server.local_video.lifecycle_status(cfg)` (also `local_video_lifecycle.status`)
-is read-only: no lock-file creation, startup, render or state mutation.
-All results contain `state`, `code`, `message`, `can_submit`. Only `available`
-(stopped but installed and admissible) and `ready` return `can_submit: true`.
-Offline setup/disabled policy, busy owners, pending leases, resource failures,
-starting/draining and unverifiable state return false. Public messages contain
-no private paths, process IDs or receipts.
+Parent's quote/generation integration checks availability before reserving
+credits and resolves existing attempts before new-work gating. A quote/status
+is not a reservation: the job lease and final check remain authoritative. No
+public bootstrap host probes were added. This worker did not edit `worker.py`,
+`studio.py` or `app.py` in this correction.
 
-Parent is integrating status into `server/studio.py` animation quotes and
-`server/app.py` fresh generation preflight **before credit reservation**.
-Existing attempt lookup comes first so closing availability does not prevent
-recovery. No public bootstrap host probes are required. A quote/status is not a
-resource reservation: the worker retains the exclusive admission and final
-resource check. Resource changes between preflight and execution still require
-the existing failure/refund handling. This worker did not edit either API file.
+## Test Evidence
 
-## Evidence And Remaining Qualification
+Current focused fixtures: 135 passed in 6.60 seconds across lifecycle,
+exact-instance recovery, canonical client fence, serial batch ownership and API
+admission. Receipt: `.runtime/local-video-lifecycle-20261012/focused-fenced.xml`.
+Final full checkout suite: 451 passed in 29.31 seconds. Receipt:
+`.runtime/local-video-lifecycle-20261012/full-fenced.xml`.
+These tests make no real provider calls and start no models or services.
 
-Focused fixture suite: 93 passed; full checkout suite: 340 passed in 27.75s.
-JUnit receipts are under
-`.runtime/local-video-lifecycle-20261012/`. Tests cover policy revocation and
-boot durability, pre-POST reboot recovery versus uncertain receipts, flock
-exclusion, busy queues/saved work, resource boundaries, driver fallback, no
-adoption, captured-ID cleanup, redirect rejection and one POST after a lost reply.
-Fixtures never start a GPU runtime or contact a real provider.
+The two-item adapter fixture asserts one start, one claim, one unload between
+items, exactly two render POSTs and one final drain/release. Its failure variant
+keeps the unchanged cold gate after acknowledgment and proves that item two is
+not posted. Other fixtures cover stale identities before/after receipt I/O,
+admission closure versus stop revocation, malformed bindings, lost claim/unload
+responses, non-completion, failed acknowledgment persistence, release receipt
+validation and private stdin credentials.
 
-Read-only observation at approximately 02:00 HKT, 2026-10-12: canonical
-ports 8188/8190 and runtime identities were absent; saved work was idle. Default
-NVML reported userspace 595.99 versus loaded 595.84. The previously qualified,
-hash-verified process-local compatibility bundle reported GPU0 at 24,036 MiB
-free and 0% utilization. The unmodified canonical resource gate held startup
-because available RAM was about 46 GiB; swap was below 75%. GPU1 peers remained
-untouched. This is historical observation, not an ongoing capacity guarantee.
+## Canonical Coordination And Live Hold
 
-A review-only message was queued to the discovered canonical runtime owner;
-the private OneTimeSync lifecycle request records the exact thread/message.
-No response or cooperating-owner installation approval is claimed. Remaining:
-parent installation policy/owner agreement, warm-batch admission,
-and one explicitly authorized live lifecycle qualification when the
-resource lane is free. These are activation tasks, not recurring daily renewal.
+Implementation was dispatched through the supported queue to the existing
+live canonical owner session, not a duplicate agent. The owner implemented
+Studio/engine/series/direct-enqueue/shutdown guards and worker-authored unload
+completion. Its initial handoff passed 27 focused/315 webapp tests, followed by
+28/316 for permission/observation regressions. Its final actual claiming-fix and
+CLI receipt confirms **32 focused and 320 total webapp tests passed**. The owner
+also independently ran the actual-source client fixture successfully. Canonical
+source remains owned by that session, with no deployment or live runtime change.
 
-Parent API integration validates draft/approval/tier/credit constraints before a
-read-only availability probe, then revalidates under the credit-reservation
-transaction. Existing attempts are resolved first, even if new generation has
-been disabled. Fixtures include availability changing after a quote, unchanged
-credit balances on holds, and prior-attempt replay without a new probe.
+The CPU conformance fixture imports both the actual client and canonical module.
+Its first run reproduced `parent_ownership_unverified`; the canonical owner then
+added narrowly bound support for the durably journaled `claiming` state. The
+second run **passes**: one claim, one unload, actual canonical worker-completion
+logic with CPU stubs, two simulated submit boundaries, and one drain. No real
+HTTP, process startup, GPU cleanup or model generation occurs in this fixture.
+Canonical module SHA-256 at that pass:
+`19c82cd5978f21e8088c514c182ae29766bf1765dc222b9f5805696e1b9da92f`.
+
+Evidence under `.runtime/local-video-lifecycle-20261012/`:
+
+- `canonical-contract-fixture.py`: cross-repository CPU fixture.
+- `canonical-contract-attempt1.log`: preserved integration failure.
+- `canonical-contract-attempt2.log`: corrected integration pass.
+- `canonical-contract-final.log`: pass after the client's GET-recovery correction.
+- `fenced-source-sha256.txt`: verified five-file client source/test snapshot.
+- `focused-fenced.xml` and `full-fenced.xml`: client pytest receipts.
+
+The canonical owner's interim manifest-mismatch note referred to the two latest
+GET-recovery edits before retesting. The manifest is now refreshed after the
+135/451 passes, and all five checksums verify; that interim mismatch is resolved.
+
+Private source/test coordination and dispatch receipts are in
+`OneTimeSync/WeSticker/LOCALVIDEO-IMPLEMENTATION-20261012.md` and
+`LOCALVIDEO-CANONICAL-CONTRACT-20261012.md`. They are not live test receipts.
+
+Parent authorizes one bounded two-item public-Aya qualification after source,
+contract, fixture and real readiness checks, when the billing worker hands back
+the heavyweight lane. The canonical owner's final coordination receipt approves
+the single WeSticker managed adapter job as sole startup, submission and cleanup
+executor, with the canonical owner retaining repo/policy ownership and read-only
+runtime supervision. This avoids
+adoption of a separately started runtime. Use one POST/item, fixed recorded
+seeds, GPU0/aux0, 512-square five-second `quality_int8_offload` outputs; preserve
+all artifacts and failures. No paid services, third attempt, automatic rerender
+or broader public activation is authorized. Fresh 48 GiB/resource/identity
+checks remain mandatory after the lane handoff.
+
+## Staged Canary, Not Launched
+
+Private runner:
+`.runtime/local-video-lifecycle-20261012/stage_two_item_canary.py`.
+Its default invocation only prints a plan, without importing the lifecycle,
+probing resources, changing configuration, creating attempt state or making
+provider calls. Staging/guard tests: **4 passed in 0.02 seconds**; receipt
+`staged-canary-tests.xml`. The planned canary output folder does not yet exist.
+
+The fixed job is `public-aya-lifecycle-20261012`; items are `wave-once-01` and
+`nod-thanks-02`, with seeds 127970636 and 31307560. It pins the approved original
+public Aya and historical normalized-reference hashes, the tested client source,
+canonical fence and unchanged resource script. It refuses a second execution of
+an existing canary folder. It never calls image generation, disables moderation,
+installs policy or enables public animation.
+
+Execution is deliberately gated behind `--execute`, an existing approved
+private config, and a fresh private parent/James lane-release receipt. The
+receipt is per-canary scheduling evidence, not a recurring installation grant.
+The runner also refuses active 5592/5593 listeners and requires stopped/available
+read-only lifecycle status before the actual job obtains its lease and rechecks
+all live gates. Reference/source changes require reviewed restaging. No release
+receipt, configuration or lifecycle policy has been fabricated or installed.
+
+After future execution, preserve both original MP4s/GIFs, exact provider receipts,
+requests, probes, contact sheets, maintenance snapshots and verified cleanup.
+Rendered/decoded outputs remain marked as awaiting actual visual QA; no fixture
+or successful HTTP response counts as identity/motion acceptance. Parent's
+separate auth-only candidate `b5c8cdd2055b6752` uses committed source and keeps
+these uncommitted lifecycle changes out of the live adapter until qualification.
+That deliberate deployment boundary is not a rollback. Source/test hashes and
+canonical conformance were rechecked for the final review/commit handoff; no
+implementation changes followed the 135/451 passes. James's explicit AVD cleanup
+handoff is still required before execution.
+
+Historical one-item canaries and earlier 93/340-test receipts do not qualify this
+new fenced batch protocol. Earlier review-only/no-owner-response notes and the
+boot-scoped grant draft are superseded by this implementation status.
