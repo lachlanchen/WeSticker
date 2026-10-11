@@ -34,6 +34,10 @@
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## Студия
 
 - 10 наборов, 156 отдельных анимаций, китайские, английские и японские подписи с быстрым просмотром.

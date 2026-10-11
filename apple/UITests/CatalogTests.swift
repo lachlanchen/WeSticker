@@ -1,4 +1,7 @@
 import XCTest
+#if os(iOS)
+import UIKit
+#endif
 
 final class CatalogTests: XCTestCase {
     func testGIFPlaybackPauseAndResume() throws {
@@ -142,6 +145,11 @@ extension XCUIApplication {
         XCTAssertLessThan(label.frame.minX - window.minX, 160, file: file, line: line)
         #else
         XCTAssertLessThan(label.frame.minX - window.minX, 80, file: file, line: line)
+        let fullWidth = (title as NSString).size(withAttributes: [
+            .font: UIFont.preferredFont(forTextStyle: .headline)
+        ]).width
+        XCTAssertGreaterThanOrEqual(label.frame.width, fullWidth - 2,
+                                    "Toolbar title must not truncate to an icon-sized item", file: file, line: line)
         #endif
         XCTAssertLessThan(label.frame.maxY - window.minY, 120, file: file, line: line)
         if let action {

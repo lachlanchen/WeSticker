@@ -34,6 +34,10 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## 스튜디오
 
 - 기본 10팩, 서로 다른 애니메이션 156개, 중국어·영어·일본어 문구 버전과 즉시 미리보기.

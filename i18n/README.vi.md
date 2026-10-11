@@ -34,6 +34,10 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## Xưởng sáng tạo
 
 - 10 bộ, 156 hoạt ảnh riêng biệt, chữ Trung/Anh/Nhật và xem trước tức thì.

@@ -80,6 +80,10 @@ for code, t in translations.items():
 
 ![Chat studio]({prefix}docs/screenshots/compact-create-desktop.png)
 
+<img src="{prefix}docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope]({prefix}docs/native-compact-toolbar-20261012.md)
+
 ## {h[0]}
 
 {chr(10).join("- " + line for line in t["features"])}

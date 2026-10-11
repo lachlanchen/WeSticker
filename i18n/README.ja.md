@@ -34,6 +34,10 @@
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## スタジオ
 
 - 標準10パック、156種類のアニメーション、中国語・英語・日本語の文字版をすぐにプレビュー。

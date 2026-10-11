@@ -34,6 +34,10 @@
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## الاستوديو
 
 - 10 مجموعات و156 حركة مستقلة، مع نصوص صينية وإنجليزية ويابانية ومعاينة فورية.

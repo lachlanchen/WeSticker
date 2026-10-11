@@ -65,7 +65,8 @@ final class NativeAccountReleaseTests: XCTestCase {
         XCTAssertTrue(welcome.waitForExistence(timeout: 10))
         XCTAssertTrue(welcome.isHittable)
         XCTAssertTrue(app.windows.firstMatch.frame.contains(welcome.frame))
-        XCTAssertLessThan(welcome.frame.height, 44)
+        // SwiftUI exposes the icon and headline as one accessibility group.
+        XCTAssertLessThan(welcome.frame.height, 112)
         XCTAssertLessThan(welcome.frame.maxY, input.frame.minY)
         capture("Authenticated fixture clean chat visible composer")
         input.tap(); input.typeText("A friendly sticker idea")

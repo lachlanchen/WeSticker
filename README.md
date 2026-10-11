@@ -34,6 +34,10 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 ![Chat studio](docs/screenshots/compact-create-desktop.png)
 
+<img src="docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](docs/native-compact-toolbar-20261012.md)
+
 ## The Studio
 
 - 10 default packs, 156 animations, Chinese/English/Japanese sticker versions and instant previews.

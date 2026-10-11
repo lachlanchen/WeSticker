@@ -34,6 +34,10 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## El estudio
 
 - 10 paquetes, 156 animaciones distintas y versiones en chino, inglés y japonés con vista previa inmediata.

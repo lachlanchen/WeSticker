@@ -14,6 +14,7 @@ private struct CompactStudioHeader: ViewModifier {
             .toolbar {
                 ToolbarItem(placement: leading) {
                     Text(title).font(.headline).lineLimit(1).truncationMode(.tail)
+                        .fixedSize(horizontal: true, vertical: false)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityIdentifier("studio-toolbar-title")
                 }

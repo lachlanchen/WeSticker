@@ -34,6 +34,10 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## Le studio
 
 - 10 collections, 156 animations distinctes, versions chinoise, anglaise et japonaise avec aperçu immédiat.

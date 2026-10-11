@@ -34,6 +34,10 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## Das Studio
 
 - 10 Pakete, 156 eigenständige Animationen, chinesische, englische und japanische Beschriftungen mit sofortiger Vorschau.

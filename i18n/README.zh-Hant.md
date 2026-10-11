@@ -34,6 +34,10 @@
 
 ![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
+<img src="../docs/screenshots/compact-create-ios.png" alt="Native iOS Create layout, authenticated test fixture" width="280">
+
+[Native layout test scope](../docs/native-compact-toolbar-20261012.md)
+
 ## 創作工坊
 
 - 10 套預設作品、156 個獨立動畫，中英日三種文字版本，可直接預覽。
