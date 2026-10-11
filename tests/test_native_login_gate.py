@@ -15,6 +15,17 @@ def test_public_home_initial_and_four_tabs():
     assert "var tab by rememberSaveable { mutableStateOf(0) }" in kotlin
 
 
+def test_about_preserves_storage_scope_without_stale_beta_capabilities():
+    for path in (APPLE / "WeStickerApp.swift", ANDROID / "MainActivity.kt"):
+        source = path.read_text()
+        assert "About WeSticker" in source
+        assert "Favorites and local photo drafts stay on this device." in source
+        assert "Cloud creations belong to your signed-in account." in source
+        assert "not connected in this beta" not in source
+        assert "remain unavailable in this build" not in source
+        assert "Catalog beta" not in source
+
+
 def test_one_root_login_remembers_destination_and_dismisses_to_browse():
     swift = (APPLE / "CreatorStudio.swift").read_text()
     kotlin = (ANDROID / "CreatorStudio.kt").read_text()

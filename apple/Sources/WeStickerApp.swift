@@ -259,7 +259,7 @@ struct CatalogView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     Button { onlySaved.toggle() } label: { Image(systemName: onlySaved ? "heart.fill" : "heart") }.accessibilityLabel("Saved collections")
-                    Button { info = true } label: { Image(systemName: "info.circle") }.accessibilityLabel("About this beta")
+                    Button { info = true } label: { Image(systemName: "info.circle") }.accessibilityLabel("About WeSticker")
                 }
             }
             .sheet(item: $preview) { value in
@@ -287,10 +287,10 @@ struct CatalogView: View {
                 document: document, contentType: .gif, defaultFilename: filename) { result in
                     if case let .failure(error) = result { failure = error.localizedDescription }
                 }
-            .alert("WeSticker · Catalog beta", isPresented: $info) {
+            .alert("WeSticker", isPresented: $info) {
                 Button("Done", role: .cancel) {}
             } message: {
-                Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavorites and local photo drafts stay on this device. GIF downloads connect to aya.lazying.art.\n\nCreate combines chat and editable sticker plans. Your connected creator service keeps private characters, libraries and generation jobs. Provider availability and limits are checked by that service before generation. Native purchases and automated uploading remain unavailable in this build.")
+                Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nWeSticker by LazyingArt.\n\nFavorites and local photo drafts stay on this device. Cloud creations belong to your signed-in account.")
             }
             .alert("Could not save sticker", isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })) {
                 Button("OK", role: .cancel) { failure = nil }

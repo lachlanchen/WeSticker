@@ -182,7 +182,7 @@ fun Catalog(packs: List<Pack>, loader: ImageLoader,
             IconButton(onClick = { onlySaved = !onlySaved }) {
                 Icon(if (onlySaved) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder, "Saved collections")
             }
-            IconButton(onClick = { info = true }) { Icon(Icons.Outlined.Info, "About this beta") }
+            IconButton(onClick = { info = true }) { Icon(Icons.Outlined.Info, "About WeSticker") }
         })
     }, snackbarHost = { SnackbarHost(snack) }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)) {
@@ -283,7 +283,7 @@ fun Catalog(packs: List<Pack>, loader: ImageLoader,
             confirmButton = { TextButton(enabled = !saving, onClick = { download(pack, sticker) }) { Text("Save GIF") } },
             dismissButton = { TextButton(onClick = { preview = null }) { Text("Close") } })
     }
-    if (info) AlertDialog(onDismissRequest = { info = false }, title = { Text("WeSticker · Catalog beta") },
-        text = { Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavorites and creator drafts stay on this device. GIF downloads connect to aya.lazying.art.\n\nCreate exports photo stickers. Agent uses on-device caption templates. Cloud AI, accounts, purchases and automated upload are not connected in this beta.") },
+    if (info) AlertDialog(onDismissRequest = { info = false }, title = { Text("WeSticker") },
+        text = { Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nWeSticker by LazyingArt.\n\nFavorites and local photo drafts stay on this device. Cloud creations belong to your signed-in account.") },
         confirmButton = { TextButton(onClick = { info = false }) { Text("Done") } })
 }
