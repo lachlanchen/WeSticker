@@ -27,3 +27,7 @@ access/UI fixtures, not additional Stripe purchases.
 All 30 configured production ZIPs (10 packs in three languages) passed archive
 CRC validation locally. Provider payment qualification is recorded separately in
 [Stripe qualification](stripe-qualification.md).
+
+Deployed static release `f8cc441b16b6cba5`. Live 390-pixel browser verification
+confirmed the public catalog fits its viewport and Get collection opens the root
+login. Shared ingress and firewall were unchanged.

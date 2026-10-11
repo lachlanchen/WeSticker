@@ -18,7 +18,7 @@ customer content and runtime addresses remain in private handoffs.
 | Real image generation | AgInTi real-provider canary passed; enabled | Preserve reference identity and per-user consent |
 | Real animated sticker generation | Local provider canary passed | Qualify available runtime lifecycle before public activation |
 | Web subscription payments | Live app-owned catalog/Portal/webhook and recovery timer active; web subscriptions enabled after actual sandbox lifecycle and live nonfinancial delivery tests | Ongoing monitoring; native IAP and advanced plan changes remain separate |
-| Subscriber default sticker downloads | App-owned access routing tested for all three language ZIPs, guest/expiry and network errors; 30 production archives pass CRC checks | Deploy the frontend change; keep AYA orders independent |
+| Subscriber default sticker downloads | Deployed app-owned access routing; all three language ZIPs, guest/expiry and network errors tested; 30 production archives pass CRC checks; live mobile login route verified | Keep AYA orders independent |
 | Native subscriptions | StoreKit/Play UI and server verification implemented; fixtures passed | Real app-specific store setup, purchase/restore/lifecycle qualification |
 | User-created packs for sale | Moderation and payout gates implemented | Verified creator onboarding and commercial operations before enabling sales |
 | Optional WeChat draft uploader | Save-only safety contracts implemented | Customer-isolated browser/container lifecycle and live draft qualification |

@@ -2,8 +2,10 @@
 
 Current web release: [public Stickers and protected Create](protected-create-release-20261011.md).
 The [native internal test builds](native-protected-create-20261011.md) track native
-builds separately. The independent HTTPS creator origin has qualified password
-and Google-through-LazyingArt sign-in, with login outside the conversation. AgInTi image generation passed
+builds separately. The independent HTTPS creator origin has qualified password,
+Google and Apple-through-LazyingArt sign-in, with login outside the conversation.
+Apple linking and a separate Apple-only login preserve the original app account.
+AgInTi image generation passed
 one real-provider qualification and is enabled. A local animation canary passed,
 but public animation remains disabled until its runtime lifecycle is available.
 Social-provider app qualification is recorded [separately](social-auth-qualification-20261011.md).
@@ -15,6 +17,13 @@ the earlier October 10 release record, not the current build numbers or gates.
 
 **Status: public catalog, protected creator beta and live web subscriptions.
 Native IAP, public animation and creator marketplace are not yet fully qualified.**
+
+The [completion ledger](request-completion-ledger.md) is the current cross-feature
+audit. Android 13 is available to internal testers; Apple compact-toolbar successors
+are being qualified separately. Subscriber language-ZIP downloads now remain in
+WeSticker instead of redirecting to the independent AYA checkout. Native signed
+notification handling is deployed with purchase flags closed; real store TEST
+delivery and financial sandbox qualification are separate milestones.
 
 ## Current Entry Flow
 
