@@ -62,13 +62,18 @@ try {
   });
   await page.getByLabel("Save Little everyday joys").click();
   await page.waitForFunction(() =>
-    /\.gif|\/motion\//.test(document.querySelector(".sticker-preview img")?.src || ""),
+    /\.gif|\/motion\//.test(
+      document.querySelector(".sticker-preview img")?.src || "",
+    ),
   );
   await page
     .getByRole("button", { name: "Pause animations", exact: true })
     .click();
   await page.waitForFunction(
-    () => !/\.gif|\/motion\//.test(document.querySelector(".sticker-preview img")?.src || ""),
+    () =>
+      !/\.gif|\/motion\//.test(
+        document.querySelector(".sticker-preview img")?.src || "",
+      ),
   );
   await page.locator(".collection-link").nth(1).click();
   await page.waitForFunction(() =>
@@ -158,40 +163,34 @@ try {
     .click();
   await page.getByLabel("Name", { exact: true }).fill("Demo friend");
   await page
-    .getByLabel(
-      "I own these images or have permission. Everyone depicted is 18+ and has agreed.",
-    )
-    .check();
-  await page.locator("input[type=file]").setInputFiles("public/icon-512.png");
-  await page.locator(".ref-grid img").waitFor();
-  await page
-    .getByLabel(
-      "These photos show the character I want. Keep this identity consistent.",
-    )
+    .getByRole("checkbox", { name: /permission to use these images/ })
     .check();
   await page
-    .getByRole("button", { name: "Lock character & create draft" })
+    .locator(".studio-start input[type=file]")
+    .setInputFiles("public/icon-512.png");
+  await page.locator(".reference-strip img").first().waitFor();
+  await page
+    .getByRole("button", { name: "Approve references & start" })
     .click();
-  await page.getByRole("button", { name: "Photo stickers · free" }).waitFor();
-  await page.screenshot({
-    path: path.join(out, "desktop-editor-empty.png"),
-    fullPage: true,
-  });
-  await page.getByRole("button", { name: "Photo stickers · free" }).click();
-  await page
-    .getByText("Ready for your review", { exact: true })
-    .waitFor({ timeout: 20000 });
   await page.getByLabel("Caption 1", { exact: true }).fill("Hello there");
-  for (const checkbox of await page
-    .getByLabel("Looks like me", { exact: true })
-    .all())
-    await checkbox.check();
+  await page.getByRole("button", { name: "Save table", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Use uploaded photo", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Confirm photo preview", exact: true })
+    .click();
+  await page.locator(".artifact-table img").waitFor({ timeout: 20000 });
+  await page
+    .getByRole("checkbox", { name: "Approve sticker 1", exact: true })
+    .check();
+  await page.getByRole("button", { name: "Save table", exact: true }).click();
   await page.screenshot({
     path: path.join(out, "desktop-editor-reviewed.png"),
     fullPage: true,
   });
   const zipDownload = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export ZIP", exact: true }).click();
+  await page.getByRole("link", { name: "Export", exact: true }).click();
   const zip = await zipDownload;
   assert.equal(await zip.failure(), null);
   await zip.saveAs(path.join(out, "photo-stickers.zip"));

@@ -26,6 +26,12 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
+**2026-10-11** · 本地开发更新：Create 与 Agent 已合并为聊天式工作区，支持可编辑的文字与动作表、私有作品库及角色库。免费版逐张生成，付费档位上限为 8/16/24 张。网页和原生测试已有记录；真实 AI 验证与新版商店发布仍待完成，下文保留早期测试版说明。
+
+[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+
+![Chat studio](../docs/screenshots/chat-studio-web.png)
+
 ## 创作工坊
 
 - 10 套默认作品、156 个独立动画，中英日三种文字版本，打开即可预览。

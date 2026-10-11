@@ -36,6 +36,10 @@ android {
         }
     }
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-dev'
+        }
         release {
             if (System.getenv('WESTICKER_KEYSTORE')) signingConfig signingConfigs.release
             minifyEnabled false

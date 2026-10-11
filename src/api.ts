@@ -48,6 +48,7 @@ export type Item = {
   label: string;
   asset: string | null;
   approved: boolean;
+  action?: string;
 };
 export type Draft = {
   id: string;
@@ -56,6 +57,7 @@ export type Draft = {
   language: string;
   status: string;
   items: Item[];
+  revision: number;
 };
 export type Character = {
   id: string;
@@ -70,6 +72,7 @@ export type Job = {
   state: string;
   progress: number;
   error?: string;
+  kind?: string;
 };
 export type Boot = {
   user: null | {

@@ -26,6 +26,12 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
+**2026-10-11** · ローカル開発の更新：Create と Agent をチャット中心の画面に統合し、文字・動作の編集表、非公開の作品庫とキャラクター管理を追加しました。無料枠は1枚ずつ、有料プランは最大8/16/24枚です。Web・ネイティブのテスト結果を記録していますが、実際のAI検証と新しいストア配信は未完了です。以下には従来のベータの説明も残しています。
+
+[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+
+![Chat studio](../docs/screenshots/chat-studio-web.png)
+
 ## スタジオ
 
 - 標準10パック、156種類のアニメーション、中国語・英語・日本語の文字版をすぐにプレビュー。

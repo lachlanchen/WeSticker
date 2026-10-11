@@ -71,6 +71,25 @@ CREATE TABLE IF NOT EXISTS audit(id TEXT PRIMARY KEY,user_id TEXT,action TEXT NO
             )
         if "subscription_id" not in columns:
             db.execute("ALTER TABLE users ADD COLUMN subscription_id TEXT")
+        if "trial_images" not in columns:
+            db.execute(
+                "ALTER TABLE users ADD COLUMN trial_images INTEGER NOT NULL DEFAULT 1"
+            )
+        pack_columns = {row["name"] for row in db.execute("PRAGMA table_info(packs)")}
+        if "revision" not in pack_columns:
+            db.execute(
+                "ALTER TABLE packs ADD COLUMN revision INTEGER NOT NULL DEFAULT 0"
+            )
+        db.executescript("""
+CREATE TABLE IF NOT EXISTS studio_messages(
+ id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ pack_id TEXT NOT NULL REFERENCES packs(id) ON DELETE CASCADE,attempt TEXT NOT NULL,
+ text TEXT NOT NULL,result TEXT,state TEXT NOT NULL,created REAL NOT NULL,
+ UNIQUE(user_id,attempt));
+CREATE TABLE IF NOT EXISTS native_links(
+ id TEXT PRIMARY KEY,challenge TEXT NOT NULL,user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+ expires REAL NOT NULL,used INTEGER NOT NULL DEFAULT 0);
+""")
 
 
 def uid():
@@ -91,6 +110,8 @@ PLANS = [
         cents=99,
         credits=3,
         packs=2,
+        characters=2,
+        pack_size=8,
         upload=False,
         features=[
             "All Aya & Lala language ZIPs",
@@ -105,6 +126,8 @@ PLANS = [
         cents=999,
         credits=40,
         packs=25,
+        characters=25,
+        pack_size=16,
         upload=False,
         features=[
             "40 AI image credits each month",
@@ -119,6 +142,8 @@ PLANS = [
         cents=2499,
         credits=120,
         packs=100,
+        characters=100,
+        pack_size=24,
         upload=True,
         features=[
             "120 AI image credits each month",
@@ -128,6 +153,25 @@ PLANS = [
         ],
     ),
 ]
+
+
+def limits(user):
+    """Expired plans retain their files, not permission to start larger jobs."""
+    plan = next(
+        (p for p in PLANS if p["id"] == user["plan"] and user["expires"] > time.time()),
+        None,
+    )
+    return {
+        "plan": plan["id"] if plan else "free",
+        "pack_size": plan["pack_size"] if plan else 1,
+        "packs": plan["packs"] if plan else 2,
+        "characters": plan["characters"] if plan else 2,
+        "batch": bool(plan),
+        "credits": user["credits"],
+        "trial_images": user.get("trial_images", 0),
+        "animation": bool(plan and plan["id"] in {"creator", "studio"}),
+    }
+
 
 THEMES = {
     "daily": {

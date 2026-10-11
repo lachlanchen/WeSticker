@@ -72,6 +72,12 @@ for code, t in translations.items():
 
 [GIF playback, new icon and test-build evidence]({prefix}docs/native-playback-20261010.md)
 
+**2026-10-11** · {t["creator_update"]}
+
+[2026-10-11 · API / QA]({prefix}docs/chat-studio-20261011.md)
+
+![Chat studio]({prefix}docs/screenshots/chat-studio-web.png)
+
 ## {h[0]}
 
 {chr(10).join("- " + line for line in t["features"])}

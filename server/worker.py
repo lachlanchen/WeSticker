@@ -103,7 +103,7 @@ def work_once(cfg):
                         ),
                     )
                     db.execute(
-                        "UPDATE packs SET items=?,updated=? WHERE id=?",
+                        "UPDATE packs SET items=?,updated=?,revision=revision+1 WHERE id=?",
                         (
                             json.dumps(items, ensure_ascii=False),
                             time.time(),
@@ -126,7 +126,9 @@ def work_once(cfg):
                             "type": "text",
                             "text": character["name"]
                             + " "
-                            + ", ".join(i["label"] for i in items),
+                            + ", ".join(
+                                i["label"] + " " + i.get("action", "") for i in items
+                            ),
                         },
                         *[
                             {
@@ -150,7 +152,7 @@ def work_once(cfg):
                     "Reference or caption needs a safety review. No image was generated."
                 )
             for index, item in enumerate(selected):
-                prompt = f"Create one charming {character['style']} chat sticker of the exact character in the supplied references. Preserve face, fur or skin, outfit, palette and proportions. Expression/action meaning: {item['label']}. One clear readable pose, whole body inside frame, transparent background. No lettering; captions are added separately."
+                prompt = f"Create one charming {character['style']} chat sticker of the exact character in the supplied references. Preserve face, fur or skin, outfit, palette and proportions. Expression meaning: {item['label']}. Action direction: {item.get('action', '')}. One clear readable pose, whole body inside frame, transparent background. No lettering; captions are added separately."
                 files = [
                     (
                         "image[]",
@@ -223,7 +225,7 @@ def work_once(cfg):
                         ),
                     )
                     db.execute(
-                        "UPDATE packs SET items=?,updated=? WHERE id=?",
+                        "UPDATE packs SET items=?,updated=?,revision=revision+1 WHERE id=?",
                         (
                             json.dumps(items, ensure_ascii=False),
                             time.time(),
@@ -233,12 +235,12 @@ def work_once(cfg):
                 submitted = False
         with database(cfg) as db:
             db.execute(
-                "UPDATE packs SET items=?,updated=? WHERE id=?",
+                "UPDATE packs SET items=?,updated=?,revision=revision+1 WHERE id=?",
                 (json.dumps(items, ensure_ascii=False), time.time(), job["pack_id"]),
             )
             db.execute(
-                "UPDATE jobs SET state='review',progress=100,updated=? WHERE id=?",
-                (time.time(), job["id"]),
+                "UPDATE jobs SET state='review',progress=100,data=?,updated=? WHERE id=?",
+                (json.dumps(data), time.time(), job["id"]),
             )
     except Exception as error:
         if isinstance(error, OutcomeUncertain):
@@ -260,8 +262,13 @@ def work_once(cfg):
                 ),
             )
             if not submitted:
+                balance = (
+                    "trial_images"
+                    if data.get("balance") == "trial_images"
+                    else "credits"
+                )
                 db.execute(
-                    "UPDATE users SET credits=credits+? WHERE id=?",
+                    f"UPDATE users SET {balance}={balance}+? WHERE id=?",
                     (max(0, data["cost"] - data.get("completed", 0)), job["user_id"]),
                 )
         return True

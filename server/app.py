@@ -11,7 +11,18 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from .store import ROOT, PLANS, THEMES, audit, database, initialize, settings, uid
+from .store import (
+    ROOT,
+    PLANS,
+    THEMES,
+    audit,
+    database,
+    initialize,
+    settings,
+    uid,
+    limits,
+)
+from .studio import clean_rows, register_studio
 
 
 class PaymentRequired(HTTPException):
@@ -58,6 +69,9 @@ def create_app(override=None):
     def current(required=True):
         if not hasattr(g, "user"):
             token = request.cookies.get("westicker_session", "")
+            authorization = request.headers.get("Authorization", "")
+            if authorization.startswith("Bearer "):
+                token = authorization[7:]
             with database(cfg) as db:
                 row = db.execute(
                     "SELECT u.*,s.csrf FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>?",
@@ -107,7 +121,7 @@ def create_app(override=None):
             abort(404)
         return dict(row)
 
-    def login_user(user_id, ttl=86400 * 14):
+    def login_user(user_id, ttl=86400 * 14, native=False):
         raw = secrets.token_urlsafe(32)
         csrf = secrets.token_urlsafe(24)
         with database(cfg) as db:
@@ -120,7 +134,7 @@ def create_app(override=None):
                     time.time() + ttl,
                 ),
             )
-        result = jsonify(ok=True)
+        result = jsonify(ok=True, token=raw, csrf=csrf) if native else jsonify(ok=True)
         result.set_cookie(
             "westicker_session",
             raw,
@@ -195,6 +209,7 @@ def create_app(override=None):
             ],
             local_accounts=cfg["local_accounts"],
             capabilities={
+                "chat": bool(cfg.get("chat_api_key")),
                 "ai_images": bool(cfg.get("image_api_key")),
                 "animation": bool(
                     cfg.get("local_video_url") and cfg.get("image_api_key")
@@ -208,6 +223,7 @@ def create_app(override=None):
                 "creator_sales": bool(cfg.get("creator_sales_enabled")),
                 "wechat_worker": bool(cfg.get("wechat_worker_enabled")),
             },
+            limits=limits(user) if user else None,
         )
 
     @app.get("/api/catalog")
@@ -272,14 +288,16 @@ def create_app(override=None):
 
     @app.post("/api/auth/logout")
     def logout():
+        auth = request.headers.get("Authorization", "")
+        raw = (
+            auth[7:]
+            if auth.startswith("Bearer ")
+            else request.cookies.get("westicker_session", "")
+        )
         with database(cfg) as db:
             db.execute(
                 "DELETE FROM sessions WHERE token=?",
-                (
-                    hashlib.sha256(
-                        request.cookies.get("westicker_session", "").encode()
-                    ).hexdigest(),
-                ),
+                (hashlib.sha256(raw.encode()).hexdigest(),),
             )
         result = jsonify(ok=True)
         result.delete_cookie("westicker_session")
@@ -406,6 +424,14 @@ def create_app(override=None):
     @app.get("/api/assets/<id>")
     def asset(id):
         row = owned("assets", id)
+        if request.args.get("preview") == "1" and row["kind"] != "animation":
+            with Image.open(state / row["path"]) as source:
+                preview = source.convert("RGBA")
+                preview.thumbnail((320, 320))
+                out = io.BytesIO()
+                preview.save(out, "PNG")
+            out.seek(0)
+            return send_file(out, mimetype="image/png")
         return send_file(
             state / row["path"],
             mimetype="image/gif" if row["kind"] == "animation" else "image/png",
@@ -443,7 +469,7 @@ def create_app(override=None):
             c["refs"] = json.loads(c["refs"])
         for p in packs:
             p["items"] = json.loads(p["items"])
-        return jsonify(characters=chars, packs=packs, jobs=jobs)
+        return jsonify(characters=chars, packs=packs, jobs=jobs, limits=limits(user))
 
     @app.post("/api/characters")
     def character():
@@ -463,17 +489,11 @@ def create_app(override=None):
         ):
             abort(400)
         with database(cfg) as db:
+            db.execute("BEGIN IMMEDIATE")
             count = db.execute(
                 "SELECT count(*) FROM characters WHERE user_id=?", (user["id"],)
             ).fetchone()[0]
-            limit = next(
-                (
-                    p["packs"]
-                    for p in PLANS
-                    if p["id"] == user["plan"] and user["expires"] > time.time()
-                ),
-                2,
-            )
+            limit = limits(user)["characters"]
             if count >= limit:
                 abort(403, description="Your character library is full for this plan.")
             id = uid()
@@ -510,15 +530,31 @@ def create_app(override=None):
             or language not in {"zh", "en", "ja"}
         ):
             abort(400)
-        items = [
-            {"id": uid(), "label": label, "asset": None, "approved": False}
-            for label in THEMES[theme][language]
-        ]
+        policy = limits(user)
+        items = clean_rows(
+            body.get(
+                "items",
+                [
+                    {"label": label}
+                    for label in THEMES[theme][language][: policy["pack_size"]]
+                ],
+            ),
+            policy["pack_size"],
+        )
         id = uid()
         now = time.time()
         with database(cfg) as db:
+            db.execute("BEGIN IMMEDIATE")
+            count = db.execute(
+                "SELECT count(*) FROM packs WHERE user_id=?", (user["id"],)
+            ).fetchone()[0]
+            if count >= policy["packs"]:
+                abort(
+                    403,
+                    description="Your plan's collection limit is reached. Existing work remains in your library.",
+                )
             db.execute(
-                "INSERT INTO packs VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO packs(id,user_id,character_id,title,theme,language,items,status,price,created,updated) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
                 (
                     id,
                     user["id"],
@@ -542,33 +578,18 @@ def create_app(override=None):
         items = body.get("items")
         if p["status"] != "draft":
             abort(409, description="Only drafts can be edited.")
-        if not isinstance(items, list) or not 1 <= len(items) <= 24:
-            abort(400)
-        if any(not isinstance(item, dict) for item in items) or len(
-            {str(item.get("id")) for item in items}
-        ) != len(items):
-            abort(400)
         old = {x["id"]: x for x in json.loads(p["items"])}
-        clean = []
-        for item in items:
-            if (
-                item.get("id") not in old
-                or not isinstance(item.get("label"), str)
-                or not 1 <= len(item["label"]) <= 32
-            ):
-                abort(400)
-            asset = item.get("asset")
-            if asset:
-                owned("assets", asset)
-            clean.append(
-                {
-                    "id": item["id"],
-                    "label": item["label"],
-                    "asset": asset,
-                    "approved": item.get("approved") is True,
-                }
-            )
+        # Downgrades never delete saved work, but cannot enlarge it beyond the tier.
+        maximum = max(limits(current())["pack_size"], len(old))
+        clean = clean_rows(items, maximum, old)
         with database(cfg) as db:
+            db.execute("BEGIN IMMEDIATE")
+            live = db.execute("SELECT revision FROM packs WHERE id=?", (id,)).fetchone()
+            if live["revision"] != body.get("revision", p["revision"]):
+                abort(
+                    409,
+                    description="This draft changed on another device. Reload before applying edits.",
+                )
             if db.execute(
                 "SELECT id FROM jobs WHERE pack_id=? AND state IN ('queued','running','uncertain')",
                 (id,),
@@ -578,10 +599,10 @@ def create_app(override=None):
                     description="Wait for the current job before editing this pack.",
                 )
             db.execute(
-                "UPDATE packs SET items=?,updated=? WHERE id=?",
+                "UPDATE packs SET items=?,updated=?,revision=revision+1 WHERE id=?",
                 (json.dumps(clean, ensure_ascii=False), time.time(), id),
             )
-        return jsonify(ok=True)
+        return jsonify(ok=True, revision=live["revision"] + 1)
 
     @app.post("/api/packs/<id>/generate")
     def generate(id):
@@ -606,7 +627,7 @@ def create_app(override=None):
                     503,
                     description="Animation and its safety provider are not connected.",
                 )
-            if user["plan"] not in {"creator", "studio"}:
+            if not limits(user)["animation"]:
                 abort(403, description="Animation is available with Creator or Studio.")
         c = owned("characters", p["character_id"])
         for ref in json.loads(c["refs"]):
@@ -625,7 +646,19 @@ def create_app(override=None):
             if prior:
                 if prior["pack_id"] != id or prior["kind"] != kind:
                     abort(409)
+                prior_data = json.loads(prior["data"])
+                if body.get("items", prior_data["selected"]) != prior_data["selected"]:
+                    abort(
+                        409,
+                        description="This attempt already belongs to a different selection.",
+                    )
                 return jsonify(id=prior["id"], state=prior["state"])
+            fresh_user = dict(
+                db.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
+            )
+            policy = limits(fresh_user)
+            if kind == "animate" and not policy["animation"]:
+                abort(403, description="Animation is available with Creator or Studio.")
             p = dict(
                 db.execute(
                     "SELECT * FROM packs WHERE id=? AND user_id=?", (id, user["id"])
@@ -633,6 +666,11 @@ def create_app(override=None):
             )
             if p["status"] != "draft":
                 abort(409)
+            if body.get("revision", p["revision"]) != p["revision"]:
+                abort(
+                    409,
+                    description="The draft has changed. Review the current table before generating.",
+                )
             if db.execute(
                 "SELECT id FROM jobs WHERE pack_id=? AND state IN ('queued','running','uncertain')",
                 (id,),
@@ -648,6 +686,22 @@ def create_app(override=None):
                 or not set(selected) <= {item["id"] for item in all_items}
             ):
                 abort(400)
+            if len(selected) > policy["pack_size"]:
+                abort(
+                    403,
+                    description=f"This plan generates at most {policy['pack_size']} sticker(s) at a time.",
+                )
+            if (
+                not policy["batch"]
+                and db.execute(
+                    "SELECT id FROM jobs WHERE user_id=? AND state IN ('queued','running','uncertain')",
+                    (user["id"],),
+                ).fetchone()
+            ):
+                abort(
+                    409,
+                    description="Finish reviewing the current single-sticker job before starting another.",
+                )
             if kind == "animate" and any(
                 not x.get("approved") or not x.get("asset")
                 for x in all_items
@@ -659,19 +713,23 @@ def create_app(override=None):
                 if kind in {"ai", "animate"}
                 else 0
             )
-            if cost and (
-                user["expires"] <= time.time()
-                or db.execute(
-                    "SELECT credits FROM users WHERE id=?", (user["id"],)
-                ).fetchone()[0]
-                < cost
+            trial = (
+                kind == "ai"
+                and policy["plan"] == "free"
+                and fresh_user["trial_images"] >= cost
+            )
+            if (
+                cost
+                and not trial
+                and (policy["plan"] == "free" or fresh_user["credits"] < cost)
             ):
                 abort(
                     402,
                     description=f"This set needs {cost} AI credits. Nothing has been submitted.",
                 )
+            balance = "trial_images" if trial else "credits"
             db.execute(
-                "UPDATE users SET credits=credits-? WHERE id=?", (cost, user["id"])
+                f"UPDATE users SET {balance}={balance}-? WHERE id=?", (cost, user["id"])
             )
             job = uid()
             now = time.time()
@@ -681,6 +739,7 @@ def create_app(override=None):
                 "character": p["character_id"],
                 "items": all_items,
                 "selected": selected,
+                "balance": balance,
             }
             db.execute(
                 "INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?,?,?,?)",
@@ -815,6 +874,7 @@ def create_app(override=None):
     register_market(app, cfg)
     register_wechat(app, cfg)
     register_native_billing(app, cfg)
+    register_studio(app, cfg)
 
     @app.get("/")
     @app.get("/<path:path>")

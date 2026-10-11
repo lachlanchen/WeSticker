@@ -1,5 +1,9 @@
 # Release readiness: 2026-10-10
 
+Latest source milestone: [chat-first creator, 2026-10-11](chat-studio-20261011.md).
+It adds native/API-connected creation and 63 backend tests, with explicit live
+provider and release gaps. The tables below preserve the earlier release record.
+
 **Status: public catalog PWA and native catalog betas. The creator service is
 still a local integration prototype, not ready for real customer payments.**
 

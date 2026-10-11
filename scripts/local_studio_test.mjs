@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright-core";
-const url = process.env.WESTICKER_PUBLIC_URL || "http://127.0.0.1:18644/";
+const url = process.env.WESTICKER_PUBLIC_URL || "http://127.0.0.1:18642/";
 const out = ".runtime/local-studio-qa";
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({
@@ -15,9 +15,14 @@ try {
   page.on("request", (r) => {
     if (r.method() !== "GET") outgoing.push(r.url());
   });
-  const nav = page.getByRole("navigation", { name: "App navigation" });
   await page.goto(url);
-  await nav.getByRole("button", { name: "Create", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Create", exact: true })
+    .first()
+    .click();
+  await page
+    .getByRole("button", { name: "Saved local photo draft", exact: true })
+    .click();
   await page.getByLabel("Caption 1", { exact: true }).waitFor();
   assert(
     await page
@@ -34,7 +39,7 @@ try {
   await page.getByLabel("Keep this character reference").check();
   await page.getByLabel("Character name", { exact: true }).fill("Aya & Lala");
   await page.getByLabel("Pack title", { exact: true }).fill("A sunny workday");
-  await nav.getByRole("button", { name: "Agent", exact: true }).click();
+  await page.getByRole("button", { name: "Ask Agent", exact: true }).click();
   await page
     .getByLabel("Pack brief", { exact: true })
     .fill("Office work with our friends");
@@ -61,20 +66,26 @@ try {
       path: `${out}/create-${width}.png`,
       fullPage: true,
     });
-    await nav.getByRole("button", { name: "Agent", exact: true }).click();
+    await page.getByRole("button", { name: "Ask Agent", exact: true }).click();
     assert(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     );
     await page.screenshot({ path: `${out}/agent-${width}.png` });
-    await nav.getByRole("button", { name: "Create", exact: true }).click();
+    await page.getByRole("button", { name: "Edit draft", exact: true }).click();
   }
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export photo sticker" }).click();
   await (await download).saveAs(`${out}/photo-sticker.png`);
   await page.reload();
-  await nav.getByRole("button", { name: "Create", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Create", exact: true })
+    .first()
+    .click();
+  await page
+    .getByRole("button", { name: "Saved local photo draft", exact: true })
+    .click();
   assert.equal(
     await page.getByLabel("Character name", { exact: true }).inputValue(),
     "Aya & Lala",

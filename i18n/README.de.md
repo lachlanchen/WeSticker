@@ -26,6 +26,12 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
+**2026-10-11** · Lokales Entwicklungsupdate: Create und Agent bilden einen Chat-Arbeitsbereich mit bearbeitbaren Text- und Aktionstabellen, privater Bibliothek und Figurenverwaltung. Kostenlos entsteht jeweils ein Sticker; bezahlte Stufen erlauben 8/16/24. Web- und native Tests sind dokumentiert. Echte KI-Prüfung und neue Store-Auslieferung stehen noch aus; bisherige Beta-Angaben bleiben unten erhalten.
+
+[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+
+![Chat studio](../docs/screenshots/chat-studio-web.png)
+
 ## Das Studio
 
 - 10 Pakete, 156 eigenständige Animationen, chinesische, englische und japanische Beschriftungen mit sofortiger Vorschau.

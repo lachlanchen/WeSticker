@@ -4,9 +4,10 @@ import {
   Sticker as StickerIcon,
   X,
   ImagePlus,
-  MessageCircle,
+  Library,
+  Users,
 } from "lucide-react";
-import { LocalStudio } from "./LocalStudio";
+import { Studio } from "./Studio";
 import { StickerBrowser } from "./StickerBrowser";
 import type { Pack, Sticker } from "./api";
 
@@ -25,15 +26,19 @@ export function PublicCatalog() {
       return [];
     }
   });
-  const [view, setView] = useState<"stickers" | "create" | "agent" | "saved">(
-    "stickers",
+  const [view, setView] = useState<
+    "stickers" | "create" | "library" | "characters" | "saved"
+  >(
+    new URLSearchParams(location.search).has("native_link")
+      ? "create"
+      : "stickers",
   );
   const favorites = view === "saved";
   const tabs = [
     { id: "stickers", label: "Stickers", Icon: StickerIcon },
     { id: "create", label: "Create", Icon: ImagePlus },
-    { id: "agent", label: "Agent", Icon: MessageCircle },
-    { id: "saved", label: "Saved", Icon: Heart },
+    { id: "library", label: "Library", Icon: Library },
+    { id: "characters", label: "Characters", Icon: Users },
   ] as const;
   const [preview, setPreview] = useState<Sticker | null>(null);
   const [error, setError] = useState("");
@@ -132,8 +137,8 @@ export function PublicCatalog() {
           </button>
         </header>
         <main>
-          {view === "create" || view === "agent" ? (
-            <LocalStudio view={view} onView={setView} />
+          {view === "create" || view === "library" || view === "characters" ? (
+            <Studio section={view} onSection={setView} />
           ) : error ? (
             <p role="alert">{error}</p>
           ) : (

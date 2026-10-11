@@ -130,18 +130,17 @@ class CreatorStore(private val context: Context) {
 @Composable fun StudioRoot(packs: List<Pack>, loader: ImageLoader, save: suspend(Pack,Sticker,String)->Unit) {
     val context=LocalContext.current
     val store=remember { CreatorStore(context) }
+    val cloud=remember { CloudStudioStore(context) }
     var tab by rememberSaveable { mutableStateOf(0) }
-    val labels=listOf("Stickers","Create","Agent","Saved")
-    val icons=listOf(Icons.Outlined.SentimentSatisfiedAlt,Icons.Outlined.AddPhotoAlternate,Icons.Outlined.Forum,Icons.Outlined.FavoriteBorder)
+    val labels=listOf("Stickers","Create","Library","Characters")
+    val icons=listOf(Icons.Outlined.SentimentSatisfiedAlt,Icons.Outlined.Forum,Icons.Outlined.CollectionsBookmark,Icons.Outlined.PeopleOutline)
     Scaffold(contentWindowInsets=WindowInsets(0,0,0,0),bottomBar={ NavigationBar {
         labels.forEachIndexed { index,label -> NavigationBarItem(selected=tab==index,onClick={tab=index},icon={Icon(icons[index],label)},label={Text(label)}) }
     } }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             when(tab) {
                 0 -> Catalog(packs,loader,save)
-                1 -> CreatorScreen(store,loader) { tab=2 }
-                2 -> AgentScreen(store) { tab=1 }
-                else -> Catalog(packs,loader,save,true)
+                else -> CloudStudioScreen(cloud,store,loader,tab) { tab=1 }
             }
         }
     }

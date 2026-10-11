@@ -7,6 +7,12 @@ final class GIFImageView: NSImageView {
     private var timer: Timer?
     private var frameIndex = 0
     private var delays: [TimeInterval] = []
+    private var playing = true
+
+    func setPlaying(_ value: Bool) {
+        playing = value
+        if value { schedule() } else { stop() }
+    }
 
     func load(_ data: Data) {
         stop()
@@ -30,7 +36,7 @@ final class GIFImageView: NSImageView {
     }
 
     private func schedule() {
-        guard window != nil, delays.count > 1, timer == nil else { return }
+        guard playing, window != nil, delays.count > 1, timer == nil else { return }
         let next = Timer(timeInterval: delays[frameIndex], repeats: false) { [weak self] _ in
             guard let self else { return }
             self.timer = nil

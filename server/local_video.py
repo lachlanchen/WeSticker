@@ -56,7 +56,10 @@ def animate(cfg, job, item, source):
             json={
                 "model": cfg["moderation_model"],
                 "input": [
-                    {"type": "text", "text": item["label"]},
+                    {
+                        "type": "text",
+                        "text": item["label"] + " " + item.get("action", ""),
+                    },
                     {
                         "type": "image_url",
                         "image_url": {
@@ -112,10 +115,9 @@ def animate(cfg, job, item, source):
             "duration": 5,
             "seed": int(hashlib.sha256(item["id"].encode()).hexdigest()[:7], 16),
             "first_frame": token,
-            "last_frame": token,
             "audio_intent": "ambient",
             "dialogue": [],
-            "prompt": f"The exact single reference character acts out this everyday expression: {item['label']}. Preserve the face, clothing and palette. Clear small body action and gentle blinking; whole character visible, locked camera and clean white backdrop. Return to the opening pose. No lettering or speech.",
+            "prompt": f"The exact single reference character acts out this everyday expression: {item['label']}. Action: {item.get('action', '')}. Preserve the face, clothing and palette. A motivated gesture with anticipation, weight shift, hand motion and a relaxed settling pose; gentle blinking and naturally responding sleeves. Whole character visible, locked camera and clean white backdrop. No lettering or speech.",
             "physical_contract": {
                 "entities": [entity, floor],
                 "contacts": [

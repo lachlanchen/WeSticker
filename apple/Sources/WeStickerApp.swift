@@ -101,6 +101,7 @@ struct AnimatedArtwork: View {
 #if os(iOS)
 struct NativeImage: UIViewRepresentable {
     let data: Data
+    var playing: Bool = true
     class Coordinator { var last: Data? }
     func makeCoordinator() -> Coordinator { Coordinator() }
     func makeUIView(context: Context) -> UIImageView {
@@ -113,7 +114,10 @@ struct NativeImage: UIViewRepresentable {
         return view
     }
     func updateUIView(_ view: UIImageView, context: Context) {
-        guard context.coordinator.last != data else { return }
+        guard context.coordinator.last != data else {
+            if playing && (view.animationImages?.count ?? 0) > 1 { view.startAnimating() } else { view.stopAnimating() }
+            return
+        }
         context.coordinator.last = data
         view.stopAnimating(); view.animationImages = nil
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return }
@@ -128,7 +132,7 @@ struct NativeImage: UIViewRepresentable {
                 ?? gif?[kCGImagePropertyGIFDelayTime as String] as? Double ?? 0.08)
         }
         view.image = frames.first
-        if frames.count > 1 { view.animationImages = frames; view.animationDuration = duration; view.startAnimating() }
+        if frames.count > 1 { view.animationImages = frames; view.animationDuration = duration; if playing { view.startAnimating() } }
     }
     static func dismantleUIView(_ view: UIImageView, coordinator: Coordinator) {
         view.stopAnimating(); view.animationImages = nil; coordinator.last = nil
@@ -144,6 +148,7 @@ struct ShareSheet: UIViewControllerRepresentable {
 #else
 struct NativeImage: NSViewRepresentable {
     let data: Data
+    var playing: Bool = true
     class Coordinator { var last: Data? }
     func makeCoordinator() -> Coordinator { Coordinator() }
     func makeNSView(context: Context) -> GIFImageView {
@@ -155,6 +160,7 @@ struct NativeImage: NSViewRepresentable {
         return view
     }
     func updateNSView(_ view: GIFImageView, context: Context) {
+        view.setPlaying(playing)
         guard context.coordinator.last != data else { return }
         context.coordinator.last = data
         view.load(data)
@@ -284,7 +290,7 @@ struct CatalogView: View {
             .alert("WeSticker · Catalog beta", isPresented: $info) {
                 Button("Done", role: .cancel) {}
             } message: {
-                Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavorites and creator drafts stay on this device. GIF downloads connect to aya.lazying.art.\n\nCreate exports photo stickers. Agent uses on-device caption templates. Cloud AI, accounts, purchases and automated upload are not connected in this beta.")
+                Text("Aya, Lala, Sasa and Zhuangzi the robot.\n\nFavorites and local photo drafts stay on this device. GIF downloads connect to aya.lazying.art.\n\nCreate combines chat and editable sticker plans. Your connected creator service keeps private characters, libraries and generation jobs. Provider availability and limits are checked by that service before generation. Native purchases and automated uploading remain unavailable in this build.")
             }
             .alert("Could not save sticker", isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })) {
                 Button("OK", role: .cancel) { failure = nil }

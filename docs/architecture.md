@@ -11,8 +11,9 @@ databases, WeChat cookies, store records, or browser profiles.
    load first; original GIFs load on demand from the existing public AYA service.
 2. Adults accept terms and confirm image permissions. The service normalizes
    uploads, strips metadata, and creates an account-scoped character record.
-3. The user confirms reference identity, names the collection, and chooses eight
-   everyday expressions. Previously locked characters are reusable.
+3. The user confirms reference identity, names the collection, and edits a
+   caption/action table with chat proposals or direct inputs. Free creations use
+   one row; paid tiers allow 8/16/24. Locked characters are reusable.
 4. Photo mode produces captioned static stickers without an AI call. Configured
    AI mode creates one or more expressions from the references. The optional
    LocalVideoGen adapter animates an approved still. These modes are distinct;
@@ -34,6 +35,7 @@ databases, WeChat cookies, store records, or browser profiles.
 | `src/` | React catalog, preview, studio, review, plans, marketplace and account |
 | `public/catalog.json`, `public/previews/` | Curated public default art, no customer originals |
 | `server/app.py`, `store.py` | API, ownership, sessions, CSRF, SQLite WAL and job reservations |
+| `server/studio.py` | Chat proposals, revisioned tables, quotes, version history and native device links |
 | `server/worker.py` | Single worker, photo/image jobs, preserved outputs, uncertain-state recovery |
 | `server/local_video.py` | Protected local animation adapter with intent and provider receipt |
 | `server/auth.py` | Disabled-until-configured OAuth and custom LazyingArt PKCE adapters |
@@ -41,15 +43,13 @@ databases, WeChat cookies, store records, or browser profiles.
 | `server/native_billing.py`, `src/NativePlans.tsx` | Account-bound Apple/Google verification and native-only purchase UI |
 | `server/market.py` | Frozen reviewed exports, preview and entitlement-gated ZIPs |
 | `server/wechat.py`, `worker/` | Draft-only ticket and isolated browser agent |
-| `android/` | Native Kotlin/Jetpack Compose catalog beta |
+| `android/` | Native Kotlin/Jetpack Compose catalog and connected creator workspace |
 | `apple/`, `macos/` | Shared SwiftUI source with separate native iOS and macOS targets |
 | `ios/`, `prototype/` | Preserved earlier Capacitor prototype and billing bridges; not distributed as current native apps |
 
-The public `/westicker/` PWA and native beta expose only the approved catalog,
-preview, favorites and individual GIF save/share. The creator product loop
-above is the separate local web prototype and planned native expansion, not
-an assertion that all seven steps are available in build 3. See the
-[native creator plan](native-creator-plan.md).
+The current source includes connected native and web creation; public betas do
+not automatically receive those features. See the [chat-first creator evidence
+and limits](chat-studio-20261011.md) and the preserved [native creator plan](native-creator-plan.md).
 
 ## Proposed subscriptions
 
@@ -102,8 +102,8 @@ separately from source code; see `ARTWORK-LICENSE.md`.
 
 Native IAP bridges and server verification are implemented but sales-disabled;
 renewal/refund notification reconciliation and real store qualification remain.
-Not yet implemented: native OAuth return plumbing, translated app UI,
+Not yet qualified: external native OAuth provider flows, translated app UI,
 automated marketplace review, dispute/tax
-operations, multi-tenant browser orchestration, full animation QA and version
-history browsing. The README languages describe the product; they are not app
+operations, multi-tenant browser orchestration and full animation QA. Version
+history is available in the local creator workspace. README languages describe the product; they are not app
 UI localization.

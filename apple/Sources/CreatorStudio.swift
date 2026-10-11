@@ -101,15 +101,14 @@ struct PNGDocument: FileDocument {
 
 struct StudioRootView: View {
     @StateObject private var store = CreatorStore()
+    @StateObject private var cloud = CloudStudioStore()
     @State private var selected = 0
-    private let labels = ["Stickers", "Create", "Agent", "Saved"]
-    private let symbols = ["face.smiling", "plus.app", "bubble.left.and.bubble.right", "heart"]
+    private let labels = ["Stickers", "Create", "Library", "Characters"]
+    private let symbols = ["face.smiling", "bubble.left.and.bubble.right", "square.stack", "person.crop.square"]
     var body: some View {
         Group {
             switch selected {
-            case 1: CreatorView(store: store, openAgent: { selected = 2 })
-            case 2: AgentView(store: store, openCreate: { selected = 1 })
-            case 3: CatalogView(showSaved: true)
+            case 1, 2, 3: CloudStudioView(store: cloud, local: store, section: selected, onCreate: { selected = 1 })
             default: CatalogView()
             }
         }.safeAreaInset(edge: .bottom, spacing: 0) {

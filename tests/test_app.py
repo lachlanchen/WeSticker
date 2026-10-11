@@ -167,7 +167,7 @@ def test_photo_end_to_end(setup):
     assert result.status_code == 200
     with zipfile.ZipFile(io.BytesIO(result.data)) as z:
         assert "metadata.json" in z.namelist() and "banner.jpg" in z.namelist()
-        assert len([n for n in z.namelist() if n.startswith("stickers/")]) == 8
+        assert len([n for n in z.namelist() if n.startswith("stickers/")]) == 1
         image = Image.open(io.BytesIO(z.read("stickers/01.png")))
         assert image.size == (240, 240) and image.mode == "RGBA"
 

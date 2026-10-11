@@ -68,32 +68,34 @@ final class CatalogTests: XCTestCase {
         #endif
         app.terminate()
     }
-    func testCreatorPlannerAndPersistence() throws {
+    func testUnifiedCreatorAndLocalDraftPersistence() throws {
         let app = XCUIApplication()
         app.launch()
+        defer { app.terminate() }
         XCTAssertTrue(app.buttons["Create"].waitForExistence(timeout: 20))
         app.buttons["Create"].tap()
-        XCTAssertTrue(app.textFields["Character name"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.textFields["HTTPS creator service"].waitForExistence(timeout: 10))
         XCTAssertEqual(app.webViews.count, 0)
-        capture("Native creator")
-        app.buttons["Agent"].tap()
-        XCTAssertTrue(app.buttons["Prepare captions"].waitForExistence(timeout: 10))
-        app.buttons["Work"].tap()
-        app.buttons["Prepare captions"].tap()
-        XCTAssertTrue(app.staticTexts["On it"].waitForExistence(timeout: 10))
-        capture("Native caption planner")
-        app.scrollViews.firstMatch.swipeUp()
-        app.buttons["Apply to draft"].tap()
-        XCTAssertTrue(app.buttons["Apply captions"].waitForExistence(timeout: 10))
-        app.buttons["Apply captions"].tap()
+        XCTAssertFalse(app.buttons["Agent"].exists)
+        XCTAssertTrue(app.buttons["Library"].exists)
+        XCTAssertTrue(app.buttons["Characters"].exists)
+        capture("Native unified creator")
+        app.buttons["Open saved local photo draft"].tap()
+        XCTAssertTrue(app.textFields["Character name"].waitForExistence(timeout: 10))
+        let character = app.textFields["Character name"]
+        character.tap()
+        let old = character.value as? String ?? ""
+        character.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: old.count) + "QA character")
         XCTAssertTrue(app.textFields["Caption 1"].waitForExistence(timeout: 10))
-        XCTAssertEqual(app.textFields["Caption 1"].value as? String, "On it")
+        let caption = app.textFields["Caption 1"].value as? String
+        capture("Native preserved local draft")
         app.terminate()
         app.launch()
         app.buttons["Create"].tap()
+        app.buttons["Open saved local photo draft"].tap()
         XCTAssertTrue(app.textFields["Caption 1"].waitForExistence(timeout: 10))
-        XCTAssertEqual(app.textFields["Caption 1"].value as? String, "On it")
+        XCTAssertEqual(app.textFields["Character name"].value as? String, "QA character")
+        XCTAssertEqual(app.textFields["Caption 1"].value as? String, caption)
         capture("Native restored draft")
-        app.terminate()
     }
 }

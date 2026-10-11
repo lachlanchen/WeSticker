@@ -26,6 +26,12 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
+**2026-10-11** · Cập nhật cục bộ: Create và Agent đã hợp nhất thành không gian trò chuyện với bảng chữ và hành động có thể chỉnh sửa, thư viện và nhân vật riêng tư. Tài khoản miễn phí tạo từng nhãn dán; các gói trả phí cho phép tối đa 8/16/24. Kiểm thử web và ứng dụng gốc đã được ghi lại. Xác minh AI thực tế và bản phát hành mới vẫn chưa hoàn tất; bên dưới giữ lại mô tả beta trước đó.
+
+[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+
+![Chat studio](../docs/screenshots/chat-studio-web.png)
+
 ## Xưởng sáng tạo
 
 - 10 bộ, 156 hoạt ảnh riêng biệt, chữ Trung/Anh/Nhật và xem trước tức thì.

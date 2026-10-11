@@ -26,6 +26,12 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
+**2026-10-11** · Développement local : Create et Agent sont réunis dans un atelier de discussion avec tableaux de textes et d’actions modifiables, bibliothèque privée et personnages. Le mode gratuit crée un sticker à la fois ; les offres payantes autorisent 8/16/24. Les tests web et natifs sont documentés. La validation IA réelle et une nouvelle diffusion en boutique restent à faire ; les détails de la bêta précédente sont conservés ci-dessous.
+
+[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+
+![Chat studio](../docs/screenshots/chat-studio-web.png)
+
 ## Le studio
 
 - 10 collections, 156 animations distinctes, versions chinoise, anglaise et japonaise avec aperçu immédiat.

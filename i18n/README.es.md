@@ -26,6 +26,12 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
+**2026-10-11** · Desarrollo local: Create y Agent comparten un espacio de chat con tablas editables de textos y acciones, biblioteca privada y personajes. El plan gratuito crea un adhesivo cada vez; los planes de pago admiten 8/16/24. Las pruebas web y nativas están documentadas. Siguen pendientes la validación real de IA y una nueva publicación en tiendas; se conservan abajo los detalles de la beta anterior.
+
+[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+
+![Chat studio](../docs/screenshots/chat-studio-web.png)
+
 ## El estudio
 
 - 10 paquetes, 156 animaciones distintas y versiones en chino, inglés y japonés con vista previa inmediata.

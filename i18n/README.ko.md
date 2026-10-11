@@ -26,6 +26,12 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
+**2026-10-11** · 로컬 개발 업데이트: Create와 Agent를 채팅 중심 작업 공간으로 통합하고 문구·동작 편집표, 비공개 라이브러리와 캐릭터 관리를 추가했습니다. 무료 계정은 한 번에 한 장, 유료 요금제는 최대 8/16/24장입니다. 웹·네이티브 테스트를 기록했으며 실제 AI 검증과 새 스토어 배포는 아직 남아 있습니다. 아래에는 이전 베타 설명도 보존했습니다.
+
+[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+
+![Chat studio](../docs/screenshots/chat-studio-web.png)
+
 ## 스튜디오
 
 - 기본 10팩, 서로 다른 애니메이션 156개, 중국어·영어·일본어 문구 버전과 즉시 미리보기.

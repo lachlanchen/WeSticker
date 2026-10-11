@@ -26,6 +26,12 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 [GIF playback, new icon and test-build evidence](docs/native-playback-20261010.md)
 
+**2026-10-11** · Local development: Create and Agent now share a chat-first workspace with editable caption/action tables, private Library and Characters. Free users create one sticker at a time; paid tiers allow 8/16/24. Web and native tests are documented. Live AI qualification and a new store release remain pending; earlier beta details below are preserved.
+
+[2026-10-11 · API / QA](docs/chat-studio-20261011.md)
+
+![Chat studio](docs/screenshots/chat-studio-web.png)
+
 ## The Studio
 
 - 10 default packs, 156 animations, Chinese/English/Japanese sticker versions and instant previews.

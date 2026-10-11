@@ -1,5 +1,6 @@
 {
   "en": {
+    "creator_update": "Local development: Create and Agent now share a chat-first workspace with editable caption/action tables, private Library and Characters. Free users create one sticker at a time; paid tiers allow 8/16/24. Web and native tests are documented. Live AI qualification and a new store release remain pending; earlier beta details below are preserved.",
     "tag": "Your character. Everyday expressions.",
     "intro": "An independent sticker studio for Aya and friends, personal characters and creator collections. Browse the default artwork without signing in; use a private workspace to prepare your own. The existing AYA shop is unchanged.",
     "headings": [
@@ -24,6 +25,7 @@
     "cite": "Code is MIT; artwork has separate rights. Cite this repository when using the software in research."
   },
   "zh-Hans": {
+    "creator_update": "本地开发更新：Create 与 Agent 已合并为聊天式工作区，支持可编辑的文字与动作表、私有作品库及角色库。免费版逐张生成，付费档位上限为 8/16/24 张。网页和原生测试已有记录；真实 AI 验证与新版商店发布仍待完成，下文保留早期测试版说明。",
     "tag": "你的角色，日常的小表情。",
     "intro": "独立的表情创作工坊：可以欣赏阿芽与伙伴们的作品，也能创建自己的角色与表情系列。默认作品无需登录即可浏览，个人素材在私有工作区处理。已有 AYA 商店保持不变。",
     "headings": [
@@ -48,6 +50,7 @@
     "cite": "源代码采用 MIT 协议，角色及美术资产单独授权。研究中使用本软件时请引用本仓库。"
   },
   "zh-Hant": {
+    "creator_update": "本機開發更新：Create 與 Agent 已合併為聊天式工作區，支援可編輯的文字與動作表、私人作品庫及角色庫。免費版逐張生成，付費方案上限為 8/16/24 張。網頁與原生測試已有記錄；真實 AI 驗證與新版商店發布仍待完成，下文保留早期測試版說明。",
     "tag": "你的角色，日常的小表情。",
     "intro": "獨立的貼圖創作工坊：可以欣賞阿芽與夥伴們的作品，也能建立自己的角色與貼圖系列。預設作品無需登入即可瀏覽，個人素材在私有工作區處理。既有 AYA 商店保持不變。",
     "headings": [
@@ -72,6 +75,7 @@
     "cite": "原始碼採用 MIT 授權，角色及美術資產另行授權。研究中使用本軟體時請引用本倉庫。"
   },
   "ja": {
+    "creator_update": "ローカル開発の更新：Create と Agent をチャット中心の画面に統合し、文字・動作の編集表、非公開の作品庫とキャラクター管理を追加しました。無料枠は1枚ずつ、有料プランは最大8/16/24枚です。Web・ネイティブのテスト結果を記録していますが、実際のAI検証と新しいストア配信は未完了です。以下には従来のベータの説明も残しています。",
     "tag": "あなたのキャラクターで、毎日の気持ちを。",
     "intro": "阿芽と仲間たちの作品を楽しみ、自分だけのキャラクターとスタンプを作る独立したスタジオです。標準作品はログインなしで閲覧でき、個人素材は非公開の作業領域で扱います。既存の AYA ショップは変更していません。",
     "headings": [
@@ -96,6 +100,7 @@
     "cite": "コードは MIT、キャラクターと画像は別の権利条件です。研究に利用する際は本リポジトリを引用してください。"
   },
   "ko": {
+    "creator_update": "로컬 개발 업데이트: Create와 Agent를 채팅 중심 작업 공간으로 통합하고 문구·동작 편집표, 비공개 라이브러리와 캐릭터 관리를 추가했습니다. 무료 계정은 한 번에 한 장, 유료 요금제는 최대 8/16/24장입니다. 웹·네이티브 테스트를 기록했으며 실제 AI 검증과 새 스토어 배포는 아직 남아 있습니다. 아래에는 이전 베타 설명도 보존했습니다.",
     "tag": "나만의 캐릭터로 전하는 일상의 마음.",
     "intro": "Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드는 독립 스튜디오입니다. 기본 작품은 로그인 없이 볼 수 있으며 개인 자료는 비공개 작업 공간에서 처리합니다. 기존 AYA 상점은 변경하지 않았습니다.",
     "headings": [
@@ -120,6 +125,7 @@
     "cite": "코드는 MIT이며 캐릭터와 그림은 별도 권리가 적용됩니다. 연구에 사용할 때 이 저장소를 인용해 주세요."
   },
   "fr": {
+    "creator_update": "Développement local : Create et Agent sont réunis dans un atelier de discussion avec tableaux de textes et d’actions modifiables, bibliothèque privée et personnages. Le mode gratuit crée un sticker à la fois ; les offres payantes autorisent 8/16/24. Les tests web et natifs sont documentés. La validation IA réelle et une nouvelle diffusion en boutique restent à faire ; les détails de la bêta précédente sont conservés ci-dessous.",
     "tag": "Votre personnage, vos petites expressions du quotidien.",
     "intro": "Un studio indépendant pour Aya et ses amis, vos personnages et vos collections. Les créations par défaut sont visibles sans connexion ; les photos personnelles restent dans un espace privé. La boutique AYA existante est inchangée.",
     "headings": [
@@ -144,6 +150,7 @@
     "cite": "Code sous MIT ; illustrations sous droits distincts. Citez ce dépôt pour un usage scientifique."
   },
   "es": {
+    "creator_update": "Desarrollo local: Create y Agent comparten un espacio de chat con tablas editables de textos y acciones, biblioteca privada y personajes. El plan gratuito crea un adhesivo cada vez; los planes de pago admiten 8/16/24. Las pruebas web y nativas están documentadas. Siguen pendientes la validación real de IA y una nueva publicación en tiendas; se conservan abajo los detalles de la beta anterior.",
     "tag": "Tu personaje. Tus expresiones de cada día.",
     "intro": "Un estudio independiente para Aya y sus amigos, personajes personales y colecciones de creadores. Las obras predeterminadas se ven sin iniciar sesión; las fotos personales se procesan en privado. La tienda AYA existente no cambia.",
     "headings": [
@@ -168,6 +175,7 @@
     "cite": "Código MIT; ilustraciones con derechos separados. Cita el repositorio si lo usas en investigación."
   },
   "de": {
+    "creator_update": "Lokales Entwicklungsupdate: Create und Agent bilden einen Chat-Arbeitsbereich mit bearbeitbaren Text- und Aktionstabellen, privater Bibliothek und Figurenverwaltung. Kostenlos entsteht jeweils ein Sticker; bezahlte Stufen erlauben 8/16/24. Web- und native Tests sind dokumentiert. Echte KI-Prüfung und neue Store-Auslieferung stehen noch aus; bisherige Beta-Angaben bleiben unten erhalten.",
     "tag": "Deine Figur. Kleine Gefühle für jeden Tag.",
     "intro": "Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creator-Sammlungen. Standardmotive sind ohne Anmeldung sichtbar; persönliche Fotos bleiben im privaten Arbeitsbereich. Der bestehende AYA-Shop wird nicht verändert.",
     "headings": [
@@ -192,6 +200,7 @@
     "cite": "Code unter MIT; Bildmaterial mit eigenen Rechten. Bei wissenschaftlicher Nutzung bitte dieses Repository zitieren."
   },
   "ru": {
+    "creator_update": "Локальное обновление: Create и Agent объединены в рабочую область с чатом, редактируемой таблицей подписей и действий, личной библиотекой и персонажами. Бесплатный режим создаёт по одному стикеру, платные уровни допускают 8/16/24. Веб- и нативные тесты задокументированы. Проверка реальных ИИ-сервисов и новая публикация в магазинах ещё не завершены; ниже сохранено описание прежней беты.",
     "tag": "Ваш персонаж. Эмоции на каждый день.",
     "intro": "Независимая студия стикеров Aya и друзей, личных персонажей и авторских наборов. Стандартные работы доступны без входа; личные фотографии обрабатываются в закрытой рабочей области. Существующий магазин AYA не изменён.",
     "headings": [
@@ -216,6 +225,7 @@
     "cite": "Код MIT; права на изображения отдельные. При исследовательском использовании ссылайтесь на репозиторий."
   },
   "vi": {
+    "creator_update": "Cập nhật cục bộ: Create và Agent đã hợp nhất thành không gian trò chuyện với bảng chữ và hành động có thể chỉnh sửa, thư viện và nhân vật riêng tư. Tài khoản miễn phí tạo từng nhãn dán; các gói trả phí cho phép tối đa 8/16/24. Kiểm thử web và ứng dụng gốc đã được ghi lại. Xác minh AI thực tế và bản phát hành mới vẫn chưa hoàn tất; bên dưới giữ lại mô tả beta trước đó.",
     "tag": "Nhân vật của bạn. Cảm xúc mỗi ngày.",
     "intro": "Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân vật do người dùng tạo. Xem bộ mặc định không cần đăng nhập; ảnh cá nhân được xử lý trong không gian riêng. Cửa hàng AYA hiện tại không thay đổi.",
     "headings": [
@@ -240,6 +250,7 @@
     "cite": "Mã nguồn MIT; hình ảnh có quyền riêng. Vui lòng trích dẫn kho mã khi dùng trong nghiên cứu."
   },
   "ar": {
+    "creator_update": "تحديث محلي: دُمج Create وAgent في مساحة محادثة مع جدول قابل للتحرير للنصوص والحركات ومكتبة وشخصيات خاصة. ينشئ الحساب المجاني ملصقًا واحدًا كل مرة، وتسمح الخطط المدفوعة بحد أقصى 8/16/24. وُثقت اختبارات الويب والتطبيقات الأصلية. ما زال التحقق من خدمات الذكاء الاصطناعي الفعلية وإصدار المتاجر الجديد معلقين؛ حُفظ وصف النسخة التجريبية السابقة أدناه.",
     "tag": "شخصيتك، وتعابيرك الصغيرة كل يوم.",
     "intro": "استوديو مستقل لملصقات Aya وأصدقائها ولشخصيات المستخدمين ومجموعاتهم. يمكن مشاهدة الأعمال الافتراضية دون تسجيل الدخول، بينما تُعالج الصور الشخصية في مساحة خاصة. متجر AYA الحالي لم يتغير.",
     "headings": [

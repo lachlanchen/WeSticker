@@ -20,6 +20,8 @@
   },
   "image_model": "gpt-image-1.5",
   "moderation_model": "omni-moderation-latest",
+  "chat_model": "deepseek-chat",
+  "chat_api_origin": "https://api.deepseek.com/v1",
   "font": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
   "creator_sales_enabled": false,
   "wechat_worker_enabled": false
