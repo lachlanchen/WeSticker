@@ -1,7 +1,11 @@
 # Public catalog bandwidth and operations
 
-Live PWA: <https://aya.lazying.art/westicker/>. The AYA shop stays at the root.
-This is static public artwork, not the private creator backend.
+Current creator PWA: <https://westicker.lazying.art>. It has its own API, account
+and billing boundary. The earlier catalog-only preview remains documented at
+<https://aya.lazying.art/westicker/>; the AYA shop stays at that host's root.
+The following October 10 deployment measurements describe the catalog-only
+preview, not authenticated creator requests. Both retain lightweight grid previews
+and original-quality download assets.
 
 ## Applied changes
 
