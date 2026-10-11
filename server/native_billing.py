@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from datetime import datetime
 import fcntl
 import hashlib
+import math
 import os
 from pathlib import Path
 import re
@@ -45,6 +46,7 @@ class Purchase:
     tier: str
     state: str
     expires: float
+    replaces: str | None = None
 
 
 def binding(user_id, provider):
@@ -54,6 +56,8 @@ def binding(user_id, provider):
 
 
 def product_plan(cfg, provider, product):
+    if provider not in {"apple", "google"} or not isinstance(product, str):
+        raise ValueError("Unrecognized store product")
     tier = cfg.get("native_billing", {}).get(provider, {}).get("products", {}).get(product)
     plan = next((p for p in PLANS if p["id"] == tier), None)
     if not plan:
@@ -123,7 +127,7 @@ def verify_apple(cfg, reference, environment):
             expires = (end or 0) / 1000
             if tx.revocationDate is not None:
                 state = "revoked"
-            elif tx.isUpgraded or expires <= time.time():
+            elif tx.isUpgraded:
                 state = "expired"
             matches.append(Purchase("apple", environment, reference, tx.transactionId,
                                     str(tx.appAccountToken).lower(), tx.productId,
@@ -143,13 +147,22 @@ def google_session(cfg):
     credentials = service_account.Credentials.from_service_account_file(
         options["key_file"], scopes=["https://www.googleapis.com/auth/androidpublisher"]
     )
-    return AuthorizedSession(credentials)
+    return AuthorizedSession(credentials, refresh_timeout=30, max_refresh_attempts=1)
 
 
 def verify_google(cfg, token):
     if not isinstance(token, str) or not re.fullmatch(r"[A-Za-z0-9_.\-:]{10,4096}", token):
         raise ValueError("Invalid purchase token")
     session = google_session(cfg)
+    try:
+        return _read_google(cfg, token, session)
+    except Exception:
+        if hasattr(session, "close"):
+            session.close()
+        raise
+
+
+def _read_google(cfg, token, session):
     base = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/" + BUNDLE
     response = session.get(base + "/purchases/subscriptionsv2/tokens/" + token, timeout=30)
     response.raise_for_status()
@@ -175,9 +188,12 @@ def verify_google(cfg, token):
     state = states.get(data.get("subscriptionState"))
     if state is None:
         raise ValueError("Unknown Play state")
-    expires = datetime.fromisoformat(line["expiryTime"].replace("Z", "+00:00")).timestamp()
-    if expires <= time.time():
-        state = "expired"
+    expires = (datetime.fromisoformat(line["expiryTime"].replace("Z", "+00:00")).timestamp()
+               if line.get("expiryTime") else 0)
+    if not expires and state in {"active", "grace"}:
+        raise ValueError("Missing paid expiry")
+    # Expiry gates access in apply_purchase. Retain nonterminal provider states
+    # so a billing retry/hold cannot be mistaken for permission to buy again.
     owner = data.get("externalAccountIdentifiers", {}).get("obfuscatedExternalAccountId")
     if not owner:
         raise ValueError("Missing account binding")
@@ -185,26 +201,46 @@ def verify_google(cfg, token):
     transaction = line.get("latestSuccessfulOrderId") or "unpaid-" + reference
     if transaction.startswith("unpaid-") and state in {"active", "grace"}:
         raise ValueError("Missing paid order")
+    linked = data.get("linkedPurchaseToken")
+    if linked is not None and (not isinstance(linked, str) or not re.fullmatch(r"[A-Za-z0-9_.\-:]{10,4096}", linked)):
+        raise ValueError("Invalid replacement reference")
     return Purchase("google", environment, reference, transaction, owner, product,
-                    plan["id"], state, expires), data, session
+                    plan["id"], state, expires,
+                    hashlib.sha256(linked.encode()).hexdigest() if linked else None), data, session
 
 
-def apply_purchase(cfg, owner, purchase):
+def apply_purchase(cfg, owner, purchase, *, lookup=None):
+    from .native_reconcile import grant_key, purchase_source, save_lookup, save_lineage
+
     if purchase.binding != binding(owner, purchase.provider):
         raise ValueError("This store purchase belongs to a different WeSticker account")
     plan = product_plan(cfg, purchase.provider, purchase.product)
     active = purchase.state in {"active", "grace"} and purchase.expires > time.time()
-    source = ":".join((purchase.provider, purchase.environment, purchase.reference))
-    grant_id = ":".join((purchase.provider, purchase.environment, purchase.transaction))
+    if (purchase.environment not in {"Production", "Sandbox"}
+            or purchase.state not in {"active", "grace", "expired", "revoked", "hold", "pending"}
+            or not math.isfinite(purchase.expires) or not purchase.transaction):
+        raise ValueError("Invalid verified purchase")
+    source = purchase_source(purchase)
+    grant_id = grant_key(purchase)
     with database(cfg) as db:
         db.execute("BEGIN IMMEDIATE")
+        if not db.execute("SELECT 1 FROM users WHERE id=?", (owner,)).fetchone():
+            raise ValueError("Account no longer exists")
         old = db.execute("SELECT * FROM native_subscriptions WHERE source=?", (source,)).fetchone()
         if old and old["user_id"] != owner:
             raise ValueError("Purchase is already bound to another account")
+        if lookup is not None:
+            save_lookup(db, cfg, owner, purchase, lookup)
+        superseded = save_lineage(db, owner, purchase, active)
+        if superseded:
+            active = False
         db.execute("INSERT INTO native_subscriptions VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(source) DO UPDATE SET product=excluded.product,tier=excluded.tier,state=excluded.state,expires=excluded.expires,observed=excluded.observed",
                    (source, owner, purchase.provider, purchase.product, plan["id"],
-                    purchase.state, purchase.expires, time.time()))
+                    "superseded" if superseded else purchase.state, purchase.expires, time.time()))
         if active:
+            grant = db.execute("SELECT user_id FROM native_grants WHERE id=?", (grant_id,)).fetchone()
+            if grant and grant["user_id"] != owner:
+                raise ValueError("Transaction is already bound to another account")
             inserted = db.execute("INSERT OR IGNORE INTO native_grants VALUES(?,?,?)",
                                   (grant_id, owner, time.time())).rowcount
             db.execute("UPDATE users SET plan=?,expires=?,subscription_id=?,credits=CASE WHEN ? THEN ? ELSE credits END WHERE id=?",
@@ -215,10 +251,35 @@ def apply_purchase(cfg, owner, purchase):
             db.execute("UPDATE users SET plan='free',expires=0,subscription_id=NULL WHERE id=? AND subscription_id=?",
                        (owner, source))
     return {"verified": True, "active": active, "plan": plan["id"] if active else "free",
-            "expires": purchase.expires, "environment": purchase.environment}
+            "expires": purchase.expires, "environment": purchase.environment,
+            "superseded": superseded}
+
+
+def verify_and_deliver(cfg, owner, provider, lookup, environment=None):
+    """Caller holds verification_lock through lookup, durable delivery and ACK."""
+    from .native_reconcile import lookup_cipher
+
+    lookup_cipher(cfg)  # Fail closed before provider work if recovery is unavailable.
+    if provider == "apple":
+        return apply_purchase(cfg, owner, verify_apple(cfg, lookup, environment), lookup=lookup)
+    purchase, data, session = verify_google(cfg, lookup)
+    try:
+        if environment is not None and purchase.environment != environment:
+            raise ValueError("Store environment changed")
+        result = apply_purchase(cfg, owner, purchase, lookup=lookup)
+        if result["active"] and data.get("acknowledgementState") == "ACKNOWLEDGEMENT_STATE_PENDING":
+            url = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/" + BUNDLE + "/purchases/subscriptions/" + purchase.product + "/tokens/" + lookup + ":acknowledge"
+            response = session.post(url, json={}, timeout=30)
+            response.raise_for_status()
+        return result
+    finally:
+        if hasattr(session, "close"):
+            session.close()
 
 
 def register_native_billing(app, cfg):
+    from .native_reconcile import initialize_recovery, lookup_cipher, register_notifications, remember_binding
+
     ext = app.extensions["westicker"]
     with database(cfg) as db:
         db.executescript("""
@@ -226,21 +287,30 @@ CREATE TABLE IF NOT EXISTS native_subscriptions(source TEXT PRIMARY KEY,user_id 
 CREATE TABLE IF NOT EXISTS native_grants(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,created REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS native_intents(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,provider TEXT NOT NULL,product TEXT NOT NULL,state TEXT NOT NULL,created REAL NOT NULL);
 """)
+    initialize_recovery(cfg)
+    register_notifications(app, cfg)
 
     @app.get("/api/billing/native/catalog")
     def native_catalog():
         user = ext["current"]()
+        remember_binding(cfg, user["id"])
+        try:
+            lookup_cipher(cfg)
+            recovery_ready = True
+        except RuntimeError:
+            recovery_ready = False
         providers = {}
         for provider in ("apple", "google"):
             options = cfg.get("native_billing", {}).get(provider, {})
             providers[provider] = {"binding": binding(user["id"], provider),
                                    "products": options.get("products", {}),
-                                   "purchase_enabled": bool(options.get("purchase_enabled"))}
+                                   "purchase_enabled": bool(options.get("purchase_enabled")) and recovery_ready}
         return jsonify(providers=providers)
 
     @app.post("/api/billing/native/prepare")
     def native_prepare():
         user = ext["current"]()
+        remember_binding(cfg, user["id"])
         body = request.get_json() or {}
         provider, product, attempt = body.get("provider"), body.get("product"), body.get("attempt")
         if provider not in {"apple", "google"} or not isinstance(attempt, str) or not re.fullmatch(r"[a-f0-9-]{32,36}", attempt):
@@ -249,9 +319,19 @@ CREATE TABLE IF NOT EXISTS native_intents(id TEXT PRIMARY KEY,user_id TEXT NOT N
         if not options.get("purchase_enabled"):
             abort(503, description="New native purchases are not enabled yet. Restore remains available.")
         try:
+            lookup_cipher(cfg)
+        except RuntimeError:
+            abort(503, description="Native purchase recovery is unavailable. Do not start another purchase.")
+        try:
             product_plan(cfg, provider, product)
         except ValueError:
             abort(400)
+        try:
+            ext["close_stripe_checkouts"](user)
+        except BlockingIOError:
+            abort(409, description="Another billing operation is being reconciled. Try the same attempt later.")
+        except ValueError:
+            abort(503, description="An existing web purchase needs reconciliation before switching stores.")
         with database(cfg) as db:
             db.execute("BEGIN IMMEDIATE")
             prior = db.execute("SELECT * FROM native_intents WHERE id=?", (attempt,)).fetchone()
@@ -261,8 +341,10 @@ CREATE TABLE IF NOT EXISTS native_intents(id TEXT PRIMARY KEY,user_id TEXT NOT N
             else:
                 fresh = db.execute("SELECT expires FROM users WHERE id=?", (user["id"],)).fetchone()
                 pending = db.execute("SELECT 1 FROM native_intents WHERE user_id=? AND state IN ('prepared','pending')", (user["id"],)).fetchone()
-                web = db.execute("SELECT 1 FROM checkouts WHERE user_id=? AND kind='subscription' AND created>?", (user["id"], time.time()-86400)).fetchone()
-                if fresh["expires"] > time.time() or pending or web:
+                unresolved = db.execute("SELECT 1 FROM native_subscriptions WHERE user_id=? AND state IN ('active','grace','hold','pending')",
+                                        (user["id"],)).fetchone()
+                web = db.execute("SELECT 1 FROM checkouts c LEFT JOIN stripe_orders o ON o.attempt=c.id WHERE c.user_id=? AND c.kind='subscription' AND (o.state IS NULL OR o.state NOT IN ('expired','complete'))", (user["id"],)).fetchone()
+                if fresh["expires"] > time.time() or pending or unresolved or web:
                     abort(409, description="Restore or manage the existing purchase before paying again.")
                 db.execute("INSERT INTO native_intents VALUES(?,?,?,?,?,?)",
                            (attempt, user["id"], provider, product, "prepared", time.time()))
@@ -288,18 +370,12 @@ CREATE TABLE IF NOT EXISTS native_intents(id TEXT PRIMARY KEY,user_id TEXT NOT N
             abort(400)
         try:
             with verification_lock(cfg, user["id"]):
-                if body.get("provider") == "apple":
-                    purchase = verify_apple(cfg, body.get("reference"), body.get("environment"))
-                    return jsonify(apply_purchase(cfg, user["id"], purchase))
-                purchase, data, session = verify_google(cfg, body.get("token"))
-                result = apply_purchase(cfg, user["id"], purchase)
-                # Delivery is durable before acknowledgement; retries reconcile
-                # the same verified order and cannot grant duplicate credits.
-                if result["active"] and data.get("acknowledgementState") == "ACKNOWLEDGEMENT_STATE_PENDING":
-                    url = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/" + BUNDLE + "/purchases/subscriptions/" + purchase.product + "/tokens/" + body["token"] + ":acknowledge"
-                    response = session.post(url, json={}, timeout=30)
-                    response.raise_for_status()
-                return jsonify(result)
+                provider = body["provider"]
+                lookup = body.get("reference") if provider == "apple" else body.get("token")
+                from .native_reconcile import validate_lookup
+                validate_lookup(provider, lookup)
+                return jsonify(verify_and_deliver(cfg, user["id"], provider, lookup,
+                                                 body.get("environment")))
         except BlockingIOError:
             abort(409, description="Another restore is in progress. Wait for it to finish; do not pay again.")
         except ValueError:

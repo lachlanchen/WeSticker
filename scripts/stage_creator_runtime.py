@@ -13,7 +13,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     source = args.source.resolve()
-    files = sorted((source / "server").glob("*.py")) + sorted(
+    files = sorted((source / "server").glob("*.py")) + sorted((source / "server").glob("*.mjs")) + sorted(
         p for p in (source / "dist").rglob("*") if p.is_file()
     )
     if not (source / "dist/catalog.json").is_file():

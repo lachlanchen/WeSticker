@@ -131,16 +131,37 @@ class CreatorStore(private val context: Context) {
     val context=LocalContext.current
     val store=remember { CreatorStore(context) }
     val cloud=remember { CloudStudioStore(context) }
-    var tab by rememberSaveable { mutableStateOf(0) }
-    val labels=listOf("Stickers","Create","Library","Characters")
-    val icons=listOf(Icons.Outlined.SentimentSatisfiedAlt,Icons.Outlined.Forum,Icons.Outlined.CollectionsBookmark,Icons.Outlined.PeopleOutline)
+    val billing=remember { NativeBillingStore(cloud) }
+    val scope=rememberCoroutineScope()
+    val activity=context as? MainActivity
+    val signIn: () -> Unit = { scope.launch { cloud.run { requireNotNull(activity).beginAuthentication(cloud.startLogin()) } } }
+    LaunchedEffect(activity?.authResult, activity?.authCancelled) {
+        while(cloud.busy) kotlinx.coroutines.delay(50)
+        if(activity?.authResult!=null){val uri=activity.authResult!!;activity.clearAuthenticationResult();cloud.run{cloud.finishLogin(uri)}}
+        else if(activity?.authCancelled==true){activity.clearAuthenticationResult();cloud.cancelLogin()}
+    }
+    val lifecycleOwner=androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(billing,lifecycleOwner) {
+        val observer=androidx.lifecycle.LifecycleEventObserver { _,event ->
+            if(event==androidx.lifecycle.Lifecycle.Event.ON_RESUME){billing.attach();billing.restore()}
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer);billing.close() }
+    }
+    LaunchedEffect(Unit) { cloud.run { cloud.refresh() } }
+    val billingSession=cloud.billingSession()
+    LaunchedEffect(billingSession?.origin,billingSession?.token) { billing.attach() }
+    var tab by rememberSaveable { mutableStateOf(1) }
+    val labels=listOf("Stickers","Create","Library","Account")
+    val icons=listOf(Icons.Outlined.SentimentSatisfiedAlt,Icons.Outlined.Forum,Icons.Outlined.CollectionsBookmark,Icons.Outlined.AccountCircle)
     Scaffold(contentWindowInsets=WindowInsets(0,0,0,0),bottomBar={ NavigationBar {
         labels.forEachIndexed { index,label -> NavigationBarItem(selected=tab==index,onClick={tab=index},icon={Icon(icons[index],label)},label={Text(label)}) }
     } }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             when(tab) {
                 0 -> Catalog(packs,loader,save)
-                else -> CloudStudioScreen(cloud,store,loader,tab) { tab=1 }
+                3 -> BillingAccountScreen(cloud,billing,signIn)
+                else -> CloudStudioScreen(cloud,store,loader,tab,onSignIn=signIn,onCreate={tab=1})
             }
         }
     }

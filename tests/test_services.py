@@ -16,6 +16,7 @@ from server.app import create_app
 from server.store import database
 from server.worker import work_once
 from test_app import ORIGIN, call, signup, draft
+from test_stripe_lifecycle import sandbox as stripe_contract
 
 
 @pytest.fixture
@@ -27,6 +28,9 @@ def services(tmp_path):
         "stripe_key": "sk_test_fixture_not_real",
         "stripe_webhook_secret": "whsec_fixture_not_real",
         "stripe_prices": {"pocket": "price_pocket", "creator": "price_creator"},
+        "stripe_mode": "test",
+        "stripe_account": "acct_fixture",
+        "stripe_purchase_enabled": True,
         "creator_sales_enabled": True,
         "wechat_worker_enabled": True,
     }
@@ -122,6 +126,7 @@ def test_wechat_ticket_is_private_idempotent_and_draft_only(services):
 def test_ai_single_credit_moderation_and_ambiguity(services, monkeypatch):
     app, cfg, c = services
     cfg["image_api_key"] = "fixture-not-real"
+    cfg["image_generation_enabled"] = True
     plan(cfg, c, "pocket", 3)
     id, _ = draft(c)
     item = c.get("/api/workspace").get_json()["packs"][0]["items"][0]["id"]
@@ -178,6 +183,7 @@ def test_ai_single_credit_moderation_and_ambiguity(services, monkeypatch):
 def test_ai_result_updates_selected_only(services, monkeypatch):
     _, cfg, c = services
     cfg["image_api_key"] = "fixture-not-real"
+    cfg["image_generation_enabled"] = True
     plan(cfg, c, "pocket", 3)
     id, _ = draft(c)
     item = c.get("/api/workspace").get_json()["packs"][0]["items"][1]["id"]
@@ -222,6 +228,7 @@ class Obj(dict):
 
 
 def event(client, cfg, payload):
+    payload = {"livemode": False} | payload
     raw = json.dumps(payload).encode()
     stamp = str(int(time.time()))
     signature = hmac.new(
@@ -239,40 +246,10 @@ def event(client, cfg, payload):
     )
 
 
-def test_checkout_idempotency_and_signed_invoice(services, monkeypatch):
-    app, cfg, c = services
-    owner = c.get("/api/bootstrap").get_json()["user"]["id"]
-    created = []
-    invoice = Obj(id="in_fixture", status="paid", subscription="sub_fixture")
-    subscription = Obj(
-        id="sub_fixture",
-        status="active",
-        latest_invoice="in_fixture",
-        customer="cus_fixture",
-        metadata={"app": "westicker", "owner": owner},
-        items={
-            "data": [
-                {
-                    "price": {"id": "price_pocket"},
-                    "current_period_end": time.time() + 86400,
-                }
-            ]
-        },
-    )
-
-    def checkout(params, options):
-        created.append(options)
-        return Obj(id="cs_fixture", url="https://checkout.stripe.test/fixture")
-
-    api = NS(
-        v1=NS(
-            customers=NS(create=lambda *a, **k: Obj(id="cus_fixture")),
-            checkout=NS(sessions=NS(create=checkout)),
-            invoices=NS(retrieve=lambda id: invoice),
-            subscriptions=NS(retrieve=lambda id: subscription),
-        )
-    )
-    monkeypatch.setattr(stripe, "StripeClient", lambda *a, **k: api)
+def test_checkout_idempotency_and_signed_invoice(stripe_contract):
+    s = stripe_contract
+    cfg, c, owner = s.cfg, s.client, s.owner
+    s.api.include_sub = False
     body = {"plan": "pocket", "attempt": "checkout-unique-1234"}
     first = call(c, "/api/billing/subscribe", body)
     assert first.status_code == 200
@@ -280,22 +257,22 @@ def test_checkout_idempotency_and_signed_invoice(services, monkeypatch):
     assert (
         call(
             c, "/api/billing/subscribe", body | {"attempt": "different-attempt-1234"}
-        ).get_json()
-        == first.get_json()
+        ).status_code
+        == 409
     )
-    assert len(created) == 1
+    assert len(s.requests) == 1
     assert (
         call(
             c,
             "/api/billing/subscribe",
             {"plan": "creator", "attempt": "different-plan-1234"},
         ).status_code
-        == 409
+        == 503
     )
     payload = {
         "id": "evt_fixture",
         "type": "invoice.paid",
-        "data": {"object": {"id": "in_fixture"}},
+        "data": {"object": {"id": s.invoice.id}},
     }
     assert (
         c.post(
@@ -327,6 +304,8 @@ def test_market_receipt_not_success_url_grants_access(services, monkeypatch):
     owner = buyer.get("/api/bootstrap").get_json()["user"]["id"]
     checkout = Obj(
         id="cs_market",
+        livemode=False,
+        mode="payment",
         metadata={"app": "westicker", "kind": "pack", "owner": owner, "pack": id},
         client_reference_id=owner,
         customer="cus_buyer",
@@ -349,14 +328,17 @@ def test_market_receipt_not_success_url_grants_access(services, monkeypatch):
                 time.time(),
             ),
         )
+    charge = Obj(id="ch_market", livemode=False, customer="cus_buyer", paid=True,
+                 amount=99, amount_refunded=0, currency="usd", payment_intent="pi_market",
+                 metadata={"app": "westicker", "kind": "pack", "owner": owner})
     api = NS(
         v1=NS(
-            checkout=NS(sessions=NS(retrieve=lambda _: checkout)),
-            charges=NS(
-                retrieve=lambda _: Obj(
-                    amount=99, amount_refunded=99, payment_intent="pi_market"
-                )
-            ),
+            accounts=NS(retrieve_current=lambda: Obj(id="acct_fixture")),
+            customers=NS(retrieve=lambda _: Obj(id="cus_buyer", livemode=False, metadata={"app": "westicker", "owner": owner})),
+            checkout=NS(sessions=NS(retrieve=lambda _: checkout, list=lambda _: NS(auto_paging_iter=lambda: iter([])))),
+            subscriptions=NS(list=lambda _: NS(auto_paging_iter=lambda: iter([]))),
+            payment_intents=NS(retrieve=lambda _: Obj(id="pi_market", status="succeeded", latest_charge="ch_market")),
+            charges=NS(retrieve=lambda _: charge),
         )
     )
     monkeypatch.setattr(stripe, "StripeClient", lambda *a, **k: api)
@@ -368,6 +350,7 @@ def test_market_receipt_not_success_url_grants_access(services, monkeypatch):
     }
     assert event(buyer, cfg, payload).status_code == 200
     assert buyer.get(f"/api/market/{id}/download").status_code == 200
+    charge["amount_refunded"] = 99
     assert (
         event(
             buyer,

@@ -30,6 +30,9 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
@@ -43,6 +46,7 @@ import java.nio.ByteBuffer
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.util.UUID
+import java.util.Locale
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -53,7 +57,10 @@ private fun newStudioID() = UUID.randomUUID().toString().replace("-", "")
 
 class CloudStudioStore(val context: Context) {
     private val prefs = context.getSharedPreferences("cloud-studio", Context.MODE_PRIVATE)
-    var origin by mutableStateOf(prefs.getString("origin", "https://westicker.lazying.art") ?: "https://westicker.lazying.art")
+    private var originValue by mutableStateOf(prefs.getString("origin", "https://westicker.lazying.art") ?: "https://westicker.lazying.art")
+    var origin: String
+        get() = originValue
+        set(value) { if (value != originValue) { originValue = value; clearGuestChat() } }
     var workspace by mutableStateOf<JSONObject?>(null)
     var current by mutableStateOf<JSONObject?>(null)
     var rows by mutableStateOf<List<JSONObject>>(emptyList())
@@ -61,8 +68,14 @@ class CloudStudioStore(val context: Context) {
     var selected by mutableStateOf<Set<String>>(emptySet())
     var refs by mutableStateOf<List<String>>(emptyList())
     var quote by mutableStateOf<JSONObject?>(null)
-    var signedIn by mutableStateOf(false)
-    var needsConsent by mutableStateOf(false)
+    private var signedInValue by mutableStateOf(false)
+    var signedIn: Boolean
+        get() = signedInValue
+        set(value) { if (value != signedInValue) { signedInValue = value; clearGuestChat() } }
+    private var needsConsentValue by mutableStateOf(false)
+    var needsConsent: Boolean
+        get() = needsConsentValue
+        set(value) { if (value != needsConsentValue) { needsConsentValue = value; clearGuestChat() } }
     var capabilities by mutableStateOf(JSONObject())
     var busy by mutableStateOf(false)
     var dirty by mutableStateOf(false)
@@ -70,9 +83,63 @@ class CloudStudioStore(val context: Context) {
     var creating by mutableStateOf(false)
     var sending by mutableStateOf(false)
     var character by mutableStateOf("")
+    var guestMessages by mutableStateOf<List<GuestChatExchange>>(emptyList())
+    var guestDraft by mutableStateOf("")
+    var guestSending by mutableStateOf(false)
+    var guestError by mutableStateOf<String?>(null)
+    private var guestGeneration = 0
+    private var guestJob: Job? = null
     private var csrf = ""
     private var linkedOrigin = ""
     private var link: Pair<String, String>? = null
+    val usesGuestChat get() = !signedIn || needsConsent
+    fun clearGuestChat() {
+        guestGeneration += 1
+        guestJob?.cancel(); guestJob = null
+        guestMessages = emptyList(); guestDraft = ""; guestSending = false; guestError = null
+    }
+    fun sendGuestChat(scope: CoroutineScope) {
+        if (!usesGuestChat || guestSending) return
+        try {
+            val origin = base()
+            val text = guestDraft.trim()
+            val request = GuestChatClient.request(origin, text, guestMessages, Locale.getDefault().language)
+            val generation = guestGeneration
+            val id = UUID.randomUUID().toString()
+            guestMessages = guestMessages + GuestChatExchange(id, text)
+            guestDraft = ""; guestError = null; guestSending = true
+            guestJob = scope.launch {
+                fun current() = generation == guestGeneration && usesGuestChat && runCatching { base() == origin }.getOrDefault(false)
+                try {
+                    val reply = GuestChatClient.send(request)
+                    if (current()) guestMessages = guestMessages.map { if (it.id == id) it.copy(reply = reply) else it }
+                } catch (e: Exception) {
+                    if (current()) guestMessages = guestMessages.map {
+                        if (it.id == id) it.copy(failure = if (e is CancellationException) "Reply cancelled." else e.message ?: "Chat is unavailable.") else it
+                    }
+                    if (e is CancellationException) throw e
+                } finally {
+                    if (generation == guestGeneration) { guestSending = false; guestJob = null }
+                }
+            }
+        } catch (e: Exception) { guestError = e.message ?: "Check the service address." }
+    }
+    fun billingSession(): BillingSession? {
+        if (!signedIn) return null
+        return runCatching {
+            val auth = token()
+            if (auth.isBlank()) null else BillingSession(base(), auth, csrf)
+        }.getOrNull()
+    }
+    fun billingRead(session: BillingSession, owner: String): String {
+        check(session.sameAccountSession(billingSession())) { "Account changed" }
+        return readSecret("billing:$owner:", strict = true)
+    }
+    fun billingWrite(session: BillingSession, owner: String, value: String) {
+        check(session.sameAccountSession(billingSession())) { "Account changed" }
+        saveSecret("billing:$owner:", value)
+        check(readSecret("billing:$owner:", strict = true) == value) { "Purchase recovery could not be saved" }
+    }
     fun base(): String {
         val value = origin.trim().trimEnd('/')
         val url = URL(value)
@@ -90,12 +157,12 @@ class CloudStudioStore(val context: Context) {
         return store.getKey(alias, null) as SecretKey
     }
     fun token(): String = readSecret("token:")
-    private fun readSecret(slot: String): String {
+    private fun readSecret(slot: String, strict: Boolean = false): String {
         val saved = prefs.getString(slot + base(), null) ?: return ""
         return try { val parts = saved.split('.'); val cipher = Cipher.getInstance("AES/GCM/NoPadding")
             cipher.init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, Base64.decode(parts[0], Base64.NO_WRAP)))
             String(cipher.doFinal(Base64.decode(parts[1], Base64.NO_WRAP)), Charsets.UTF_8)
-        } catch (_: Exception) { "" }
+        } catch (e: Exception) { if (strict) throw IllegalStateException("Purchase recovery could not be read", e); "" }
     }
     private fun saveToken(value: String) = saveSecret("token:", value)
     private fun saveSecret(slot: String, value: String) {
@@ -267,7 +334,7 @@ class CloudStudioStore(val context: Context) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable fun CloudStudioScreen(store: CloudStudioStore, local: CreatorStore, loader: ImageLoader, section: Int, onCreate: () -> Unit) {
+@Composable fun CloudStudioScreen(store: CloudStudioStore, local: CreatorStore, loader: ImageLoader, section: Int, onSignIn: () -> Unit, onCreate: () -> Unit) {
     val context = LocalContext.current; val scope = rememberCoroutineScope()
     fun run(block: suspend () -> Unit) { scope.launch { store.run(block) } }
     var text by remember { mutableStateOf("") }; var name by remember { mutableStateOf("My character") }; var title by remember { mutableStateOf("Everyday moments") }
@@ -276,44 +343,64 @@ class CloudStudioStore(val context: Context) {
     var acceptedTerms by remember { mutableStateOf(false) }
     var serviceSettings by remember { mutableStateOf(false) }
     var pane by remember { mutableStateOf(0) }
-    val activity=context as? MainActivity
-    LaunchedEffect(activity?.authResult, activity?.authCancelled) {
-        while(store.busy) delay(50)
-        if(activity?.authResult!=null){val uri=activity.authResult!!;activity.clearAuthenticationResult();scope.launch{store.run{store.finishLogin(uri)}}}
-        else if(activity?.authCancelled==true){activity.clearAuthenticationResult();store.cancelLogin()}
-    }
+    var libraryPane by remember { mutableStateOf(0) }
     val scroll=rememberScrollState()
-    LaunchedEffect(store.messages.size, store.sending) { if(pane==0) scroll.animateScrollTo(scroll.maxValue) }
+    LaunchedEffect(store.messages.size, store.sending, store.guestMessages.size, store.guestSending) { if(pane==0 || store.usesGuestChat) scroll.animateScrollTo(scroll.maxValue) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) run { store.upload(uri) } }
     LaunchedEffect(Unit) { if (store.origin.isNotBlank()) store.run { store.refresh() }; while (true) { delay(4000); if (!store.busy && store.workspace?.optJSONArray("jobs")?.objects()?.any { it.optString("state") in listOf("queued", "running") } == true) store.run { store.refresh() } } }
     if (showLocal) { CreatorScreen(local, loader) { showLocal = false }; return }
-    Scaffold(topBar = { TopAppBar(title = { Text(when(section) {2 -> "Library"; 3 -> "Characters"; else -> "Create"}) }, actions = {
-        IconButton(enabled=!store.busy,onClick={run{store.refresh()}}){Icon(Icons.Outlined.Refresh,"Refresh workspace")}
-        if(store.signedIn){IconButton(enabled=!store.busy&&!store.dirty,onClick={store.current=null;store.messages=emptyList();store.rows=emptyList();store.creating=false;pane=0;onCreate()}){Icon(Icons.Outlined.Add,"New creation")};IconButton(onClick={run{store.signOut()}}){Icon(Icons.Outlined.Logout,"Sign out")}}
+    Scaffold(topBar = { TopAppBar(title = { Text(if(section==2) "Library" else "Create") }, actions = {
+        if(section==2) IconButton(enabled=!store.busy,onClick={run{store.refresh()}}){Icon(Icons.Outlined.Refresh,"Refresh library")}
+        else IconButton(enabled=store.usesGuestChat||!store.busy&&!store.dirty,onClick={
+            if(store.usesGuestChat) store.clearGuestChat()
+            else {store.current=null;store.messages=emptyList();store.rows=emptyList();store.creating=false;pane=0}
+        }){Icon(Icons.Outlined.Edit,"New chat")}
+        IconButton(onClick={serviceSettings=true}){Icon(Icons.Outlined.Settings,"Service settings")}
     }) }, bottomBar={
-        if(store.signedIn&&!store.needsConsent&&section==1&&!store.creating&&pane==0) Surface {
+        if(section==1&&(store.usesGuestChat||!store.creating&&pane==0)) Surface {
             Row(Modifier.fillMaxWidth().imePadding().padding(12.dp),verticalAlignment=Alignment.Bottom,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                IconButton(enabled=!store.busy,onClick={store.creating=true}){Icon(Icons.Outlined.AddPhotoAlternate,"Character references")}
-                OutlinedTextField(text,{text=it.take(2000)},placeholder={Text("Message Aya…")},modifier=Modifier.weight(1f),minLines=1,maxLines=5)
-                IconButton(enabled=text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked,onClick={val input=text;text="";run{store.chat(input)}}){Icon(Icons.Outlined.Send,"Send message")}
+                IconButton(enabled=store.usesGuestChat||!store.busy,onClick={if(store.usesGuestChat) showLocal=true else store.creating=true}){
+                    Icon(Icons.Outlined.AddPhotoAlternate,if(store.usesGuestChat) "Open saved local photo draft" else "Character references")
+                }
+                OutlinedTextField(if(store.usesGuestChat) store.guestDraft else text,{
+                    if(store.usesGuestChat) store.guestDraft=it.take(GuestChatHistory.MESSAGE_LIMIT) else text=it.take(2000)
+                },placeholder={Text("Message Aya…")},modifier=Modifier.weight(1f),minLines=1,maxLines=5)
+                IconButton(enabled=if(store.usesGuestChat) store.guestDraft.isNotBlank()&&!store.guestSending else text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked,onClick={
+                    if(store.usesGuestChat) store.sendGuestChat(scope) else {val input=text;text="";run{store.chat(input)}}
+                }){Icon(Icons.Outlined.Send,"Send message")}
             }
         }
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll).padding(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
-            store.error?.let { Text(it, color=MaterialTheme.colorScheme.error) }
-            if (store.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if(!store.signedIn){
-                Spacer(Modifier.height(24.dp))
-                AsyncImage("file:///android_asset/app-icon.png","Aya and Lala",imageLoader=loader,modifier=Modifier.size(112.dp))
-                Text("Your own little cast",style=MaterialTheme.typography.headlineMedium)
-                Text("Welcome to WeSticker",color=MaterialTheme.colorScheme.onSurfaceVariant)
-                Button(enabled=!store.busy,onClick={run{val url=store.startLogin();requireNotNull(activity).beginAuthentication(url)}},modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Icon(Icons.Outlined.AccountCircle,null);Spacer(Modifier.width(8.dp));Text(if(store.busy)"Connecting…" else "Continue with LazyingArt")}
-                TextButton(onClick={showLocal=true}){Text("Open saved local photo draft")}
-                Row(verticalAlignment=Alignment.CenterVertically){
-                    listOf("Terms" to "/terms.html","Privacy" to "/privacy.html").forEach{(label,path)->TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+path)))}){Text(label)}}
-                    IconButton(onClick={serviceSettings=!serviceSettings}){Icon(Icons.Outlined.Settings,"Service settings")}
+            if(section==2) {
+                TabRow(selectedTabIndex=libraryPane) {
+                    listOf("Creations","Characters").forEachIndexed { index,label ->
+                        Tab(selected=libraryPane==index,onClick={libraryPane=index},text={Text(label)})
+                    }
                 }
-                if(serviceSettings) OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
+                if(libraryPane==0) { TextButton(onClick={showLocal=true}){Text("Open saved local photo draft")}; HorizontalDivider() }
+            }
+            if(!(section==1&&store.usesGuestChat)) {
+                store.error?.let { Text(it, color=MaterialTheme.colorScheme.error) }
+                if(store.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+            }
+            if(section==1&&store.usesGuestChat) {
+                if(store.guestMessages.isEmpty()) {
+                    AsyncImage("file:///android_asset/app-icon.png","Aya and Lala",imageLoader=loader,modifier=Modifier.size(80.dp))
+                    Text("What shall we make?",style=MaterialTheme.typography.headlineSmall)
+                }
+                store.guestMessages.forEach { message ->
+                    Text(message.text,fontWeight=FontWeight.Bold,modifier=Modifier.align(Alignment.End))
+                    if(message.reply!=null) Text(message.reply)
+                    else if(message.failure!=null) {
+                        Text(message.failure,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                        TextButton(enabled=!store.guestSending,onClick={store.guestDraft=message.text}){Icon(Icons.Outlined.Edit,null);Text("Edit message")}
+                    } else Text("Aya is thinking…",style=MaterialTheme.typography.bodySmall)
+                }
+                store.guestError?.let { Text(it,color=MaterialTheme.colorScheme.error) }
+            } else if(!store.signedIn){
+                Text(if(libraryPane==0) "Cloud creations" else "Cloud characters",style=MaterialTheme.typography.titleMedium)
+                TextButton(enabled=!store.busy,onClick=onSignIn){Icon(Icons.Outlined.AccountCircle,null);Spacer(Modifier.width(8.dp));Text("Sign in to cloud library")}
             } else if(store.needsConsent) {
                 Text("Before your first creation",style=MaterialTheme.typography.titleLarge)
                 TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+"/terms.html")))}){Text("Creator terms")}
@@ -322,17 +409,17 @@ class CloudStudioStore(val context: Context) {
                 Button(enabled=acceptedTerms&&!store.busy,onClick={run{store.acceptTerms()}}){Text("Continue")}
             } else store.workspace?.let { w ->
                 val policy=w.getJSONObject("limits");val packs=w.getJSONArray("packs").objects();val chars=w.getJSONArray("characters").objects()
-                Text("${policy.getString("plan")} · ${policy.getInt("credits")} credits · ${policy.getInt("pack_size")} per creation",style=MaterialTheme.typography.labelMedium)
                 when {
-                    section==2 -> { packs.forEach{p->
+                    section==2&&libraryPane==0 -> { packs.forEach{p->
                         TextButton(onClick={run{store.open(p);onCreate()}}){Text(p.getString("title"))}
                         Row { p.getJSONArray("items").objects().filter{!it.isNull("asset")}.take(4).forEach{StudioImage(store,it.getString("asset"),loader,60)} };HorizontalDivider()
-                    }; TextButton(onClick={showLocal=true}){Text("Open saved local photo draft")} }
-                    section==3 -> chars.forEach{c->
+                    }; if(packs.isEmpty()) Text("No cloud creations yet",color=MaterialTheme.colorScheme.onSurfaceVariant) }
+                    section==2 -> { if(chars.isEmpty()) Text("No cloud characters yet",color=MaterialTheme.colorScheme.onSurfaceVariant)
+                    chars.forEach{c->
                         Text(c.getString("name"),fontWeight=FontWeight.Bold)
                         Row{val refs=c.getJSONArray("refs");for(i in 0 until minOf(refs.length(),4))StudioImage(store,refs.getString(i),loader,65)}
                         TextButton(onClick={store.character=c.getString("id");store.creating=true;onCreate()}){Text("Create with ${c.getString("name")}")};HorizontalDivider()
-                    }
+                    } }
                     store.creating -> {
                         TextButton(onClick={store.creating=false}){Text("Back to chat")}
                         Text("Who are we creating?",style=MaterialTheme.typography.titleLarge)
@@ -351,7 +438,6 @@ class CloudStudioStore(val context: Context) {
                     store.current==null -> {
                         AsyncImage("file:///android_asset/app-icon.png","Aya and Lala",imageLoader=loader,modifier=Modifier.size(80.dp))
                         Text("What shall we make?",style=MaterialTheme.typography.headlineSmall)
-                        listOf("A cheerful hello sticker","Help me choose my character","Something funny for a busy day").forEach { suggestion -> OutlinedButton(onClick={text=suggestion}){Text(suggestion)} }
                     }
                     else -> {
                         val p=store.current!!;Text(p.getString("title"),style=MaterialTheme.typography.titleLarge)
@@ -396,5 +482,15 @@ class CloudStudioStore(val context: Context) {
             }
         }
     }
+    if(serviceSettings) AlertDialog(onDismissRequest={serviceSettings=false},title={Text("Service settings")},text={
+        Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
+            OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
+            runCatching { store.base() }.getOrNull()?.let { base ->
+                Row { listOf("Terms" to "/terms.html","Privacy" to "/privacy.html").forEach { (label,path) ->
+                    TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(base+path)))}){Text(label)}
+                } }
+            }
+        }
+    },confirmButton={TextButton(onClick={serviceSettings=false;run{store.refresh()}}){Text("Done")}})
     history?.let{items->AlertDialog(onDismissRequest={history=null},title={Text("Preserved versions")},text={Column(Modifier.verticalScroll(rememberScrollState())){items.forEach{r->if(!r.isNull("asset")){StudioImage(store,r.getString("asset"),loader,140);Text(r.getString("label"))}}}},confirmButton={TextButton(onClick={history=null}){Text("Close")}})}
 }

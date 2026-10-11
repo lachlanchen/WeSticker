@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Studio } from "./Studio";
 import { StickerBrowser } from "./StickerBrowser";
+import { WebPlans } from "./WebPlans";
 import {api, setCSRF, type Boot, type Pack, type Sticker} from "./api";
 
 const base = import.meta.env.BASE_URL;
@@ -39,7 +40,6 @@ export function PublicCatalog() {
     { id: "stickers", label: "Stickers", Icon: StickerIcon },
     { id: "create", label: "Create", Icon: ImagePlus },
     { id: "library", label: "Library", Icon: Library },
-    { id: "characters", label: "Characters", Icon: Users },
   ] as const;
   const [preview, setPreview] = useState<Sticker | null>(null);
   const [error, setError] = useState("");
@@ -134,7 +134,6 @@ export function PublicCatalog() {
       <div className="main-shell">
         <header className="topbar">
           <strong>WeSticker</strong>
-          <span>Creator beta</span>
           {account?.user && <button className="icon-button" aria-label="Your account" onClick={() => setAccountOpen(true)}><Users size={20}/></button>}
           <button
             className="icon-button"
@@ -178,8 +177,8 @@ export function PublicCatalog() {
         {tabs.map(({ id, label, Icon }) => (
           <button
             key={id}
-            className={view === id ? "active" : ""}
-            aria-current={view === id ? "page" : undefined}
+            className={view === id || (id === "library" && view === "characters") ? "active" : ""}
+            aria-current={view === id || (id === "library" && view === "characters") ? "page" : undefined}
             onClick={() => setView(id)}
           >
             <Icon size={22} />
@@ -192,6 +191,7 @@ export function PublicCatalog() {
           <button className="icon-button close" aria-label="Close account" onClick={() => setAccountOpen(false)}><X/></button>
           <h2>{account.user.name}</h2>
           <p>LazyingArt account</p>
+          <WebPlans key={account.user.id} boot={account} onUpdated={setAccount}/>
           {accountError && <p role="alert">{accountError}</p>}
           <button className="button outline full" disabled={accountBusy} onClick={async()=>{
             setAccountBusy(true);setAccountError("");
@@ -200,6 +200,7 @@ export function PublicCatalog() {
           }}><LogOut size={18}/> Sign out of WeSticker</button>
           <details><summary>Delete my WeSticker account</summary>
             <p>Your private WeSticker creations and uploads will be deleted. Your LazyingArt account and other apps stay unchanged.</p>
+            <p>Manage any App Store or Google Play subscription separately before deleting your account.</p>
             <label>Type DELETE<input value={deleteConfirmation} onChange={e=>setDeleteConfirmation(e.target.value)}/></label>
             <button className="button outline full" disabled={deleteConfirmation!=="DELETE"||accountBusy} onClick={async()=>{
               setAccountBusy(true);setAccountError("");

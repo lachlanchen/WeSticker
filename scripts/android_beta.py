@@ -30,7 +30,16 @@ def main():
     env = dict(os.environ, WESTICKER_KEYSTORE=str(key),
                WESTICKER_STORE_PASSWORD=password.read_text().strip(),
                WESTICKER_BUILD=str(args.build), WESTICKER_VERSION=args.version)
+    env.pop("ANDROID_SDK_ROOT", None)
     java = Path(env["JAVA_HOME"]) / "bin"
+    if not (java / "javac").is_file():
+        raise RuntimeError("JAVA_HOME must name a complete JDK, including javac")
+    build_tools = Path(env["ANDROID_HOME"]) / "build-tools"
+    candidates = [p for p in build_tools.iterdir()
+                  if all(x.isdigit() for x in p.name.split(".")) and (p / "apksigner").is_file()]
+    if not candidates:
+        raise RuntimeError("ANDROID_HOME must contain installed Android build tools")
+    apksigner = max(candidates, key=lambda p: tuple(map(int, p.name.split(".")))) / "apksigner"
     if not key.exists():
         subprocess.run([str(java / "keytool"), "-genkeypair", "-keystore", str(key),
                         "-alias", "westicker-upload", "-keyalg", "RSA", "-keysize", "3072",
@@ -55,7 +64,7 @@ def main():
         target = out / f"WeSticker-{args.version}-{args.build}.{kind}"
         shutil.copy2(root / "android/app/build/outputs" / source, target)
         if kind == "apk":
-            subprocess.run([str(Path(env["ANDROID_HOME"]) / "build-tools/36.0.0/apksigner"),
+            subprocess.run([str(apksigner),
                             "verify", "--verbose", str(target)], check=True,
                            stdout=subprocess.DEVNULL)
         else:

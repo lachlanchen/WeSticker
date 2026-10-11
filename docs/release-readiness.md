@@ -1,10 +1,14 @@
 # Release Readiness
 
-Current internal release: [login/chat beta, 2026-10-11](login-chat-release-20261011.md).
-iOS 1.0 (7), macOS 1.0 (6) and Android 1.0 (7) are available to internal testers.
-The independent HTTPS creator origin has real password sign-in and conversational
-chat. Social login, live image/animation and payments remain unqualified. The tables below preserve
-the earlier October 10 release record, not the current build numbers.
+Current web release: [clean guest chat and Library, 2026-10-11](clean-chat-release-20261011.md).
+The [native replacement candidates](native-guest-chat-20261011.md) track native
+builds separately. The independent HTTPS creator origin has real password
+sign-in and conversational chat without login. AgInTi image generation passed
+one real-provider qualification and is enabled. A local animation canary passed,
+but public animation remains disabled until its runtime lifecycle is available.
+Social providers and payments remain gated; a real Stripe sandbox Checkout and
+Portal test passed, but public webhook delivery has not. The tables below preserve
+the earlier October 10 release record, not the current build numbers or gates.
 
 **Status: public catalog and login/chat beta, not ready for customer payments.**
 

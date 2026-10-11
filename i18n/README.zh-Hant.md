@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · LazyingArt 密碼登入與聊天式創作已在 https://westicker.lazying.art 上線。可以先聊天，隨後加入參考圖並編輯貼圖方案。內部測試版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社群登入、AI 圖像與動畫生成、付款尚未啟用。
+**2026-10-11** · https://westicker.lazying.art 已開放免登入訪客聊天。Characters（角色）位於 Library（作品庫）內，不再是獨立的主導覽入口。AgInTi 圖像生成（`nano-banana-2`）已通過真實服務商驗證並啟用；生成仍需帳號、授權同意及明確確認報價。
 
-[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · 訪客聊天 / 導覽](../docs/clean-chat-release-20261011.md) · [AgInTi 圖像驗證](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 發布狀態
 
-LazyingArt 密碼登入與聊天式創作已在 https://westicker.lazying.art 上線。可以先聊天，隨後加入參考圖並編輯貼圖方案。內部測試版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社群登入、AI 圖像與動畫生成、付款尚未啟用。
+原生替換組建候選版本：[iOS 1.0 (10)、macOS 1.0 (8)、Android 1.0 (9)](../docs/native-guest-chat-20261011.md)。收到商店處理及內部分發回執前，不確認這些版本已分發。一次本機動畫試運行已通過，但面向公眾的動畫生成仍保持離線，等待服務生命週期驗證。第三方社群登入、原生 App 內購買及網頁付款仍停用，等待端到端驗證通過。
 
 ## 引用
 

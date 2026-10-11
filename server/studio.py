@@ -10,6 +10,7 @@ from flask import abort, jsonify, request
 import requests
 
 from .store import THEMES, audit, database, limits, uid
+from .generation import capabilities as generation_capabilities
 
 
 def clean_rows(rows, maximum, old=None):
@@ -196,10 +197,10 @@ def register_studio(app, cfg):
             reason = (
                 f"This plan allows {policy['pack_size']} sticker(s) per generation."
             )
-        elif kind != "photo" and not cfg.get("image_api_key"):
-            reason = "The image and safety provider is not connected."
+        elif kind == "ai" and not generation_capabilities(cfg)["ai_images"]:
+            reason = "Image generation is not available yet. Photo stickers still work."
         elif kind == "animate" and (
-            not policy["animation"] or not cfg.get("local_video_url")
+            not policy["animation"] or not generation_capabilities(cfg)["animation"]
         ):
             reason = "Animation requires Creator or Studio and a connected animation provider."
         elif kind == "animate" and any(

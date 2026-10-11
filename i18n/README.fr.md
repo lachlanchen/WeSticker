@@ -26,9 +26,9 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · La connexion par mot de passe LazyingArt et la création par chat sont disponibles sur https://westicker.lazying.art. Commencez par discuter, ajoutez vos références ensuite et modifiez le plan de stickers. Versions de test internes : iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). La connexion via des services tiers, la génération d’images et d’animations par IA et les paiements ne sont pas encore activés.
+**2026-10-11** · Le chat invité est disponible sur https://westicker.lazying.art sans connexion. Characters se trouve dans Library, et non dans une rubrique principale distincte. La génération d’images via AgInTi (`nano-banana-2`) a été validée avec le fournisseur réel et est activée ; elle nécessite toujours un compte, le consentement et la confirmation explicite du devis.
 
-[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Chat invité / navigation](../docs/clean-chat-release-20261011.md) · [Validation des images AgInTi](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## État de publication
 
-La connexion par mot de passe LazyingArt et la création par chat sont disponibles sur https://westicker.lazying.art. Commencez par discuter, ajoutez vos références ensuite et modifiez le plan de stickers. Versions de test internes : iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). La connexion via des services tiers, la génération d’images et d’animations par IA et les paiements ne sont pas encore activés.
+Versions natives candidates de remplacement : [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Leur distribution reste non confirmée tant que les justificatifs de traitement par les boutiques d’applications et de distribution interne ne sont pas disponibles. Un essai local d’animation a réussi, mais l’animation publique reste hors ligne en attendant la validation du cycle de vie du service. La connexion via les réseaux sociaux, les achats intégrés aux applications natives et les paiements web restent désactivés jusqu’à leur validation de bout en bout.
 
 ## Citation
 

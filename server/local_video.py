@@ -3,21 +3,66 @@
 import hashlib
 import base64
 import json
+import fcntl
 from pathlib import Path
+import re
 import subprocess
 import time
 from urllib.parse import urlparse
 import requests
 from PIL import Image
+from .generation import moderate
 
 
 class OutcomeUncertain(RuntimeError):
     pass
 
 
+def require_idle(session, base):
+    def get(path):
+        response = session.get(base + path, timeout=30)
+        response.raise_for_status()
+        return response.json()
+    jobs = get("/api/jobs?scope=active&limit=100")
+    series = get("/api/series?limit=100")
+    if not isinstance(jobs.get("jobs"), list) or jobs["jobs"]:
+        raise ValueError("Animation deferred: another render is active.")
+    records = series.get("series")
+    if (not isinstance(records, list) or len(records) >= 100
+            or any(r.get("status") in {"queued", "running", "stitching"} for r in records)):
+        raise ValueError("Animation deferred: series queue needs review.")
+    if get("/api/settings").get("system_prompt", "").strip():
+        raise ValueError("Animation deferred: shared renderer instructions need review.")
+
+
+def video_output(state):
+    outputs = [x for x in state.get("outputs", []) if isinstance(x, dict)
+               and (x.get("media_type") == "video" or str(x.get("filename", "")).lower().endswith(".mp4"))
+               and type(x.get("id")) is int and x["id"] >= 0]
+    if len(outputs) != 1:
+        raise OutcomeUncertain("Render finished; inspect the saved output list before download.")
+    return outputs[0]["id"]
+
+
 def animate(cfg, job, item, source):
+    if any(not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", str(value)) for value in (job["id"], item["id"])):
+        raise ValueError("Invalid animation attempt identity.")
+    folder = Path(cfg["state"]) / "renders" / job["id"] / item["id"]
+    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+    with (folder / "attempt.lock").open("a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise OutcomeUncertain("This animation attempt is already being observed.") from error
+        return _animate(cfg, job, item, source)
+
+
+def _animate(cfg, job, item, source):
     base = cfg["local_video_url"].rstrip("/")
-    if urlparse(base).hostname not in {"127.0.0.1", "localhost", "::1"}:
+    parsed = urlparse(base)
+    if (parsed.hostname not in {"127.0.0.1", "localhost", "::1"}
+            or parsed.scheme != "http" or parsed.username or parsed.password
+            or parsed.path or parsed.query or parsed.fragment):
         raise ValueError("LocalVideoGen must use a protected local endpoint.")
     folder = Path(cfg["state"]) / "renders" / job["id"] / item["id"]
     folder.mkdir(parents=True, exist_ok=True)
@@ -25,6 +70,13 @@ def animate(cfg, job, item, source):
     receipt = folder / "receipt.json"
     if intent.exists() and not receipt.exists():
         raise OutcomeUncertain("Existing submission intent needs reconciliation.")
+    fingerprint = hashlib.sha256(json.dumps({
+        "source": hashlib.sha256(Path(source).read_bytes()).hexdigest(),
+        "label": item["label"], "action": item.get("action", ""),
+        "profile": "quality_int8_offload", "size": [512, 512], "duration": 5,
+    }, sort_keys=True).encode()).hexdigest()
+    if receipt.exists() and (not intent.exists() or json.loads(intent.read_text()).get("fingerprint") != fingerprint):
+        raise OutcomeUncertain("Saved render belongs to a different or unverified request.")
     memory = {
         k: int(v.split()[0])
         for k, v in (
@@ -33,7 +85,7 @@ def animate(cfg, job, item, source):
         )
     }
     if not receipt.exists() and (
-        memory["MemAvailable"] < 24 * 1024**2
+        memory["MemAvailable"] < 48 * 1024**2
         or (
             memory["SwapTotal"]
             and (memory["SwapTotal"] - memory["SwapFree"]) / memory["SwapTotal"] > 0.75
@@ -44,38 +96,26 @@ def animate(cfg, job, item, source):
         )
     session = requests.Session()
     session.trust_env = False
+    # Explicitly reject redirects rather than send uploads to a different service.
+    original_request = session.request
+    def local_request(method, url, **kwargs):
+        kwargs["allow_redirects"] = False
+        response = original_request(method, url, **kwargs)
+        if 300 <= response.status_code < 400:
+            raise ValueError("Local render service redirected the request.")
+        return response
+    session.request = local_request
     if receipt.exists():
         provider = json.loads(receipt.read_text())["id"]
     else:
-        if not cfg.get("image_api_key"):
-            raise ValueError("Safety provider must be connected before animation.")
-        moderation = requests.post(
-            cfg.get("image_api_origin", "https://api.openai.com/v1").rstrip("/")
-            + "/moderations",
-            headers={"Authorization": "Bearer " + cfg["image_api_key"]},
-            json={
-                "model": cfg["moderation_model"],
-                "input": [
-                    {
-                        "type": "text",
-                        "text": item["label"] + " " + item.get("action", ""),
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": "data:image/png;base64,"
-                            + base64.b64encode(Path(source).read_bytes()).decode()
-                        },
-                    },
-                ],
-            },
-            timeout=60,
-        )
-        moderation.raise_for_status()
-        if any(x["flagged"] for x in moderation.json()["results"]):
-            raise ValueError(
-                "This expression needs a safety review; no animation submitted."
-            )
+        health = session.get(base + "/api/health?deep=1", timeout=30)
+        health.raise_for_status()
+        ready = health.json()
+        if not (ready.get("connected") is True and ready.get("ready") is True
+                and ready.get("model_status") == "verified"):
+            raise ValueError("Animation engine is not ready. Nothing was submitted.")
+        require_idle(session, base)
+        moderate(cfg, item["label"] + " " + item.get("action", ""), [source])
         with Image.open(source) as raw:
             image = raw.convert("RGBA")
             canvas = Image.new("RGBA", image.size, "white")
@@ -147,13 +187,17 @@ def animate(cfg, job, item, source):
             json.dumps(payload, ensure_ascii=False, indent=2)
         )
         intent.write_text(
-            json.dumps({"created": time.time(), "job": job["id"], "item": item["id"]})
+            json.dumps({"created": time.time(), "job": job["id"], "item": item["id"],
+                        "fingerprint": fingerprint, "request_sha256": hashlib.sha256(
+                            (folder / "request.json").read_bytes()).hexdigest()})
         )
         try:
             result = session.post(base + "/api/renders", json=payload, timeout=120)
             result.raise_for_status()
             data = result.json()
             provider = data["id"]
+            if not isinstance(provider, str) or not re.fullmatch(r"[a-f0-9-]{36}", provider):
+                raise ValueError("Unexpected render receipt identity.")
             receipt.write_text(json.dumps(data, indent=2))
         except Exception as e:
             raise OutcomeUncertain(
@@ -179,8 +223,9 @@ def animate(cfg, job, item, source):
             )
         video = folder / "original.mp4"
         if not video.exists():
+            output_id = video_output(state)
             with session.get(
-                base + f"/api/jobs/{provider}/outputs/0?download=1",
+                base + f"/api/jobs/{provider}/outputs/{output_id}?download=1",
                 stream=True,
                 timeout=120,
             ) as response:

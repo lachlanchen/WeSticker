@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · https://westicker.lazying.art で LazyingArt のパスワードログインとチャット中心の制作を利用できます。会話を始めてから参考画像を追加し、スタンプ案を編集できます。内部テスト版は iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。外部サービスでのログイン、AI 画像・動画生成、決済はまだ利用できません。
+**2026-10-11** · https://westicker.lazying.art でログイン不要のゲストチャットを利用できます。Characters は独立したメイン項目ではなく、Library 内にあります。AgInTi の画像生成（`nano-banana-2`）は実プロバイダーでの検証に合格し、有効になっています。生成には引き続きアカウント、同意、見積もりの明示的な確認が必要です。
 
-[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · ゲストチャット / ナビゲーション](../docs/clean-chat-release-20261011.md) · [AgInTi 画像生成の検証](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## リリース状況
 
-https://westicker.lazying.art で LazyingArt のパスワードログインとチャット中心の制作を利用できます。会話を始めてから参考画像を追加し、スタンプ案を編集できます。内部テスト版は iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。外部サービスでのログイン、AI 画像・動画生成、決済はまだ利用できません。
+差し替え用のネイティブビルド候補：[iOS 1.0 (10)、macOS 1.0 (8)、Android 1.0 (9)](../docs/native-guest-chat-20261011.md)。ストアでの処理と内部配布の確認記録が得られるまで、配布済みとは確認できません。ローカルのアニメーション試験は1件成功しましたが、サービスのライフサイクル検証が完了するまで一般向けアニメーション生成は停止したままです。ソーシャルログイン、ネイティブアプリ内課金、Web 決済は、エンドツーエンドの検証に合格するまで無効のままです。
 
 ## 引用
 

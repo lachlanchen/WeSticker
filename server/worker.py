@@ -14,6 +14,38 @@ import requests
 
 from .store import audit, database, initialize, settings, uid
 from .local_video import animate, OutcomeUncertain
+from .generation import moderate, provider_origin
+from . import aginti
+from .media import exterior_alpha
+
+
+def openai_image(cfg, job, item, fields, files, refs):
+    folder = Path(cfg["state"]) / "renders" / job["id"] / item["id"]
+    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+    intent = folder / "image-intent.json"
+    if intent.exists():
+        raise OutcomeUncertain("Existing image request must be reconciled, not repeated.")
+    with intent.open("x") as handle:
+        json.dump({"created": time.time(), "job": job["id"], "item": item["id"],
+            "request": fields, "references": [{"id": r["id"], "sha256": r["sha256"]} for r in refs]}, handle)
+    try:
+        api = provider_origin(cfg.get("image_api_origin", "https://api.openai.com/v1"))
+        result = requests.post(api + "/images/edits",
+            headers={"Authorization": "Bearer " + cfg["image_api_key"]},
+            data=fields, files=files, timeout=300, allow_redirects=False)
+        result.raise_for_status()
+        payload = result.json()
+        binary = base64.b64decode(payload["data"][0]["b64_json"], validate=True)
+        if len(binary) > 25_000_000:
+            raise ValueError("Provider image exceeded the expected limit.")
+        (folder / "original.png").write_bytes(binary)
+        (folder / "image-receipt.json").write_text(json.dumps({
+            "created": payload.get("created"), "usage": payload.get("usage"),
+            "request_id": getattr(result, "headers", {}).get("x-request-id"),
+            "sha256": hashlib.sha256(binary).hexdigest()}))
+        return binary
+    except Exception:
+        raise OutcomeUncertain("Image request saved; reconcile before retrying.") from None
 
 
 def work_once(cfg):
@@ -111,48 +143,16 @@ def work_once(cfg):
                         ),
                     )
         else:
-            if not cfg.get("image_api_key"):
+            use_aginti = cfg.get("image_provider") == "aginti"
+            if not use_aginti and not cfg.get("image_api_key"):
                 raise ValueError("Image provider is not configured.")
-            headers = {"Authorization": "Bearer " + cfg["image_api_key"]}
-            api = cfg.get("image_api_origin", "https://api.openai.com/v1").rstrip("/")
-            # Service endpoints are operator configuration, never accepted from users.
-            moderation = requests.post(
-                api + "/moderations",
-                headers=headers,
-                json={
-                    "model": cfg["moderation_model"],
-                    "input": [
-                        {
-                            "type": "text",
-                            "text": character["name"]
-                            + " "
-                            + ", ".join(
-                                i["label"] + " " + i.get("action", "") for i in items
-                            ),
-                        },
-                        *[
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": "data:image/png;base64,"
-                                    + base64.b64encode(
-                                        (state / r["path"]).read_bytes()
-                                    ).decode()
-                                },
-                            }
-                            for r in refs
-                        ],
-                    ],
-                },
-                timeout=60,
-            )
-            moderation.raise_for_status()
-            if any(x["flagged"] for x in moderation.json()["results"]):
-                raise ValueError(
-                    "Reference or caption needs a safety review. No image was generated."
-                )
+            moderate(cfg, character["name"] + " " + ", ".join(
+                i["label"] + " " + i.get("action", "") for i in items),
+                [state / r["path"] for r in refs])
             for index, item in enumerate(selected):
                 prompt = f"Create one charming {character['style']} chat sticker of the exact character in the supplied references. Preserve face, fur or skin, outfit, palette and proportions. Expression meaning: {item['label']}. Action direction: {item.get('action', '')}. One clear readable pose, whole body inside frame, transparent background. No lettering; captions are added separately."
+                if use_aginti:
+                    prompt = prompt.replace("transparent background", "plain neutral white background for cutout")
                 files = [
                     (
                         "image[]",
@@ -182,20 +182,18 @@ def work_once(cfg):
                         "image_submission_intent",
                         {"job": job["id"], "item": item["id"]},
                     )
+                binary = (aginti.generate(cfg, job, item, prompt, [state / r["path"] for r in refs])
+                          if use_aginti else openai_image(cfg, job, item, fields, files, refs))
                 submitted = True
-                result = requests.post(
-                    api + "/images/edits",
-                    headers=headers,
-                    data=fields,
-                    files=files,
-                    timeout=300,
-                )
-                result.raise_for_status()
-                binary = base64.b64decode(
-                    result.json()["data"][0]["b64_json"], validate=True
-                )
+                if use_aginti:
+                    # Preserve the paid original even if output screening needs review.
+                    original = state / "renders" / job["id"] / item["id"] / "screening.png"
+                    original.write_bytes(binary)
+                    moderate(cfg, item["label"], [original])
                 image = Image.open(io.BytesIO(binary)).convert("RGBA")
                 image.thumbnail((1024, 1024))
+                if use_aginti:
+                    image = exterior_alpha(image)
                 asset = uid()
                 path = Path("assets") / (asset + ".png")
                 image.save(state / path, "PNG")

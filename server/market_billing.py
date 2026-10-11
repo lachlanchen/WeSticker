@@ -17,6 +17,10 @@ def apply_market_receipt(cfg, api, event):
     obj = event["data"]["object"]
     if event_type == "charge.refunded":
         charge = api.v1.charges.retrieve(obj["id"]).to_dict()
+        if charge.get("metadata", {}).get("app") != "westicker" or charge.get("metadata", {}).get("kind") != "pack":
+            return False
+        if charge.get("livemode") is not (cfg.get("stripe_mode") == "live"):
+            raise ValueError("Marketplace refund mode mismatch")
         if charge.get("amount_refunded", 0) < charge.get("amount", 1):
             return True
         with database(cfg) as db:
@@ -26,6 +30,8 @@ def apply_market_receipt(cfg, api, event):
             )
         return True
     checkout = api.v1.checkout.sessions.retrieve(obj["id"]).to_dict()
+    if checkout.get("livemode") is not (cfg.get("stripe_mode") == "live"):
+        raise ValueError("Marketplace session mode mismatch")
     if checkout.get("metadata", {}).get("app") != "westicker":
         return True
     if event_type == "checkout.session.expired":
@@ -37,6 +43,15 @@ def apply_market_receipt(cfg, api, event):
     if metadata.get("kind") != "pack":
         return False
     if checkout.get("payment_status") != "paid":
+        return True
+    intent = api.v1.payment_intents.retrieve(checkout["payment_intent"]).to_dict()
+    charge = api.v1.charges.retrieve(intent["latest_charge"]).to_dict()
+    if (intent.get("status") != "succeeded" or charge.get("livemode") is not (cfg.get("stripe_mode") == "live")
+            or charge.get("customer") != checkout.get("customer")):
+        raise ValueError("Marketplace payment mismatch")
+    if charge.get("disputed") or charge.get("amount_refunded", 0) >= charge.get("amount", 1):
+        with database(cfg) as db:
+            db.execute("DELETE FROM entitlements WHERE source=?", ("stripe-pi:" + checkout["payment_intent"],))
         return True
     with database(cfg) as db:
         db.execute("BEGIN IMMEDIATE")

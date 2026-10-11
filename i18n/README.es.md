@@ -26,9 +26,9 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · El inicio de sesión con contraseña de LazyingArt y la creación por chat están disponibles en https://westicker.lazying.art. Empieza conversando, añade referencias después y edita el plan de stickers. Pruebas internas: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). El acceso con proveedores sociales, la generación de imágenes y animaciones con IA y los pagos aún no están habilitados.
+**2026-10-11** · El chat de invitados está disponible en https://westicker.lazying.art sin iniciar sesión. Characters está dentro de Library, no como sección principal independiente. La generación de imágenes mediante AgInTi (`nano-banana-2`) superó la validación con el proveedor real y está habilitada; sigue requiriendo una cuenta, consentimiento y confirmación explícita del presupuesto.
 
-[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Chat de invitados / navegación](../docs/clean-chat-release-20261011.md) · [Validación de imágenes AgInTi](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Estado de publicación
 
-El inicio de sesión con contraseña de LazyingArt y la creación por chat están disponibles en https://westicker.lazying.art. Empieza conversando, añade referencias después y edita el plan de stickers. Pruebas internas: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). El acceso con proveedores sociales, la generación de imágenes y animaciones con IA y los pagos aún no están habilitados.
+Compilaciones nativas candidatas de reemplazo: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Su distribución no está confirmada hasta disponer de los comprobantes de procesamiento en las tiendas y de distribución interna. Una prueba piloto local de animación fue satisfactoria, pero la animación pública sigue fuera de servicio hasta validar el ciclo de vida del servicio. El inicio de sesión con proveedores sociales, las compras integradas en las aplicaciones nativas y los pagos web siguen deshabilitados hasta superar la validación de extremo a extremo.
 
 ## Cita
 

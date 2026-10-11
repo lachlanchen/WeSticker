@@ -26,9 +26,9 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · https://westicker.lazying.art 에서 LazyingArt 비밀번호 로그인과 채팅 중심의 제작을 이용할 수 있습니다. 대화부터 시작하고 나중에 참고 이미지를 추가하여 스티커 계획을 편집하세요. 내부 테스트 버전은 iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7)입니다. 소셜 로그인, AI 이미지·애니메이션 생성, 결제는 아직 활성화되지 않았습니다.
+**2026-10-11** · https://westicker.lazying.art 에서 로그인 없이 게스트 채팅을 이용할 수 있습니다. Characters는 별도의 주요 메뉴가 아니라 Library 안에 있습니다. AgInTi 이미지 생성(`nano-banana-2`)은 실제 제공업체 검증을 통과해 활성화되었습니다. 생성에는 여전히 계정, 동의 및 견적에 대한 명시적 확인이 필요합니다.
 
-[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · 게스트 채팅 / 탐색](../docs/clean-chat-release-20261011.md) · [AgInTi 이미지 검증](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 출시 상태
 
-https://westicker.lazying.art 에서 LazyingArt 비밀번호 로그인과 채팅 중심의 제작을 이용할 수 있습니다. 대화부터 시작하고 나중에 참고 이미지를 추가하여 스티커 계획을 편집하세요. 내부 테스트 버전은 iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7)입니다. 소셜 로그인, AI 이미지·애니메이션 생성, 결제는 아직 활성화되지 않았습니다.
+교체용 네이티브 빌드 후보: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). 스토어 처리 및 내부 배포 확인 기록이 확보되기 전까지 배포 여부는 확인되지 않은 상태입니다. 로컬 애니메이션 시험 1건은 성공했지만, 서비스 수명 주기 검증이 완료될 때까지 공개 애니메이션 생성은 오프라인 상태를 유지합니다. 소셜 로그인, 네이티브 앱 내 구매 및 웹 결제는 종단 간 검증을 통과할 때까지 비활성화 상태로 유지됩니다.
 
 ## 인용
 

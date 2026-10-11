@@ -10,9 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def settings():
+    from .generation import load_keys
     path = os.environ.get("WESTICKER_CONFIG")
     value = json.loads(Path(path).read_text()) if path else {}
-    return (
+    return load_keys(
         dict(
             origin="http://127.0.0.1:18642",
             state=str(ROOT / "data"),

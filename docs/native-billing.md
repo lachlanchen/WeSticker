@@ -1,76 +1,191 @@
 # Native subscriptions
 
-Status: implemented adapters and fixture-tested UI, not enabled sales or real
-store qualification. Android debug and iOS simulator builds compile. Native
-system-browser authentication and production API access are separate gates.
+Status: implemented recovery adapters and synthetic tests, **not enabled sales or
+actual store qualification**. No provider products, credentials, paid transactions
+or native purchase capability are provisioned by these modules.
 
-## Responsibilities
+## Delivery and recovery
 
-- `ios/App/App/WeStickerBilling.swift`: StoreKit 2 prices, bound purchase,
-  transaction updates, restore, subscription management and explicit finish.
-- `android/app/src/main/java/art/lazying/westicker/WeStickerBillingPlugin.java`:
-  Play Billing 9.1.0 prices, bound purchase, pending states and restore.
-- `src/NativePlans.tsx`: native-only plans, store-localized prices, account-switch
-  guards and server verification before finishing delivery. Web keeps Stripe.
-- `server/native_billing.py`: fresh provider lookup, exact app/product/environment
-  checks, immutable user binding and transactional credit grants.
+`server/native_billing.py` validates fresh provider state for the exact WeSticker
+app, configured product/base plan, environment and immutable account binding.
+Apple uses `appAccountToken`; Google uses the app-scoped `obfuscatedAccountId`.
+Clients and notifications supply lookup hints, never entitlement facts.
 
-Apple binds a WeSticker UUID via `appAccountToken`; Google binds the app-scoped
-hash via `obfuscatedAccountId`. Client claims, redirects and receipt text alone
-never grant access. Google acknowledgement follows durable server delivery;
-Apple finish follows a successful server response. Uncertain results keep the
-purchase for restore instead of issuing a second purchase.
+`server/native_reconcile.py` encrypts minimal lookup material and queues verified
+notification wakeups. Each recovery attempt takes the same nonblocking,
+process-shared per-account lock as client Restore, then reads the provider again.
+The single-host SQLite deployment also has one batch lock. There is no background
+thread on module import, Flask creation or HTTP requests.
 
-The API serializes provider lookup and delivery per user using a nonblocking
-process-shared lock. A concurrent restore receives 409, without another provider
-read. This matches the current single-host SQLite pilot, not a distributed lock.
-Monthly credits reset once per verified paid transaction. Restoring that same
-transaction neither refills spent credits nor adds rollover credits.
+Delivery atomically persists the lookup, verified subscription, replacement
+lineage and paid-order grant before Google acknowledgement. An acknowledgement
+failure leaves recovery due; a later run retries without refilling spent credits.
+Apple clients finish only after successful server delivery. Monthly credits reset
+once per verified paid transaction, not per restore, notification or grace check.
+Refund/revocation, hold and expiry remove the matching access, not saved work.
+Cancellation remains active through the freshly verified paid-through date.
 
-## Configuration
+Google's fresh `linkedPurchaseToken` establishes predecessor/successor ownership.
+Pending replacements do not retire paid predecessors. Active replacements retain
+hashed ownership tombstones, including unknown predecessors; a delayed restore or
+notification for an old token cannot restore the superseded tier. Cross-account,
+conflicting and self-linked replacements fail closed. Unsupported deferred or
+multi-line Google plans remain rejected by the verifier; this is not qualification
+of every Google replacement mode.
 
-`config.example.json` leaves both product maps empty and purchases disabled.
-Only populate them from verified WeSticker provider records. Private options:
+Prepared/pending attempts and unresolved active/grace/hold/pending subscriptions
+block a second purchase even after local access expires. Only fresh terminal
+provider state establishes that a previously owned subscription has ended.
+Closing new sales never disables Restore, Manage, notifications or reconciliation.
 
-| Provider | Fields |
+## Private configuration
+
+The app identity is `art.lazying.westicker`. Keep both `purchase_enabled` flags
+false until independently qualified. Product IDs, app records, merchant keys and
+test audiences must belong to WeSticker; never copy sibling-app credentials.
+
+| Scope | Fields |
 | --- | --- |
-| Apple | `bundle_id`, numeric `app_id`, `key_file`, `key_id`, `issuer_id`, DER `root_files`, `products` map to tier IDs, `accept_sandbox`, `purchase_enabled` |
-| Google | `package`, service-account `key_file`, `base_plan` (monthly), `products` map to tier IDs, `accept_sandbox`, `purchase_enabled` |
+| `native_billing` | `key_file`: private lookup-encryption key; optional `reconcile_interval`: seconds, default 900, clamped to 60-3600 |
+| `.apple` | `bundle_id`, numeric `app_id`, signing `key_file`, `key_id`, `issuer_id`, trusted DER `root_files`, `products` map to tier IDs, `accept_sandbox`, `purchase_enabled`, `notifications_enabled` |
+| `.google` | `package`, service-account `key_file`, `base_plan` (monthly), `products`, `accept_sandbox`, `purchase_enabled`, `notifications_enabled`, `notifications` below |
 
-The app identity is `art.lazying.westicker`. Product maps are app-specific; do
-not copy another app's subscriptions. Sandbox acceptance is explicit. Closing
-new sales does not disable verification, Restore or Manage.
+`native_billing.key_file` is distinct from both provider signing key files. The
+operator provisions a URL-safe base64-encoded 32-byte random key in a regular,
+non-symlink file owned by the service user, mode 0600 or stricter. Nothing generates,
+prints, borrows or replaces this key automatically. New delivery fails closed
+before provider work when it is absent, malformed or insecurely readable. Catalog
+purchase capability is false and prepare is unavailable without a usable key;
+configured products remain visible.
 
-## Tests and evidence
+HKDF separates the encryption key by app and schema version; Fernet authenticates
+the ciphertext. The encrypted envelope binds the app, owner, source, provider and
+environment. Store references/order IDs are hashed in new database indexes, and
+the raw Google token is never written outside ciphertext. Errors and batch output
+contain only static error categories and aggregate counts. Do not enable HTTP
+wire-debug logging or proxy request-body/Authorization logging for these routes.
 
-```bash
-.venv/bin/pytest -q tests/test_native_billing.py
-node scripts/native-billing-ui-test.mjs
-npm run native:sync
+Back up the key separately from the database with app-specific access controls.
+Key loss or replacement is not a rotation procedure: it prevents decryption, does
+not extend access and requires controlled recovery. No automatic re-encryption or
+key-ring rotation is implemented. Account deletion removes active lookup rows and
+associated inbox/lineage/bindings; operational backup retention remains the
+operator's responsibility, not a claim of physical erasure of SQLite/WAL backups.
+
+Legacy Apple references are encrypted and their source IDs hashed on startup when
+the key is usable. Until then, pre-existing rows are left intact, not discarded.
+Legacy grant IDs are hashed without losing duplicate-delivery protection. Old
+Google rows never retained raw tokens: an authenticated Restore or authenticated
+notification must supply them. Batch `missing_lookups` reports uncovered legacy
+subscriptions; a zero-work batch is not proof that they are reconciled.
+
+Google authenticated push requires all four exact, app-owned values:
+
+```json
+{
+  "notifications": {
+    "audience": "https://<westicker-api>/api/billing/native/notifications/google",
+    "service_account_email": "<dedicated-push-account>",
+    "service_account_subject": "<immutable-numeric-service-account-id>",
+    "subscription": "projects/<project>/subscriptions/<subscription>"
+  }
+}
 ```
 
-Backend fixtures exercise wrong app/environment/owner/product, grace, expiry,
-revocation, cancelled-but-paid-through, hold, renewal quota, concurrent restore,
-CSRF, duplicate intents and acknowledgement transport failure after delivery.
-UI fixtures cover success, cancellation, pending payment, server unavailability,
-closed sales with restore still available, and a late purchase result after
-leaving the plans screen. These tests use no payment card
-and do not prove an Apple sandbox or Google license-test transaction.
+## Notification contract
 
-## Before accepting payments
+Only these POST routes bypass browser session/Origin/CSRF checks:
 
-1. Configure the independent API origin and native authentication return/session
-   transport. Verify cancellation, account switching, logout and account deletion.
-2. Reconcile app-owned subscription products and their visible localized prices.
-3. Implement authenticated provider notifications and periodic revalidation,
-   including refund/revocation, grace/hold, renewals and Google replacement-token
-   lineage. Preserve durable lookup material privately for that process.
-4. Exercise purchase, restore after restart, renewal, cancellation, refund,
-   provider outage and pending approval with actual sandbox/license-test accounts.
-5. Verify cross-account rejection and repeat delivery without a duplicate charge
-   or quota grant. Resolve prepared/pending intents from provider evidence.
-6. Enable the qualified platform separately. Store listing approval is not a
-   substitute for billing evidence; one platform does not gate the other's build.
+- `/api/billing/native/notifications/apple`
+- `/api/billing/native/notifications/google`
 
-Current restore can reconcile when the app is open. Background subscription
-reconciliation is not yet implemented, so sales must remain disabled.
+Both default to HTTP 503 until their `notifications_enabled` flag is set. Body
+limit is 65536 bytes. Apple verifies the outer V2 JWS and nested transaction with
+the official SDK, pinned operator-provided Apple roots and online certificate
+checks. Production app ID, bundle and environment must match; optional Sandbox
+fallback performs an independent complete verification. TEST is transport only.
+Transaction-free summary/other-product notifications are not entitlement support.
+
+Google uses the official Google-auth verifier for OIDC signature, timestamps,
+audience and issuer, then requires the exact verified email, immutable subject,
+Pub/Sub subscription and RTDN package. Invalid/missing identity is 401; malformed
+or wrong-app events are 400; unavailable authentication/configuration is 503.
+Subscription voids only trigger fresh lookup: an event's refund flag cannot revoke
+a newer paid period. TEST and unsupported one-time-product events do not grant.
+
+Accepted notifications persist an account-scoped, hashed-ID deduplication inbox
+and wake a lookup in one transaction, returning 200 only after persistence. An
+unknown reference first requires fresh provider ownership resolution; an unknown
+or deleted account is ignored, never created. Client catalog/prepare/delivery
+records account binding indexes, and startup backfills existing accounts. No raw
+notification payload is retained. Provider/network failures return 503 for retry.
+Duplicate events do not refill credits or reset retry scheduling. Wake versions
+preserve a new event that arrives while a worker is verifying an older one.
+
+## Parent integration hooks
+
+`register_native_billing(app, cfg)` already initializes recovery tables, migrates
+legacy metadata and registers notification routes. Do not register it twice.
+
+1. In `app.py`'s request guard, import `NOTIFICATION_PATHS` and exempt exactly those
+   paths from Origin/session/CSRF checks alongside the existing Stripe route.
+   Before global JSON parsing, set `request.max_content_length = 65536` on these
+   paths. Keep ordinary native prepare/outcome/verify authenticated and CSRF-bound.
+2. Inside the existing account-deletion database transaction, before deleting the
+   user, call `app.extensions["westicker"]["delete_native_account"](db, user["id"])`.
+   This is also exported as `delete_native_account(db, owner)`. All recovery tables
+   additionally use `ON DELETE CASCADE`; a late provider response cannot recreate
+   the account. Store subscription cancellation is separate from account erasure
+   and must remain explicit in the parent's deletion UI.
+3. Run `reconcile_due(cfg, limit=25, budget_seconds=60)` from an explicit scheduler,
+   or use `app.extensions["westicker"]["reconcile_native"]` with those keyword args.
+   No `store.py` schema hook is required beyond normal foreign-key enforcement.
+
+For a parent-managed timer using the same config/state/service user:
+
+```bash
+WESTICKER_CONFIG=/private/westicker/config.json \
+  .venv/bin/python -m server.native_reconcile --limit 25 --budget-seconds 60
+```
+
+Run approximately every minute and monitor `failed`, `busy`, `missing_lookups` and
+worker exit status. Failed attempts back off from 60 seconds to six hours. A fresh
+notification wakes the reference sooner. Successful references poll at the
+configured interval, including inactive ones, to recover missed changes.
+Known expiry is enforced even during provider/key outages. No outage extends the
+provider's last verified paid-through date.
+
+Each batch caps records at 100 and checks a monotonic budget (maximum 300 seconds)
+between records. This is **not a hard interruption deadline** for an in-flight
+verification: SDK API/OCSP/acknowledgement calls have 30-second network timeouts,
+and Google OIDC certificate fetches use 10 seconds. Give the timer sufficient
+shutdown allowance for the current record. Process-shared locks release on crash;
+missed/interrupted work remains due. Multi-host deployments need a distributed
+ordering/lease design before reuse.
+
+## Verification and rollout
+
+```bash
+.venv/bin/pytest -q tests/test_native_billing.py tests/test_native_reconcile.py
+```
+
+Recovery tests cover encrypted persistence/restart, key failure/tampering/scope,
+renewal/duplicate grants, grace, hold, pending, refund/revocation and expiry;
+acknowledgement retries, bounded batches/backoff/locks, wakeup races, deleted
+accounts, Google replacement lineage, exact OIDC identities, and signed Apple
+notifications. Local crypto fixtures use ephemeral test keys and test certificates,
+with real signature validation. Apple's offline certificate checks are confined
+to the fixture; runtime Apple verification retains online checks. No test proves
+a real Apple sandbox purchase, Google license-test payment or delivered callback.
+
+Before enabling a platform, the parent must provision and verify its actual
+WeSticker products/keys/app permissions, authenticated notification transport,
+explicit scheduler and backup policy; then exercise no-charge purchase, restart
+restore, renewal, paid-through cancellation, expiry/refund, grace/hold, account
+switching/deletion and relevant replacements. Store approval, TEST notifications
+and synthetic fixtures are not payment lifecycle evidence. An App Store Connect
+upload key is not automatically proof of App Store Server API authorization.
+
+Provider references: [Apple signed-data verifier](https://apple.github.io/app-store-server-library-python/_modules/appstoreserverlibrary/signed_data_verifier.html),
+[Google authenticated push](https://docs.cloud.google.com/pubsub/docs/authenticate-push-subscriptions),
+[Google subscription replacement](https://developer.android.com/google/play/billing/subscriptions).

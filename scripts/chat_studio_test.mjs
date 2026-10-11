@@ -20,7 +20,7 @@ let account = false;
 try {
   await page.goto(base);
   await page
-    .getByRole("button", { name: "Create", exact: true })
+    .getByRole("button", { name: /^(My library|Library)$/ })
     .first()
     .click();
   await page.getByRole("button", { name: "New account", exact: true }).click();
@@ -35,6 +35,7 @@ try {
     .getByRole("button", { name: "Create account", exact: true })
     .click();
   account = true;
+  await page.getByRole("button", {name: "Create", exact: true}).first().click();
   await page.getByRole("heading", { name: "What shall we make?" }).waitFor();
   await page.getByLabel("Message your sticker assistant").fill("change 1 to Hello there");
   await page.getByRole("button", {name: "Send message", exact: true}).click();
@@ -50,12 +51,14 @@ try {
   await page
     .getByRole("button", { name: "Approve references & start" })
     .click();
+  await page.getByRole("tab", {name: "Sticker plan", exact: true}).click();
   await page.getByLabel("Caption 1", { exact: true }).waitFor();
   assert(
     await page
       .getByRole("button", { name: "Add word", exact: true })
       .isDisabled(),
   );
+  await page.getByRole("tab", {name: "Chat", exact: true}).click();
   await page
     .getByLabel("Message your sticker assistant")
     .fill("change 1 to Hello there");
@@ -66,6 +69,7 @@ try {
       document.querySelector('[aria-label="Caption 1"]').value ===
       "Hello there",
   );
+  await page.getByRole("tab", {name: "Sticker plan", exact: true}).click();
   await page
     .getByLabel("Action 1", { exact: true })
     .fill("Lift one hand, wave twice, blink and relax.");
@@ -94,7 +98,7 @@ try {
   await page.getByRole("button", { name: "Close version history" }).click();
   for (const width of [390, 768, 1360]) {
     await page.setViewportSize({ width, height: 1000 });
-    if(width < 1050) await page.getByRole("tab",{name:"Chat",exact:true}).click();
+    await page.getByRole("tab",{name:"Chat",exact:true}).click();
     await page.screenshot({
       path: `${out}/create-${width}.png`,
       fullPage: true,
@@ -105,7 +109,7 @@ try {
       ),
       `overflow at ${width}`,
     );
-    if(width < 1050) {
+    {
       await page.getByRole("tab",{name:"Sticker plan",exact:true}).click();
       await page.screenshot({path: `${out}/plan-${width}.png`,fullPage:true});
     }
@@ -118,7 +122,8 @@ try {
       document.querySelector('[aria-label="Caption 1"]')?.value ===
       "Hello there",
   );
-  await page.getByRole("button", { name: "Characters", exact: true }).click();
+  await page.getByRole("button", { name: /^(My library|Library)$/ }).first().click();
+  await page.getByRole("tab", { name: "Characters", exact: true }).click();
   await page.getByRole("heading", { name: "Studio review mascot" }).waitFor();
   assert.deepEqual(errors, []);
   await writeFile(

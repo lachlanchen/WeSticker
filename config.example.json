@@ -19,6 +19,13 @@
     }
   },
   "image_model": "gpt-image-1.5",
+  "image_provider": "aginti",
+  "aginti_root": "",
+  "aginti_image_model": "nano-banana-2",
+  "aginti_qualified": false,
+  "image_generation_enabled": false,
+  "animation_enabled": false,
+  "stripe_purchase_enabled": false,
   "moderation_model": "omni-moderation-latest",
   "chat_model": "deepseek-chat",
   "chat_api_origin": "https://api.deepseek.com/v1",

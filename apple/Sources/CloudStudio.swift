@@ -48,7 +48,9 @@ private enum StudioSecret {
 }
 
 @MainActor final class CloudStudioStore: ObservableObject {
-    @Published var origin = UserDefaults.standard.string(forKey: "studio-origin") ?? "https://westicker.lazying.art"
+    @Published var origin = UserDefaults.standard.string(forKey: "studio-origin") ?? "https://westicker.lazying.art" {
+        didSet { if origin != oldValue { clearGuestChat() } }
+    }
     @Published var workspace: StudioWorkspace?
     @Published var current: StudioPack?
     @Published var rows: [StudioRow] = [] { didSet { quote = nil } }
@@ -58,17 +60,68 @@ private enum StudioSecret {
     @Published var error: String?
     @Published var busy = false
     @Published var dirty = false
-    @Published var signedIn = false
-    @Published var needsConsent = false
+    @Published var signedIn = false { didSet { if signedIn != oldValue { clearGuestChat() } } }
+    @Published var needsConsent = false { didSet { if needsConsent != oldValue { clearGuestChat() } } }
     @Published var capabilities: [String: Bool] = [:]
     @Published var sending = false
     @Published var refs: [String] = [] { didSet { pendingCharacter = "" } }
     @Published var pendingCharacter = ""
+    @Published var guestMessages: [GuestChatExchange] = []
+    @Published var guestDraft = ""
+    @Published var guestSending = false
+    @Published var guestError: String?
+    private var guestGeneration = 0
+    private var guestTask: Task<Void, Never>?
     private var csrf = ""
     private var linkedOrigin = ""
     private var link: (String, String)?
     private let network = URLSession(configuration: .ephemeral)
     private let authentication = StudioAuthentication()
+
+    var usesGuestChat: Bool { !signedIn || needsConsent }
+
+    func clearGuestChat() {
+        guestGeneration += 1
+        guestTask?.cancel(); guestTask = nil
+        guestMessages = []; guestDraft = ""; guestSending = false; guestError = nil
+    }
+
+    func sendGuestChat() {
+        guard usesGuestChat, !guestSending else { return }
+        do {
+            let base = try validatedOrigin()
+            let text = guestDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+            let request = try GuestChatProtocol.request(origin: base, message: text, exchanges: guestMessages,
+                                                        locale: Locale.current.languageCode ?? "en")
+            let generation = guestGeneration, id = UUID()
+            guestMessages.append(GuestChatExchange(id: id, text: text))
+            guestDraft = ""; guestError = nil; guestSending = true
+            guestTask = Task {
+                defer { if generation == guestGeneration { guestSending = false; guestTask = nil } }
+                do {
+                    let reply = try await GuestChatClient.send(request)
+                    guard !Task.isCancelled, generation == guestGeneration, usesGuestChat,
+                          base == (try? validatedOrigin()), let index = guestMessages.firstIndex(where: { $0.id == id }) else { return }
+                    guestMessages[index].reply = reply
+                } catch {
+                    guard generation == guestGeneration, base == (try? validatedOrigin()),
+                          let index = guestMessages.firstIndex(where: { $0.id == id }) else { return }
+                    guestMessages[index].failure = error.localizedDescription
+                }
+            }
+        } catch { guestError = error.localizedDescription }
+    }
+
+    var billingSession: NativeBillingSession? {
+        guard signedIn, let base = try? validatedOrigin() else { return nil }
+        let token = StudioSecret.read(base)
+        guard !token.isEmpty else { return nil }
+        return NativeBillingSession(origin: base, token: token, csrf: csrf)
+    }
+    var billingSessionID: String {
+        guard let session = billingSession else { return "signed-out" }
+        return SHA256.hash(data: Data((session.origin + session.token).utf8)).map { String(format: "%02x", $0) }.joined()
+    }
 
     func validatedOrigin() throws -> String {
         let value = origin.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
@@ -280,42 +333,65 @@ struct CloudStudioView: View {
     @State private var termsAccepted = false
     @State private var showServiceSettings = false
     @State private var pane = 0
+    @State private var libraryPane = 0
 
     var body: some View {
         NavigationStack {
+            VStack(spacing: 0) {
             ScrollViewReader { proxy in ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
-                    if !store.signedIn { signInView }
-                    else if store.needsConsent {
-                        Text("Before your first creation").font(.title2.bold())
-                        Link("Creator terms", destination: URL(string: store.origin + "/terms.html")!)
-                        Link("Privacy policy", destination: URL(string: store.origin + "/privacy.html")!)
-                        Toggle("I am 18 or older and accept the creator terms", isOn: $termsAccepted)
-                        Button("Continue") { store.perform { try await store.acceptTerms() } }.disabled(!termsAccepted)
+                    if section == 2 {
+                        Picker("Library view", selection: $libraryPane) {
+                            Text("Creations").tag(0); Text("Characters").tag(1)
+                        }.pickerStyle(.segmented)
+                        if libraryPane == 0 { Button("Open saved local photo draft") { showLocal = true }; Divider() }
+                        if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
+                        if !store.signedIn { cloudAccessView }
+                        else if store.needsConsent { consentView }
+                        else if let w = store.workspace {
+                            if libraryPane == 0 { libraryView(w) } else { charactersView(w) }
+                        }
+                    } else if store.usesGuestChat {
+                        guestConversation
+                    } else {
+                        if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
+                        if let w = store.workspace {
+                            if store.current == nil { chatWelcome }
+                            else if let p = store.current { editor(p, w) }
+                        }
                     }
-                    else if let w = store.workspace {
-                        Text("\(w.limits.plan.capitalized) · \(w.limits.credits) credits · \(w.limits.pack_size) per creation").font(.caption).foregroundStyle(.secondary)
-                        if section == 2 { libraryView(w) }
-                        else if section == 3 { charactersView(w) }
-                        else if store.current == nil { chatWelcome }
-                        else if let p = store.current { editor(p, w) }
-                    }
-                    if store.busy { ProgressView() }
+                    if store.busy && !store.usesGuestChat { ProgressView() }
                     Color.clear.frame(height: 1).id("chat-bottom")
                 }.padding().frame(maxWidth: 850, alignment: .leading).frame(maxWidth: .infinity)
             }.onChange(of: store.messages.count) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
-            }.navigationTitle(section == 2 ? "Library" : section == 3 ? "Characters" : "Create")
-            .safeAreaInset(edge: .bottom) {
-                if store.signedIn && !store.needsConsent && section == 1 && pane == 0 { composer.padding().background(.regularMaterial) }
-            }
-            .toolbar { ToolbarItemGroup {
-                Button { store.perform { try await store.refresh() } } label: { Image(systemName: "arrow.clockwise") }
-                if store.signedIn {
-                    Button { store.current = nil; store.messages = []; store.rows = []; store.dirty = false; pane = 0; onCreate() } label: { Image(systemName: "plus") }.disabled(store.dirty)
-                    Button("Sign out") { store.perform { try await store.signOut() } }
+                .onChange(of: store.guestMessages.count) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
+                .onChange(of: store.guestSending) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                if section == 1 && (store.usesGuestChat || pane == 0) {
+                    composer.padding().frame(maxWidth: .infinity).background(.regularMaterial)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+            }.navigationTitle(section == 2 ? "Library" : "Create")
+            .toolbar { ToolbarItemGroup {
+                if section == 2 {
+                    Button { store.perform { try await store.refresh() } } label: { Image(systemName: "arrow.clockwise") }.accessibilityLabel("Refresh library").disabled(store.busy)
+                } else {
+                    Button {
+                        if store.usesGuestChat { store.clearGuestChat() }
+                        else { store.current = nil; store.messages = []; store.rows = []; store.dirty = false; pane = 0 }
+                    } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New chat").disabled(!store.usesGuestChat && (store.busy || store.dirty))
+                }
+                Button { showServiceSettings = true } label: { Image(systemName: "gearshape") }.accessibilityLabel("Service settings")
             } }
+            .sheet(isPresented: $showServiceSettings) { NavigationStack {
+                Form {
+                    TextField("HTTPS creator service", text: $store.origin).autocorrectionDisabled()
+                    if let base = try? store.validatedOrigin() {
+                        Link("Terms", destination: URL(string: base + "/terms.html")!)
+                        Link("Privacy", destination: URL(string: base + "/privacy.html")!)
+                    }
+                }.navigationTitle("Service settings").toolbar { Button("Done") { showServiceSettings = false; store.perform { try await store.refresh() } } }
+            }.frame(minWidth: 280, minHeight: 240) }
             .sheet(isPresented: $creating) { NavigationStack { ScrollView { VStack(alignment: .leading, spacing: 16) {
                 if let w = store.workspace { creationForm(w) }
             }.padding() }.navigationTitle("Character references").toolbar { Button("Done") { creating = false } } }.frame(minWidth: 280, minHeight: 400) }
@@ -340,35 +416,55 @@ struct CloudStudioView: View {
             }
         }
     }
-    private var signInView: some View { Group {
-        VStack(alignment: .leading, spacing: 20) {
-            if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) { NativeImage(data: data).frame(width: 112, height: 112).clipShape(RoundedRectangle(cornerRadius: 24)) }
-            Text("Your own little cast").font(.title.bold())
-            Text("Welcome to WeSticker").foregroundStyle(.secondary)
-            Button { store.perform { try await store.signIn() } } label: { Label(store.busy ? "Connecting…" : "Continue with LazyingArt", systemImage: "person.crop.circle").frame(maxWidth: .infinity).padding(.vertical, 8) }.buttonStyle(.borderedProminent).disabled(store.busy)
-            Button("Open saved local photo draft") { showLocal = true }
-            HStack(spacing: 20) {
-                Link("Terms", destination: URL(string: store.origin + "/terms.html")!)
-                Link("Privacy", destination: URL(string: store.origin + "/privacy.html")!)
-                Button { showServiceSettings.toggle() } label: { Image(systemName: "gearshape") }.accessibilityLabel("Service settings")
-            }.font(.caption)
-            if showServiceSettings { TextField("HTTPS creator service", text: $store.origin).textFieldStyle(.roundedBorder).autocorrectionDisabled() }
-        }.frame(maxWidth: 390).padding(.vertical, 32).frame(maxWidth: .infinity)
-    } }
+    private var cloudAccessView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(libraryPane == 0 ? "Cloud creations" : "Cloud characters").font(.headline)
+            Button { store.perform { try await store.signIn() } } label: { Label("Sign in to cloud library", systemImage: "person.crop.circle") }.disabled(store.busy)
+        }
+    }
+    private var consentView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Before your first cloud creation").font(.headline)
+            if let base = try? store.validatedOrigin() {
+                Link("Creator terms", destination: URL(string: base + "/terms.html")!)
+                Link("Privacy policy", destination: URL(string: base + "/privacy.html")!)
+            }
+            Toggle("I am 18 or older and accept the creator terms", isOn: $termsAccepted)
+            Button("Continue") { store.perform { try await store.acceptTerms() } }.disabled(!termsAccepted || store.busy)
+        }
+    }
+    @ViewBuilder private var guestConversation: some View {
+        if store.guestMessages.isEmpty { chatWelcome }
+        ForEach(store.guestMessages) { message in
+            Text(message.text).padding(10).frame(maxWidth: .infinity, alignment: .trailing)
+                .background(Color.cyan.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+            if let reply = message.reply { Text(reply).textSelection(.enabled) }
+            else if let failure = message.failure {
+                Text(failure).font(.caption).foregroundStyle(.secondary)
+                Button { store.guestDraft = message.text } label: { Label("Edit message", systemImage: "pencil") }.disabled(store.guestSending)
+            } else { Label("Aya is thinking…", systemImage: "ellipsis.bubble").font(.caption).foregroundStyle(.secondary) }
+        }
+        if let error = store.guestError { Text(error).foregroundStyle(.red) }
+    }
     private var chatWelcome: some View {
         VStack(alignment: .leading, spacing: 20) {
             if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) { NativeImage(data: data).frame(width: 80, height: 80) }
             Text("What shall we make?").font(.title2.bold())
-            ForEach(["A cheerful hello sticker", "Help me choose my character", "Something funny for a busy day"], id: \.self) { suggestion in
-                Button(suggestion) { text = suggestion }.buttonStyle(.bordered)
-            }
         }
     }
     private var composer: some View {
         HStack(alignment: .bottom) {
-            Button { creating = true } label: { Image(systemName: "photo.badge.plus").font(.title3) }.accessibilityLabel("Character references").disabled(store.busy)
-            TextField("Message your sticker assistant", text: $text, axis: .vertical).lineLimit(1...5).textFieldStyle(.roundedBorder)
-            Button { let message = text; text = ""; store.perform { try await store.chat(message) } } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }.accessibilityLabel("Send message").disabled(store.busy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.dirty || store.blocked)
+            Button { if store.usesGuestChat { showLocal = true } else { creating = true } } label: { Image(systemName: "photo.badge.plus").font(.title3) }
+                .accessibilityLabel(store.usesGuestChat ? "Open saved local photo draft" : "Character references").disabled(!store.usesGuestChat && store.busy)
+            TextField("Message your sticker assistant", text: Binding(get: { store.usesGuestChat ? store.guestDraft : text }, set: {
+                if store.usesGuestChat { store.guestDraft = String($0.prefix(GuestChatProtocol.messageLimit)) } else { text = String($0.prefix(2000)) }
+            }), axis: .vertical).lineLimit(1...5).textFieldStyle(.roundedBorder)
+                .accessibilityIdentifier("chat-message-input")
+            Button {
+                if store.usesGuestChat { store.sendGuestChat() }
+                else { let message = text; text = ""; store.perform { try await store.chat(message) } }
+            } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }.accessibilityLabel("Send message")
+                .disabled(store.usesGuestChat ? store.guestSending || store.guestDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty : store.busy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.dirty || store.blocked)
         }.frame(maxWidth: 850)
     }
     @ViewBuilder private func libraryView(_ w: StudioWorkspace) -> some View {
@@ -379,9 +475,10 @@ struct CloudStudioView: View {
                 }; Text("\(p.items.count) stickers").font(.caption) }
             }.buttonStyle(.plain); Divider()
         }
-        Button("Open saved local photo draft") { showLocal = true }
+        if w.packs.isEmpty { Text("No cloud creations yet").foregroundStyle(.secondary) }
     }
     @ViewBuilder private func charactersView(_ w: StudioWorkspace) -> some View {
+        if w.characters.isEmpty { Text("No cloud characters yet").foregroundStyle(.secondary) }
         ForEach(w.characters) { c in
             Text(c.name).font(.headline)
             ScrollView(.horizontal) { HStack { ForEach(c.refs, id: \.self) { id in StudioAsset(store: store, id: id).frame(width: 70, height: 70) } } }

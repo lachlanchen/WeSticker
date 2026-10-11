@@ -26,9 +26,9 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 [GIF playback, new icon and test-build evidence](docs/native-playback-20261010.md)
 
-**2026-10-11** · LazyingArt password sign-in and chat-first creation are live at https://westicker.lazying.art. Start a conversation, add references later and review editable sticker plans. Internal test builds: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Social-provider login, AI image/animation rendering and payments are not yet enabled.
+**2026-10-11** · Guest chat is live at https://westicker.lazying.art without signing in. Characters is inside Library, not a separate main destination. AgInTi image generation (`nano-banana-2`) passed real-provider qualification and is enabled; generation still requires an account, consent and explicit quote confirmation.
 
-[2026-10-11 · Login / chat / test builds](docs/login-chat-release-20261011.md) · [API / QA](docs/chat-studio-20261011.md)
+[2026-10-11 · Guest chat / navigation](docs/clean-chat-release-20261011.md) · [AgInTi image qualification](docs/aginti-images.md) · [API / QA](docs/chat-studio-20261011.md)
 
 ![Chat studio](docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a
 
 ## Verification
 
-77 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.
+Backend and browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These workflow checks are distinct from the real-provider evidence for [guest chat](docs/clean-chat-release-20261011.md) and [AgInTi images](docs/aginti-images.md); they do not qualify live payments or public animation.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Release Status
 
-LazyingArt password sign-in and chat-first creation are live at https://westicker.lazying.art. Start a conversation, add references later and review editable sticker plans. Internal test builds: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Social-provider login, AI image/animation rendering and payments are not yet enabled.
+Replacement native build candidates: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](docs/native-guest-chat-20261011.md). Distribution is not confirmed until store-processing and internal distribution receipts are available. One local animation canary passed, but public animation remains offline pending service lifecycle qualification. Social-provider sign-in, native in-app purchases and web payments remain disabled pending end-to-end qualification.
 
 ## Citation
 

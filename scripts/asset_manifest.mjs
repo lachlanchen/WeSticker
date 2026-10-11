@@ -41,6 +41,7 @@ for (const sticker of catalog.packs[0].stickers.zh)
 const precache = files.filter(
   (f) =>
     !f.startsWith("/motion/") &&
+    !/^\/assets\/ChatText-[^/]+\.js$/.test(f) &&
     (!f.startsWith("/previews/") || firstPosters.has(f)),
 );
 const hash = createHash("sha256");

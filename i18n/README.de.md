@@ -26,9 +26,9 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · LazyingArt-Passwortanmeldung und chatbasierte Gestaltung sind unter https://westicker.lazying.art verfügbar. Beginne ein Gespräch, füge später Referenzen hinzu und bearbeite den Stickerplan. Interne Testversionen: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Anmeldung über soziale Anbieter, KI-Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht aktiviert.
+**2026-10-11** · Der Gastchat ist unter https://westicker.lazying.art ohne Anmeldung verfügbar. Characters befindet sich in Library und ist kein eigener Hauptbereich. Die Bilderzeugung über AgInTi (`nano-banana-2`) wurde mit dem echten Anbieter erfolgreich qualifiziert und ist aktiviert; sie erfordert weiterhin ein Konto, Einwilligung und die ausdrückliche Bestätigung des Kostenvoranschlags.
 
-[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Gastchat / Navigation](../docs/clean-chat-release-20261011.md) · [AgInTi-Bildqualifikation](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Veröffentlichungsstand
 
-LazyingArt-Passwortanmeldung und chatbasierte Gestaltung sind unter https://westicker.lazying.art verfügbar. Beginne ein Gespräch, füge später Referenzen hinzu und bearbeite den Stickerplan. Interne Testversionen: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Anmeldung über soziale Anbieter, KI-Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht aktiviert.
+Neue native Build-Kandidaten als Ersatz: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Ihre Verteilung ist erst mit Belegen zur Store-Verarbeitung und internen Verteilung bestätigt. Ein lokaler Animationstest war erfolgreich; die öffentliche Animationserzeugung bleibt jedoch bis zur Qualifikation des Dienstlebenszyklus offline. Anmeldung über soziale Anbieter, native In-App-Käufe und Webzahlungen bleiben bis zur erfolgreichen Ende-zu-Ende-Prüfung deaktiviert.
 
 ## Zitieren
 

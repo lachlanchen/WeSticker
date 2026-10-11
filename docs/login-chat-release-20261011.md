@@ -3,6 +3,10 @@
 Verified 11 October 2026. This supersedes the earlier same-day
 [chat-workspace release](chat-beta-release-20261011.md).
 
+Later update: [Clean Chat And Library](clean-chat-release-20261011.md) supersedes
+this navigation and guest-login description. AgInTi image generation is now
+qualified separately; the disabled-capability list below records this older build.
+
 ## Available
 
 - [WeSticker web app](https://westicker.lazying.art): real LazyingArt password

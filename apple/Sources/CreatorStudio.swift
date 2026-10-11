@@ -102,16 +102,20 @@ struct PNGDocument: FileDocument {
 struct StudioRootView: View {
     @StateObject private var store = CreatorStore()
     @StateObject private var cloud = CloudStudioStore()
-    @State private var selected = 0
-    private let labels = ["Stickers", "Create", "Library", "Characters"]
-    private let symbols = ["face.smiling", "bubble.left.and.bubble.right", "square.stack", "person.crop.square"]
+    @StateObject private var billing = NativeBillingStore()
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var selected = 1
+    private let labels = ["Stickers", "Create", "Library", "Account"]
+    private let symbols = ["face.smiling", "bubble.left.and.bubble.right", "square.stack", "person.crop.circle"]
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            Group {
             switch selected {
-            case 1, 2, 3: CloudStudioView(store: cloud, local: store, section: selected, onCreate: { selected = 1 })
+            case 3: NativeBillingAccountView(cloud: cloud, billing: billing, signIn: { cloud.perform { try await cloud.signIn() } })
+            case 1, 2: CloudStudioView(store: cloud, local: store, section: selected, onCreate: { selected = 1 })
             default: CatalogView()
             }
-        }.safeAreaInset(edge: .bottom, spacing: 0) {
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
             VStack(spacing: 0) {
                 Divider()
                 HStack(spacing: 4) {
@@ -128,7 +132,9 @@ struct StudioRootView: View {
                     }
                 }.padding(.horizontal, 8).padding(.vertical, 6)
             }.background(.background)
-        }
+        }.task { billing.attach(cloud); cloud.perform { try await cloud.refresh() } }
+        .task(id: cloud.billingSessionID) { billing.attach(cloud) }
+        .onChange(of: scenePhase) { phase in if phase == .active { billing.attach(cloud); billing.restore() } }
     }
 }
 

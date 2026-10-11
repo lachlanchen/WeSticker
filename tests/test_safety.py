@@ -103,7 +103,7 @@ def test_animation_requires_provider_and_reference_approval(case):
         ).status_code
         == 503
     )
-    cfg.update(local_video_url="http://127.0.0.1:8190", image_api_key="fixture")
+    cfg.update(local_video_url="http://127.0.0.1:8190", image_api_key="fixture", animation_enabled=True)
     user = c.get("/api/bootstrap").get_json()["user"]["id"]
     with database(cfg) as db:
         db.execute(

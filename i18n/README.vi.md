@@ -26,9 +26,9 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Đăng nhập bằng mật khẩu LazyingArt và sáng tạo qua trò chuyện đã có tại https://westicker.lazying.art. Bắt đầu trò chuyện, thêm ảnh tham khảo sau và chỉnh sửa kế hoạch nhãn dán. Bản thử nghiệm nội bộ: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Đăng nhập mạng xã hội, tạo ảnh và hoạt ảnh AI, thanh toán chưa được bật.
+**2026-10-11** · Trò chuyện dành cho khách đã hoạt động tại https://westicker.lazying.art mà không cần đăng nhập. Characters nằm trong Library, không phải mục điều hướng chính riêng biệt. Tạo ảnh qua AgInTi (`nano-banana-2`) đã được kiểm chứng với nhà cung cấp thực và được bật; việc tạo ảnh vẫn yêu cầu tài khoản, sự đồng ý và xác nhận rõ ràng báo giá.
 
-[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Trò chuyện dành cho khách / điều hướng](../docs/clean-chat-release-20261011.md) · [Kiểm chứng ảnh AgInTi](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Trạng thái phát hành
 
-Đăng nhập bằng mật khẩu LazyingArt và sáng tạo qua trò chuyện đã có tại https://westicker.lazying.art. Bắt đầu trò chuyện, thêm ảnh tham khảo sau và chỉnh sửa kế hoạch nhãn dán. Bản thử nghiệm nội bộ: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Đăng nhập mạng xã hội, tạo ảnh và hoạt ảnh AI, thanh toán chưa được bật.
+Các bản dựng ứng viên thay thế cho ứng dụng native: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Chưa xác nhận việc phân phối cho đến khi có biên nhận xử lý của cửa hàng ứng dụng và phân phối nội bộ. Một lần thử nghiệm hoạt ảnh cục bộ đã thành công, nhưng tính năng tạo hoạt ảnh công khai vẫn ngoại tuyến cho đến khi vòng đời dịch vụ được kiểm chứng. Đăng nhập qua mạng xã hội, mua hàng trong ứng dụng native và thanh toán web vẫn bị tắt cho đến khi vượt qua kiểm chứng đầu cuối.
 
 ## Trích dẫn
 

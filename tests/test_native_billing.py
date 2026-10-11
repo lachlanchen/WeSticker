@@ -2,9 +2,11 @@
 
 from dataclasses import replace
 from types import SimpleNamespace as Obj
+import hashlib
 import time
 import uuid
 
+from cryptography.fernet import Fernet
 import pytest
 
 from server.app import create_app
@@ -16,8 +18,11 @@ from test_app import call, signup
 
 @pytest.fixture
 def native(tmp_path):
+    key_file = tmp_path / "native-test.key"
+    key_file.write_bytes(Fernet.generate_key())
+    key_file.chmod(0o600)
     cfg = {"state": str(tmp_path), "origin": "http://localhost:18642", "local_accounts": True,
-           "native_billing": {"apple": {"products": {"art.lazying.westicker.pocket.monthly": "pocket"},
+           "native_billing": {"key_file": str(key_file), "apple": {"products": {"art.lazying.westicker.pocket.monthly": "pocket"},
                                           "purchase_enabled": True}}}
     app = create_app(cfg)
     client = app.test_client()
@@ -193,6 +198,7 @@ def test_google_acknowledgement_retry_does_not_double_grant(native, monkeypatch)
     cfg, client, owner, receipt = native
     cfg["native_billing"]["google"] = {"products": {"westicker_pocket_monthly": "pocket"}}
     receipt = replace(receipt, provider="google", binding=binding(owner, "google"),
+                      reference=hashlib.sha256(b"test-purchase-token").hexdigest(),
                       product="westicker_pocket_monthly")
     attempts = []
     def acknowledge(*args, **kwargs):

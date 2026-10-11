@@ -2,7 +2,27 @@
 
 import io
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageSequence
+from PIL import Image, ImageChops, ImageDraw, ImageFont, ImageOps, ImageSequence
+
+
+def exterior_alpha(source):
+    """Use the approved AYA export matte: only perimeter-connected neutral white."""
+    image = source.convert("RGBA")
+    r, g, b, alpha = image.split()
+    low = ImageChops.darker(ImageChops.darker(r, g), b)
+    high = ImageChops.lighter(ImageChops.lighter(r, g), b)
+    white = low.point(lambda value: 255 if value >= 244 else 0)
+    neutral = ImageChops.subtract(high, low).point(lambda value: 255 if value <= 18 else 0)
+    mask = ImageChops.lighter(ImageChops.multiply(white, neutral),
+        alpha.point(lambda value: 255 if value == 0 else 0))
+    width, height = mask.size
+    for x, y in ([(x, y) for x in range(width) for y in (0, height - 1)] +
+                 [(x, y) for y in range(height) for x in (0, width - 1)]):
+        if mask.getpixel((x, y)) == 255:
+            ImageDraw.floodfill(mask, (x, y), 128)
+    alpha.paste(0, mask=mask.point(lambda value: 255 if value == 128 else 0))
+    image.putalpha(alpha)
+    return image
 
 
 def font(config, size):

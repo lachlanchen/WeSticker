@@ -23,6 +23,9 @@ from .store import (
     limits,
 )
 from .studio import clean_rows, register_studio
+from .guest_chat import register_guest_chat
+from .generation import capabilities as generation_capabilities
+from .native_reconcile import MAX_EVENT_BYTES, NOTIFICATION_PATHS
 
 
 class PaymentRequired(HTTPException):
@@ -156,9 +159,12 @@ def create_app(override=None):
         "login_user": login_user,
         "throttle": throttle,
     }
+    register_guest_chat(app, cfg)
 
     @app.before_request
     def protect():
+        if request.path in NOTIFICATION_PATHS:
+            request.max_content_length = MAX_EVENT_BYTES
         if (
             request.path.startswith("/api/")
             and request.is_json
@@ -169,7 +175,7 @@ def create_app(override=None):
         if (
             request.path.startswith("/api/")
             and request.method not in {"GET", "HEAD", "OPTIONS"}
-            and request.path != "/api/billing/webhook"
+            and request.path not in NOTIFICATION_PATHS | {"/api/billing/webhook"}
         ):
             if request.headers.get("Origin") != cfg["origin"]:
                 abort(403, description="Origin rejected.")
@@ -215,14 +221,14 @@ def create_app(override=None):
             local_accounts=cfg["local_accounts"],
             capabilities={
                 "chat": bool(cfg.get("chat_api_key")),
-                "ai_images": bool(cfg.get("image_api_key")),
-                "animation": bool(
-                    cfg.get("local_video_url") and cfg.get("image_api_key")
-                ),
+                **generation_capabilities(cfg),
                 "web_checkout": bool(
-                    cfg.get("stripe_key")
+                    cfg.get("stripe_purchase_enabled") is True
+                    and cfg.get("stripe_key")
                     and cfg.get("stripe_webhook_secret")
-                    and cfg.get("stripe_prices")
+                    and cfg.get("stripe_account")
+                    and cfg.get("stripe_mode") in {"test", "live"}
+                    and all(cfg.get("stripe_prices", {}).get(p["id"]) for p in PLANS)
                 ),
                 "native_billing": False,
                 "creator_sales": bool(cfg.get("creator_sales_enabled")),
@@ -351,6 +357,7 @@ def create_app(override=None):
             shared = app.extensions.get("westicker_shared_identity")
             if shared:
                 shared.erase(user["id"])
+            app.extensions["westicker"]["delete_native_account"](db, user["id"])
             db.execute("DELETE FROM users WHERE id=?", (user["id"],))
         for path in paths:
             candidate = state / path
@@ -642,13 +649,13 @@ def create_app(override=None):
             abort(400, description="Confirm generation and permissions.")
         if kind not in {"photo", "ai", "animate"}:
             abort(400)
-        if kind == "ai" and not cfg.get("image_api_key"):
+        if kind == "ai" and not generation_capabilities(cfg)["ai_images"]:
             abort(
                 503,
                 description="AI generation is not connected yet. Photo stickers work now.",
             )
         if kind == "animate":
-            if not cfg.get("local_video_url") or not cfg.get("image_api_key"):
+            if not generation_capabilities(cfg)["animation"]:
                 abort(
                     503,
                     description="Animation and its safety provider are not connected.",

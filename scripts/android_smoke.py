@@ -18,6 +18,7 @@ def main():
     p.add_argument("--out", required=True, type=Path)
     p.add_argument("--port", type=int, default=5588)
     p.add_argument("--creator", action="store_true")
+    p.add_argument("--account", action="store_true", help="Check guest Account UI without signing in or purchasing")
     a = p.parse_args()
     if not a.apk.is_file():
         p.error("The selected APK does not exist")
@@ -66,23 +67,44 @@ def main():
             run("install", "-r", str(a.apk.resolve()))
             run("shell", "am", "start", "-n", "art.lazying.westicker/.MainActivity")
             time.sleep(12)
-            tree = capture("01-catalog")
+            tree = capture("01-start")
             if any(n.get("text") == "Bluetooth keeps stopping" for n in tree.iter("node")):
                 tap(tree, "Close app")
-                tree = capture("01-catalog-cleared")
+                tree = capture("01-start-cleared")
+            tap(tree, "Stickers")
+            tree = capture("01-catalog")
             texts = [n.get("text", "") or n.get("content-desc", "") for n in tree.iter("node")]
             if not any("Sticker collections" in t for t in texts):
                 raise RuntimeError("Native catalog is not visible")
             if "Sign in" in texts or "Plans & credits" in texts:
                 raise RuntimeError("Unqualified beta control is visible")
+            if a.account:
+                tap(tree, "Account")
+                time.sleep(2)
+                tree = capture("account-guest")
+                account_texts = [n.get("text", "") or n.get("content-desc", "") for n in tree.iter("node")]
+                assert "WeSticker Account" in account_texts
+                assert "Sign in" in account_texts
+                assert "Manage Play subscriptions" in account_texts
+                assert not any("Stripe" in t or "Checkout" in t for t in account_texts)
+                tap(tree, "Stickers")
+                tree = capture("account-return")
             if a.creator:
                 tap(tree, "Create")
                 time.sleep(2)
                 tree = capture("creator")
-                assert any(n.get("text") == "Continue with LazyingArt" for n in tree.iter("node"))
+                assert any(n.get("content-desc") == "Send message" for n in tree.iter("node"))
+                assert not any(n.get("text") in ("Sign in", "Continue with LazyingArt") for n in tree.iter("node"))
                 assert not any(n.get("text") == "Agent" for n in tree.iter("node"))
                 assert any(n.get("content-desc") == "Library" or n.get("text") == "Library" for n in tree.iter("node"))
-                assert any(n.get("content-desc") == "Characters" or n.get("text") == "Characters" for n in tree.iter("node"))
+                assert not any(n.get("content-desc") == "Characters" or n.get("text") == "Characters" for n in tree.iter("node"))
+                tap(tree, "Library")
+                tree = capture("library")
+                tap(tree, "Characters")
+                tree = capture("library-characters")
+                assert any(n.get("text") == "Cloud characters" for n in tree.iter("node"))
+                tap(tree, "Creations")
+                tree = capture("library-creations")
                 tap(tree, "Open saved local photo draft")
                 tree = capture("local-photo-draft")
                 assert any("Choose photo" in n.get("text", "") for n in tree.iter("node"))
@@ -90,7 +112,7 @@ def main():
                 run("shell", "am", "start", "-n", "art.lazying.westicker/.MainActivity")
                 time.sleep(3)
                 tree = capture("creator-reopened")
-                tap(tree, "Create")
+                tap(tree, "Library")
                 tree = capture("create-reopened")
                 tap(tree, "Open saved local photo draft")
                 tree = capture("creator-restored")
@@ -114,11 +136,13 @@ def main():
             assert moving > 1, "The GIF pixels did not animate"
             tap(tree, "Pause animations")
             time.sleep(1)
-            assert motion_samples("paused") == 1, "Pause did not stop animation"
+            paused = motion_samples("paused")
+            assert paused == 1, "Pause did not stop animation"
             tree = capture("paused-catalog")
             tap(tree, "Play animations")
             time.sleep(1)
-            assert motion_samples("resumed") > 1, "GIF did not resume"
+            resumed = motion_samples("resumed")
+            assert resumed > 1, "GIF did not resume"
             tree = capture("resumed-catalog")
             tap(tree, "Preview ", contains=True)
             time.sleep(3)
@@ -130,6 +154,10 @@ def main():
             if "ChooserActivity" not in foreground:
                 raise RuntimeError("Native share sheet did not open")
             result = {"installed_exact_apk": str(a.apk), "catalog": True, "english": True,
+                      "apk_sha256": hashlib.sha256(a.apk.read_bytes()).hexdigest(),
+                      "account_guest_ui": a.account, "purchase_attempted": False,
+                      "guest_chat_ui_without_login": a.creator, "live_guest_request": False,
+                      "motion_unique_frames": {"playing": moving, "paused": paused, "resumed": resumed},
                       "preview": True, "native_share_sheet": True, "physical_device": False,
                       "creator_navigation_and_local_editor_restore": a.creator, "gif_motion_pause_resume": True}
             (a.out / "result.json").write_text(json.dumps(result, indent=2))

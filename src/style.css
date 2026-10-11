@@ -1174,6 +1174,26 @@ footer button {
 .auth-modal .provider {
   margin: 7px 0;
 }
+
+.web-plans { min-width: 0; margin: 20px 0; }
+.web-plans h3 { font-size: 18px; margin: 0 0 8px; }
+.web-plan-list { border-top: 1px solid #dbe6eb; }
+.web-plan-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #dbe6eb;
+}
+.web-plan-row strong, .web-plan-row span { display: block; overflow-wrap: anywhere; }
+.web-plan-row span { font-size: 12px; color: #48616b; margin-top: 3px; }
+.web-plans .row { flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.web-plans .plan-note { font-size: 12px; line-height: 1.6; }
+@media (max-width: 560px) {
+  .web-plan-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .web-plan-row > button { grid-column: 1 / -1; width: 100%; }
+}
 .legal p {
   font-size: 13px;
 }

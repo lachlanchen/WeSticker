@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   ArrowDownToLine,
   ArrowUp,
@@ -26,6 +26,8 @@ import {
 import "./studio.css";
 import { LocalStudio } from "./LocalStudio";
 import { CreatorActions } from "./CreatorActions";
+import { GuestChat } from "./GuestChat";
+const ChatText = lazy(() => import("./ChatText").then(m => ({default: m.ChatText})));
 
 type Limits = {
   plan: string;
@@ -113,6 +115,7 @@ export function Studio({
   const [creating, setCreating] = useState(false);
   const [showReferences, setShowReferences] = useState(false);
   const [pane, setPane] = useState("chat");
+  const [libraryTab, setLibraryTab] = useState("creations");
   const [linkApproved, setLinkApproved] = useState(false);
   const [localView, setLocalView] = useState<"create" | "agent" | null>(null);
   const [creatorAction, setCreatorAction] = useState<
@@ -349,17 +352,8 @@ export function Studio({
       <header className="creator-heading">
         <div>
           <h1>
-            {section === "create"
-              ? "Create together"
-              : section === "library"
-                ? "Your library"
-                : "Your characters"}
+            {section === "create" ? "Create" : "Library"}
           </h1>
-          <span>
-            {boot?.user
-              ? `${w.limits.plan} · ${w.limits.credits} credits · ${w.limits.pack_size === 1 ? "Single stickers" : `Up to ${w.limits.pack_size} per pack`}`
-              : "A little character. A lot to say."}
-          </span>
         </div>
         <button
           title="Refresh workspace"
@@ -376,13 +370,15 @@ export function Studio({
           {error}
         </p>
       )}
-      <button
+      {section !== "create" && <button
         className="local-draft-link"
         onClick={() => setLocalView("create")}
       >
         Saved local photo draft
-      </button>
-      {!boot ? (
+      </button>}
+      {section === "create" && !boot?.user?.consented && !link ? (
+        <GuestChat />
+      ) : !boot ? (
         <p role="status">Connecting to your studio…</p>
       ) : !boot.user ? (
         <StudioLogin boot={boot} onLogin={refresh} onError={setError} />
@@ -413,7 +409,10 @@ export function Studio({
           )}
           {linkApproved && <p role="status">Connected. Return to the app.</p>}
           {linkApproved && appReturn && <a className="button primary" href={`art.lazying.westicker://auth/complete?link=${link}`}>Return to WeSticker</a>}
-          {section === "characters" ? (
+          {section !== "create" && <div className="library-tabs" role="tablist" aria-label="Library">
+            {[["creations", "Creations"], ["characters", "Characters"]].map(([id, label]) => <button key={id} role="tab" aria-selected={(section === "characters" ? "characters" : libraryTab) === id} onClick={() => {setLibraryTab(id); if(section === "characters") onSection?.("library");}}>{label}</button>)}
+          </div>}
+          {section === "characters" || (section === "library" && libraryTab === "characters") ? (
             <div className="character-library">
               {w.characters.map((c) => (
                 <article key={c.id}>
@@ -489,7 +488,7 @@ export function Studio({
             </div>
           ) : (
             <>
-              <div className="studio-collection-bar">
+              {w.packs.length > 0 && <div className="studio-collection-bar">
                 <select
                   aria-label="Current creation"
                   value={creating ? "" : pack?.id || ""}
@@ -512,7 +511,7 @@ export function Studio({
                 >
                   <Plus size={18} />
                 </button>
-              </div>
+              </div>}
               {showReferences ? (
                 <div className="studio-start">
                   <button onClick={() => setShowReferences(false)}><X size={16}/> Back to chat</button>
@@ -656,12 +655,12 @@ export function Studio({
                         <div className="chat-exchange" key={m.id}>
                           <p className="chat-user">{m.text}</p>
                           <div className="chat-assistant">
-                            <p>
+                            <Suspense fallback={<p>{m.result?.reply || "Aya is thinking…"}</p>}><ChatText>
                               {m.result?.reply ||
                                 (m.state === "failed"
                                   ? "The request failed. Your draft is unchanged."
                                   : "Aya is thinking…")}
-                            </p>
+                            </ChatText></Suspense>
                             {m.result?.items && (
                               <>
                                 <div className="proposal-table">

@@ -184,6 +184,7 @@ def test_free_image_reservation_and_definite_failure_refund(setup):
     signup(c)
     id, _ = draft(c)
     app.config["WESTICKER"]["image_api_key"] = "test-only"
+    app.config["WESTICKER"]["image_generation_enabled"] = True
     p = c.get("/api/workspace").json["packs"][0]
     body = {
         "kind": "ai",

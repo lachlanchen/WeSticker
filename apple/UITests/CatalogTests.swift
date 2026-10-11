@@ -5,6 +5,7 @@ final class CatalogTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         defer { app.terminate() }
+        app.buttons["Stickers"].tap()
         let sticker = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Preview ")).firstMatch
         XCTAssertTrue(sticker.waitForExistence(timeout: 20))
         if app.buttons["Play animations"].exists { app.buttons["Play animations"].tap() }
@@ -47,6 +48,7 @@ final class CatalogTests: XCTestCase {
     func testNativeCatalogAndSharing() throws {
         let app = XCUIApplication()
         app.launch()
+        app.buttons["Stickers"].tap()
         XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 20))
         XCTAssertEqual(app.webViews.count, 0, "The mobile/desktop catalog must be native")
         let preview = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Preview ")).firstMatch
@@ -74,13 +76,25 @@ final class CatalogTests: XCTestCase {
         defer { app.terminate() }
         XCTAssertTrue(app.buttons["Create"].waitForExistence(timeout: 20))
         app.buttons["Create"].tap()
+        let input = app.descendants(matching: .any)["chat-message-input"].firstMatch
+        XCTAssertTrue(input.waitForExistence(timeout: 10))
+        XCTAssertTrue(input.isHittable, "Chat composer must be visible, not merely in the accessibility tree")
+        XCTAssertGreaterThan(input.frame.height, 20)
+        XCTAssertLessThanOrEqual(input.frame.maxY, app.buttons["Create"].frame.minY)
+        XCTAssertFalse(app.buttons["Continue with LazyingArt"].exists)
+        XCTAssertFalse(app.buttons["Characters"].exists)
         app.buttons["Service settings"].tap()
         XCTAssertTrue(app.textFields["HTTPS creator service"].waitForExistence(timeout: 10))
         XCTAssertEqual(app.webViews.count, 0)
         XCTAssertFalse(app.buttons["Agent"].exists)
+        app.buttons["Done"].tap()
         XCTAssertTrue(app.buttons["Library"].exists)
-        XCTAssertTrue(app.buttons["Characters"].exists)
         capture("Native unified creator")
+        app.buttons["Library"].tap()
+        XCTAssertTrue(app.buttons["Characters"].waitForExistence(timeout: 10))
+        app.buttons["Characters"].tap()
+        capture("Characters inside Library")
+        app.buttons["Creations"].tap()
         app.buttons["Open saved local photo draft"].tap()
         XCTAssertTrue(app.textFields["Character name"].waitForExistence(timeout: 10))
         let character = app.textFields["Character name"]
@@ -92,7 +106,7 @@ final class CatalogTests: XCTestCase {
         capture("Native preserved local draft")
         app.terminate()
         app.launch()
-        app.buttons["Create"].tap()
+        app.buttons["Library"].tap()
         app.buttons["Open saved local photo draft"].tap()
         XCTAssertTrue(app.textFields["Caption 1"].waitForExistence(timeout: 10))
         XCTAssertEqual(app.textFields["Character name"].value as? String, "QA character")
