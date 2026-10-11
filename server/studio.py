@@ -11,6 +11,7 @@ import requests
 
 from .store import THEMES, audit, database, limits, uid
 from .generation import capabilities as generation_capabilities
+from .local_video_lifecycle import status as animation_status
 
 
 def clean_rows(rows, maximum, old=None):
@@ -225,6 +226,11 @@ def register_studio(app, cfg):
                 (id,),
             ).fetchone():
                 reason = "This collection already has an active or unresolved job."
+        availability = None
+        if kind == "animate" and not reason:
+            availability = animation_status(cfg)
+            if availability.get("can_submit") is not True:
+                reason = availability.get("message", "Animation is temporarily unavailable.")
         return jsonify(
             kind=kind,
             items=selected,
@@ -232,6 +238,7 @@ def register_studio(app, cfg):
             revision=p["revision"],
             can_generate=not reason,
             reason=reason,
+            availability=availability,
             limits=policy,
         )
 

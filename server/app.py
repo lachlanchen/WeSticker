@@ -25,6 +25,7 @@ from .store import (
 from .studio import clean_rows, register_studio
 from .guest_chat import register_guest_chat
 from .generation import capabilities as generation_capabilities
+from .local_video_lifecycle import status as animation_status
 from .native_reconcile import MAX_EVENT_BYTES, NOTIFICATION_PATHS
 
 
@@ -674,6 +675,25 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
             abort(400, description="Confirm generation and permissions.")
         if kind not in {"photo", "ai", "animate"}:
             abort(400)
+
+        def previous_attempt(db):
+            prior = db.execute(
+                "SELECT * FROM jobs WHERE user_id=? AND attempt=?",
+                (user["id"], attempt),
+            ).fetchone()
+            if prior:
+                if prior["pack_id"] != id or prior["kind"] != kind:
+                    abort(409)
+                prior_data = json.loads(prior["data"])
+                if body.get("items", prior_data["selected"]) != prior_data["selected"]:
+                    abort(409, description="This attempt already belongs to a different selection.")
+            return prior
+
+        # Recovery reads an existing operation even if its provider is now closed.
+        with database(cfg) as db:
+            prior = previous_attempt(db)
+            if prior:
+                return jsonify(id=prior["id"], state=prior["state"])
         if kind == "ai" and not generation_capabilities(cfg)["ai_images"]:
             abort(
                 503,
@@ -697,22 +717,7 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
                     409,
                     description="A reference has expired. Create a new character with fresh references.",
                 )
-        with database(cfg) as db:
-            db.execute("BEGIN IMMEDIATE")
-            prior = db.execute(
-                "SELECT * FROM jobs WHERE user_id=? AND attempt=?",
-                (user["id"], attempt),
-            ).fetchone()
-            if prior:
-                if prior["pack_id"] != id or prior["kind"] != kind:
-                    abort(409)
-                prior_data = json.loads(prior["data"])
-                if body.get("items", prior_data["selected"]) != prior_data["selected"]:
-                    abort(
-                        409,
-                        description="This attempt already belongs to a different selection.",
-                    )
-                return jsonify(id=prior["id"], state=prior["state"])
+        def validate_request(db):
             fresh_user = dict(
                 db.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
             )
@@ -724,6 +729,8 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
                     "SELECT * FROM packs WHERE id=? AND user_id=?", (id, user["id"])
                 ).fetchone()
             )
+            if p["character_id"] != c["id"]:
+                abort(409, description="The character changed. Review the current references first.")
             if p["status"] != "draft":
                 abort(409)
             if body.get("revision", p["revision"]) != p["revision"]:
@@ -788,6 +795,22 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
                     description=f"This set needs {cost} AI credits. Nothing has been submitted.",
                 )
             balance = "trial_images" if trial else "credits"
+            return p, all_items, selected, cost, balance
+
+        # Validate draft/approval errors before a host probe, without holding a write lock.
+        with database(cfg) as db:
+            validate_request(db)
+        if kind == "animate":
+            availability = animation_status(cfg)
+            if availability.get("can_submit") is not True:
+                abort(503, description=availability.get(
+                    "message", "Animation is temporarily unavailable. No credits were reserved."))
+        with database(cfg) as db:
+            db.execute("BEGIN IMMEDIATE")
+            prior = previous_attempt(db)
+            if prior:
+                return jsonify(id=prior["id"], state=prior["state"])
+            p, all_items, selected, cost, balance = validate_request(db)
             db.execute(
                 f"UPDATE users SET {balance}={balance}-? WHERE id=?", (cost, user["id"])
             )

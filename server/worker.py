@@ -14,6 +14,7 @@ import requests
 
 from .store import audit, database, initialize, settings, uid
 from .local_video import animate, OutcomeUncertain
+from .local_video_lifecycle import job_admission
 from .generation import moderate, provider_origin
 from . import aginti
 from .media import exterior_alpha
@@ -96,52 +97,53 @@ def work_once(cfg):
                 item["asset"] = refs[i % len(refs)]["id"]
                 item["approved"] = False
         elif job["kind"] == "animate":
-            for index, item in enumerate(selected):
-                with database(cfg) as db:
-                    asset = db.execute(
-                        "SELECT * FROM assets WHERE id=? AND user_id=?",
-                        (item["asset"], job["user_id"]),
-                    ).fetchone()
-                if not asset:
-                    raise ValueError("Approved animation reference is unavailable.")
-                result = animate(cfg, job, item, state / asset["path"])
-                id = uid()
-                path = Path("assets") / (id + ".gif")
-                path_target = state / path
-                path_target.write_bytes(result.read_bytes())
-                item["asset"] = id
-                item["approved"] = False
-                data["completed"] = (index + 1) * 3
-                with database(cfg) as db:
-                    db.execute(
-                        "INSERT INTO assets VALUES(?,?,?,?,?,?,?)",
-                        (
-                            id,
-                            job["user_id"],
-                            str(path),
-                            hashlib.sha256(path_target.read_bytes()).hexdigest(),
-                            "animation",
-                            time.time(),
-                            None,
-                        ),
-                    )
-                    db.execute(
-                        "UPDATE jobs SET progress=?,data=?,updated=? WHERE id=?",
-                        (
-                            round((index + 1) / len(selected) * 100),
-                            json.dumps(data),
-                            time.time(),
-                            job["id"],
-                        ),
-                    )
-                    db.execute(
-                        "UPDATE packs SET items=?,updated=?,revision=revision+1 WHERE id=?",
-                        (
-                            json.dumps(items, ensure_ascii=False),
-                            time.time(),
-                            job["pack_id"],
-                        ),
-                    )
+            with job_admission(cfg) as batch:
+                for index, item in enumerate(selected):
+                    with database(cfg) as db:
+                        asset = db.execute(
+                            "SELECT * FROM assets WHERE id=? AND user_id=?",
+                            (item["asset"], job["user_id"]),
+                        ).fetchone()
+                    if not asset:
+                        raise ValueError("Approved animation reference is unavailable.")
+                    result = animate(cfg, job, item, state / asset["path"], batch=batch)
+                    id = uid()
+                    path = Path("assets") / (id + ".gif")
+                    path_target = state / path
+                    path_target.write_bytes(result.read_bytes())
+                    item["asset"] = id
+                    item["approved"] = False
+                    data["completed"] = (index + 1) * 3
+                    with database(cfg) as db:
+                        db.execute(
+                            "INSERT INTO assets VALUES(?,?,?,?,?,?,?)",
+                            (
+                                id,
+                                job["user_id"],
+                                str(path),
+                                hashlib.sha256(path_target.read_bytes()).hexdigest(),
+                                "animation",
+                                time.time(),
+                                None,
+                            ),
+                        )
+                        db.execute(
+                            "UPDATE jobs SET progress=?,data=?,updated=? WHERE id=?",
+                            (
+                                round((index + 1) / len(selected) * 100),
+                                json.dumps(data),
+                                time.time(),
+                                job["id"],
+                            ),
+                        )
+                        db.execute(
+                            "UPDATE packs SET items=?,updated=?,revision=revision+1 WHERE id=?",
+                            (
+                                json.dumps(items, ensure_ascii=False),
+                                time.time(),
+                                job["pack_id"],
+                            ),
+                        )
         else:
             use_aginti = cfg.get("image_provider") == "aginti"
             if not use_aginti and not cfg.get("image_api_key"):

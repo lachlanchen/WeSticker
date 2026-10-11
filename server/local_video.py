@@ -1,7 +1,6 @@
-"""Optional single-submit LocalVideoGen adapter. No model process is launched here."""
+"""Single-item LocalVideoGen adapter with installed on-demand ownership policy."""
 
 import hashlib
-import base64
 import json
 import fcntl
 from pathlib import Path
@@ -9,9 +8,9 @@ import re
 import subprocess
 import time
 from urllib.parse import urlparse
-import requests
 from PIL import Image
 from .generation import moderate
+from .local_video_lifecycle import admission, atomic_json, local_session, status as lifecycle_status
 
 
 class OutcomeUncertain(RuntimeError):
@@ -44,7 +43,7 @@ def video_output(state):
     return outputs[0]["id"]
 
 
-def animate(cfg, job, item, source):
+def animate(cfg, job, item, source, *, batch=None):
     if any(not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", str(value)) for value in (job["id"], item["id"])):
         raise ValueError("Invalid animation attempt identity.")
     folder = Path(cfg["state"]) / "renders" / job["id"] / item["id"]
@@ -54,10 +53,10 @@ def animate(cfg, job, item, source):
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as error:
             raise OutcomeUncertain("This animation attempt is already being observed.") from error
-        return _animate(cfg, job, item, source)
+        return _animate(cfg, job, item, source, batch=batch)
 
 
-def _animate(cfg, job, item, source):
+def _animate(cfg, job, item, source, *, batch=None):
     base = cfg["local_video_url"].rstrip("/")
     parsed = urlparse(base)
     if (parsed.hostname not in {"127.0.0.1", "localhost", "::1"}
@@ -75,39 +74,37 @@ def _animate(cfg, job, item, source):
         "label": item["label"], "action": item.get("action", ""),
         "profile": "quality_int8_offload", "size": [512, 512], "duration": 5,
     }, sort_keys=True).encode()).hexdigest()
-    if receipt.exists() and (not intent.exists() or json.loads(intent.read_text()).get("fingerprint") != fingerprint):
-        raise OutcomeUncertain("Saved render belongs to a different or unverified request.")
-    memory = {
-        k: int(v.split()[0])
-        for k, v in (
-            line.split(":", 1)
-            for line in Path("/proc/meminfo").read_text().splitlines()
-        )
-    }
-    if not receipt.exists() and (
-        memory["MemAvailable"] < 48 * 1024**2
-        or (
-            memory["SwapTotal"]
-            and (memory["SwapTotal"] - memory["SwapFree"]) / memory["SwapTotal"] > 0.75
-        )
-    ):
-        raise ValueError(
-            "Generation deferred: workstation resource limits. No model submitted."
-        )
-    session = requests.Session()
-    session.trust_env = False
-    # Explicitly reject redirects rather than send uploads to a different service.
-    original_request = session.request
-    def local_request(method, url, **kwargs):
-        kwargs["allow_redirects"] = False
-        response = original_request(method, url, **kwargs)
-        if 300 <= response.status_code < 400:
-            raise ValueError("Local render service redirected the request.")
-        return response
-    session.request = local_request
+    if receipt.exists():
+        try:
+            if not intent.exists() or json.loads(intent.read_text()).get("fingerprint") != fingerprint:
+                raise ValueError("Fingerprint differs")
+        except (OSError, ValueError, AttributeError) as error:
+            raise OutcomeUncertain("Saved render belongs to a different or unverified request.") from error
+    session = local_session()
+    try:
+        key = hashlib.sha256(str(folder.resolve()).encode()).hexdigest()
+        with admission(cfg, key, fingerprint, resume=receipt.exists(), batch=batch) as lease:
+            result = _run(cfg, job, item, source, base, folder, intent, receipt, fingerprint, session, lease)
+            if lease:
+                lease.complete()
+            return result
+    except Exception as error:
+        if intent.exists() and not isinstance(error, OutcomeUncertain):
+            raise OutcomeUncertain("Saved animation intent/receipt needs recovery, not another submission.") from error
+        raise
+    finally:
+        session.close()
+
+
+def _run(cfg, job, item, source, base, folder, intent, receipt, fingerprint, session, lease):
     if receipt.exists():
         provider = json.loads(receipt.read_text())["id"]
+        if not isinstance(provider, str) or not re.fullmatch(r"[a-f0-9-]{36}", provider):
+            raise OutcomeUncertain("Saved render receipt has an invalid provider identity.")
+        if lease:
+            lease.receipt(provider)
     else:
+        lease.prepare()
         health = session.get(base + "/api/health?deep=1", timeout=30)
         health.raise_for_status()
         ready = health.json()
@@ -186,11 +183,12 @@ def _animate(cfg, job, item, source):
         (folder / "request.json").write_text(
             json.dumps(payload, ensure_ascii=False, indent=2)
         )
-        intent.write_text(
-            json.dumps({"created": time.time(), "job": job["id"], "item": item["id"],
-                        "fingerprint": fingerprint, "request_sha256": hashlib.sha256(
-                            (folder / "request.json").read_bytes()).hexdigest()})
-        )
+        # Recheck ownership/resources/queues under the shared admission lock,
+        # then durably reserve the uncertain-outcome slot before the sole POST.
+        lease.submitting()
+        atomic_json(intent, {"created": time.time(), "job": job["id"], "item": item["id"],
+                            "fingerprint": fingerprint, "request_sha256": hashlib.sha256(
+                                (folder / "request.json").read_bytes()).hexdigest()})
         try:
             result = session.post(base + "/api/renders", json=payload, timeout=120)
             result.raise_for_status()
@@ -198,7 +196,8 @@ def _animate(cfg, job, item, source):
             provider = data["id"]
             if not isinstance(provider, str) or not re.fullmatch(r"[a-f0-9-]{36}", provider):
                 raise ValueError("Unexpected render receipt identity.")
-            receipt.write_text(json.dumps(data, indent=2))
+            atomic_json(receipt, data)
+            lease.receipt(provider)
         except Exception as e:
             raise OutcomeUncertain(
                 "Local render outcome uncertain; inspect the saved intent."
