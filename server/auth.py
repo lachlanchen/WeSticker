@@ -16,6 +16,12 @@ from .store import database, uid
 def register_auth(app, cfg):
     oauth = OAuth(app)
     providers = cfg.get("providers", {})
+    shared = None
+    if providers.get("lazyingart", {}).get("private_directory"):
+        from .shared_identity import SharedIdentity
+        shared = SharedIdentity(cfg)
+        app.extensions["westicker_shared_identity"] = shared
+        providers["lazyingart"]["enabled"] = shared.enabled
     for name, options in providers.items():
         if not options.get("enabled") or name == "lazyingart":
             continue
@@ -64,7 +70,7 @@ def register_auth(app, cfg):
                 ),
             )
 
-    def activate(issuer, subject, name, ttl=86400 * 14):
+    def activate(issuer, subject, name, ttl=86400 * 14, grant=None):
         if not subject or len(subject) > 256:
             abort(400)
         with database(cfg) as db:
@@ -83,6 +89,8 @@ def register_auth(app, cfg):
                 db.execute(
                     "INSERT INTO identities VALUES(?,?,?)", (issuer, subject, id)
                 )
+        if grant:
+            shared.associate(id, *grant)
         response = app.extensions["westicker"]["login_user"](id, ttl=ttl)
         response.status_code = 302
         response.headers["Location"] = cfg["origin"] + "/?welcome=1"
@@ -98,6 +106,8 @@ def register_auth(app, cfg):
         )
         callback = cfg["origin"] + "/auth/" + provider + "/callback"
         if provider == "lazyingart":
+            if shared:
+                return shared.start()
             issuer = options["issuer"].rstrip("/")
             if not issuer.startswith("https://"):
                 abort(503)
@@ -149,6 +159,10 @@ def register_auth(app, cfg):
         if not options.get("enabled"):
             abort(404)
         if provider == "lazyingart":
+            if shared:
+                identity, identifier = shared.complete()
+                return activate(identity.issuer, identity.subject, identity.display_name,
+                                grant=(identity, identifier))
             flow = session.pop("lazyingart", None)
             issuer = options["issuer"].rstrip("/")
             if (

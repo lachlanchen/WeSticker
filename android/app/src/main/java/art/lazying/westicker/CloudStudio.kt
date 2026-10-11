@@ -53,7 +53,7 @@ private fun newStudioID() = UUID.randomUUID().toString().replace("-", "")
 
 class CloudStudioStore(val context: Context) {
     private val prefs = context.getSharedPreferences("cloud-studio", Context.MODE_PRIVATE)
-    var origin by mutableStateOf(prefs.getString("origin", "") ?: "")
+    var origin by mutableStateOf(prefs.getString("origin", "https://westicker.lazying.art") ?: "https://westicker.lazying.art")
     var workspace by mutableStateOf<JSONObject?>(null)
     var current by mutableStateOf<JSONObject?>(null)
     var rows by mutableStateOf<List<JSONObject>>(emptyList())
@@ -62,6 +62,8 @@ class CloudStudioStore(val context: Context) {
     var refs by mutableStateOf<List<String>>(emptyList())
     var quote by mutableStateOf<JSONObject?>(null)
     var signedIn by mutableStateOf(false)
+    var needsConsent by mutableStateOf(false)
+    var capabilities by mutableStateOf(JSONObject())
     var busy by mutableStateOf(false)
     var dirty by mutableStateOf(false)
     var error by mutableStateOf<String?>(null)
@@ -125,11 +127,18 @@ class CloudStudioStore(val context: Context) {
     suspend fun refresh() {
         if (linkedOrigin != base()) { workspace = null; current = null; rows = emptyList(); selected = emptySet(); quote = null; character = ""; messages = emptyList(); refs = emptyList(); dirty = false; csrf = ""; linkedOrigin = base() }
         val boot = api("/api/bootstrap"); csrf = boot.optString("csrf").takeUnless { it == "null" } ?: ""
-        signedIn = boot.optJSONObject("user") != null
+        capabilities = boot.optJSONObject("capabilities") ?: JSONObject()
+        val user = boot.optJSONObject("user")
+        signedIn = user != null
+        needsConsent = signedIn && user?.optBoolean("consented") != true && user?.optInt("consented") != 1
         if (!signedIn) { workspace = null; current = null; rows = emptyList(); selected = emptySet(); quote = null; character = ""; messages = emptyList(); refs = emptyList(); dirty = false; return }
+        if (needsConsent) { workspace = null; return }
         val next = api("/api/workspace"); workspace = next
         if (!dirty) next.getJSONArray("packs").objects().find { it.getString("id") == current?.optString("id") }?.let { current = it; rows = it.getJSONArray("items").objects() }
         prefs.edit().putString("origin", base()).apply()
+    }
+    suspend fun acceptTerms() {
+        api("/api/account/consent", JSONObject().put("adult", true).put("terms", true)); refresh()
     }
     suspend fun startLogin(): String {
         refresh()
@@ -216,7 +225,7 @@ class CloudStudioStore(val context: Context) {
 
 @Composable private fun StudioImage(store: CloudStudioStore, id: String, loader: ImageLoader, size: Int = 84) {
     val context = LocalContext.current
-    val model = remember(id, store.signedIn, store.origin) { ImageRequest.Builder(context).data(store.base() + "/api/assets/" + id + "?preview=1").addHeader("Authorization", "Bearer " + store.token()).memoryCacheKey(store.base() + ":" + id).diskCachePolicy(coil.request.CachePolicy.DISABLED).build() }
+    val model = remember(id, store.signedIn, store.origin) { ImageRequest.Builder(context).data(store.base() + "/api/assets/" + id + "?preview=1").addHeader("Authorization", "Bearer " + store.token()).memoryCachePolicy(coil.request.CachePolicy.DISABLED).diskCachePolicy(coil.request.CachePolicy.DISABLED).build() }
     AsyncImage(model, "Character reference", imageLoader = loader, modifier = Modifier.size(size.dp))
 }
 
@@ -227,6 +236,8 @@ class CloudStudioStore(val context: Context) {
     var text by remember { mutableStateOf("") }; var name by remember { mutableStateOf("My character") }; var title by remember { mutableStateOf("Everyday moments") }
     var language by remember { mutableStateOf("en") }; var rights by remember { mutableStateOf(false) }; var showLocal by remember { mutableStateOf(false) }
     var history by remember { mutableStateOf<List<JSONObject>?>(null) }
+    var acceptedTerms by remember { mutableStateOf(false) }
+    var serviceSettings by remember { mutableStateOf(false) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) run { store.upload(uri) } }
     LaunchedEffect(Unit) { if (store.origin.isNotBlank()) store.run { store.refresh() }; while (true) { delay(4000); if (!store.busy && store.workspace?.optJSONArray("jobs")?.objects()?.any { it.optString("state") in listOf("queued", "running") } == true) store.run { store.refresh() } } }
     if (showLocal) { CreatorScreen(local, loader) { showLocal = false }; return }
@@ -239,10 +250,17 @@ class CloudStudioStore(val context: Context) {
             if (store.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
             if(!store.signedIn){
                 Text("Your own little cast",style=MaterialTheme.typography.titleLarge)
-                OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
+                TextButton(onClick={serviceSettings=!serviceSettings}){Text("Service settings")}
+                if(serviceSettings) OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
                 Button(enabled=!store.busy,onClick={run{context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.startLogin())))}}){Text("Sign in with browser")}
                 TextButton(enabled=!store.busy,onClick={run{store.finishLogin()}}){Text("I connected my account")}
                 TextButton(onClick={showLocal=true}){Text("Open saved local photo draft")}
+            } else if(store.needsConsent) {
+                Text("Before your first creation",style=MaterialTheme.typography.titleLarge)
+                TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+"/terms.html")))}){Text("Creator terms")}
+                TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+"/privacy.html")))}){Text("Privacy policy")}
+                Row(verticalAlignment=Alignment.CenterVertically){Checkbox(acceptedTerms,{acceptedTerms=it});Text("I am 18 or older and accept the creator terms",Modifier.weight(1f))}
+                Button(enabled=acceptedTerms&&!store.busy,onClick={run{store.acceptTerms()}}){Text("Continue")}
             } else store.workspace?.let { w ->
                 val policy=w.getJSONObject("limits");val packs=w.getJSONArray("packs").objects();val chars=w.getJSONArray("characters").objects()
                 Text("${policy.getString("plan")} · ${policy.getInt("credits")} credits · ${policy.getInt("pack_size")} per creation",style=MaterialTheme.typography.labelMedium)
@@ -295,7 +313,11 @@ class CloudStudioStore(val context: Context) {
                         Row {TextButton(enabled=!store.busy&&!store.blocked&&store.rows.size<policy.getInt("pack_size"),onClick={store.rows=store.rows+JSONObject().put("id",newStudioID()).put("label","Hello").put("action","").put("asset",JSONObject.NULL).put("approved",false);store.dirty=true}){Text("Add word")}
                             Button(enabled=store.dirty&&!store.busy&&!store.blocked,onClick={run{store.save()}}){Text("Save table")}}
                         w.getJSONArray("jobs").objects().filter{it.getString("pack_id")==p.getString("id")}.take(3).forEach{job->Text("${job.getString("kind")} · ${job.getString("state")}");LinearProgressIndicator(progress={job.getInt("progress")/100f},modifier=Modifier.fillMaxWidth());if(!job.isNull("error"))Text(job.getString("error"),color=MaterialTheme.colorScheme.error)}
-                        listOf("photo" to "Use uploaded photo","ai" to "Generate references","animate" to "Animate approved").forEach{(kind,label)->OutlinedButton(enabled=!store.busy&&!store.dirty&&!store.blocked&&store.selected.isNotEmpty(),onClick={run{store.getQuote(kind)}}){Text(label)}}
+                        listOf("photo" to "Use uploaded photo","ai" to "Generate references","animate" to "Animate approved").forEach{(kind,label)->
+                            val available = kind=="photo" || store.capabilities.optBoolean(if(kind=="ai") "ai_images" else "animation")
+                            OutlinedButton(enabled=available&&!store.busy&&!store.dirty&&!store.blocked&&store.selected.isNotEmpty(),onClick={run{store.getQuote(kind)}}){Text(label)}
+                        }
+                        if(!store.capabilities.optBoolean("ai_images")) Text("AI image generation is unavailable on this service. Photo creations and saved drafts remain available.",style=MaterialTheme.typography.bodySmall)
                         store.quote?.let{q->Text("${q.getJSONArray("items").length()} sticker(s) · ${q.getInt("credits")} credits",fontWeight=FontWeight.Bold);if(!q.isNull("reason"))Text(q.getString("reason"));Button(enabled=q.getBoolean("can_generate")&&!store.busy,onClick={run{store.generate()}}){Text("Confirm generation")};TextButton(onClick={store.quote=null}){Text("Cancel")}}
                         Button(enabled=!store.busy&&!store.dirty&&store.rows.all{it.optBoolean("approved")},onClick={run{store.export()}}){Text("Export reviewed ZIP")}
                         TextButton(onClick={run{history=store.api("/api/packs/${p.getString("id")}/versions").getJSONArray("versions").objects().flatMap{it.getJSONArray("items").objects()}}}){Text("Version history")}

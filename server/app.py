@@ -78,6 +78,9 @@ def create_app(override=None):
                     (hashlib.sha256(token.encode()).hexdigest(), time.time()),
                 ).fetchone()
                 g.user = dict(row) if row else None
+            shared = app.extensions.get("westicker_shared_identity")
+            if g.user and shared and request.path != "/api/auth/logout":
+                shared.validate(g.user["id"])
         if required and not g.user:
             abort(401, description="Sign in to keep your creations private.")
         if (
@@ -343,6 +346,9 @@ def create_app(override=None):
                     "SELECT id FROM jobs WHERE user_id=?", (user["id"],)
                 )
             ]
+            shared = app.extensions.get("westicker_shared_identity")
+            if shared:
+                shared.erase(user["id"])
             db.execute("DELETE FROM users WHERE id=?", (user["id"],))
         for path in paths:
             candidate = state / path

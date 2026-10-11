@@ -1,5 +1,13 @@
 # Local preview and deployment
 
+## Independent Creator Origin
+
+<https://westicker.lazying.art> now serves the merged workspace and its guarded
+API, independently of AYA. See the [October 11 release record](chat-beta-release-20261011.md)
+for live checks and remaining account/provider gates. Local demo accounts stay
+disabled. This deployment does not make the unqualified Docker or customer-agent
+paths below production-ready.
+
 ## Public catalog PWA
 
 The read-only catalog is live at <https://aya.lazying.art/westicker/>. Install it

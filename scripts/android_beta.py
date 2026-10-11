@@ -15,6 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--build", type=int, required=True)
     parser.add_argument("--version", default="1.0")
+    parser.add_argument("--scope", default="catalog beta")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     config = root / ".config/android-signing"
@@ -64,7 +65,7 @@ def main():
                 raise RuntimeError("Bundle signature missing")
         artifacts.append({"path": str(target), "sha256": hashlib.sha256(target.read_bytes()).hexdigest()})
     result = {"bundle": "art.lazying.westicker", "version": args.version, "native_ui": "Jetpack Compose",
-              "build": args.build, "scope": "catalog beta", "artifacts": artifacts}
+              "build": args.build, "scope": args.scope, "artifacts": artifacts}
     (out / "manifest.json").write_text(json.dumps(result, indent=2))
     print(json.dumps(result, indent=2))
 

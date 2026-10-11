@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · 本機開發更新：Create 與 Agent 已合併為聊天式工作區，支援可編輯的文字與動作表、私人作品庫及角色庫。免費版逐張生成，付費方案上限為 8/16/24 張。網頁與原生測試已有記錄；真實 AI 驗證與新版商店發布仍待完成，下文保留早期測試版說明。
+**2026-10-11** · Create 與 Agent 已合併，支援可編輯的文字與動作表、作品庫和角色庫。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已開放內部測試。獨立網頁為 https://westicker.lazying.art。共享帳號註冊、圖片與動畫生成、付款仍待接通驗證，並非完整創作服務上線。
 
-[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 獨
 
 ## 驗證結果
 
-46 項後端測試與 2 項瀏覽器代理安全測試通過。真實瀏覽器完成訪客下載、照片上傳、角色確認、照片貼圖生成、文字審核、ZIP 匯出與帳號刪除，並檢查桌面及行動寬度。這不代表真實付款或模型服務已驗證。
+72 項後端測試與 2 項瀏覽器代理安全測試通過。真實瀏覽器完成訪客下載、照片上傳、角色確認、照片貼圖生成、文字審核、ZIP 匯出與帳號刪除，並檢查桌面及行動寬度。這不代表真實付款或模型服務已驗證。
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 發布狀態
 
-公開目錄 PWA 已上線：https://aya.lazying.art/westicker/。原生目錄版本用於 Google Play 內部測試與 Apple TestFlight，具體可用狀態及測試限制見發布紀錄。測試版尚未開放 AI 創作、登入、訂閱與創作者銷售，並非完整創作服務上線。
+Create 與 Agent 已合併，支援可編輯的文字與動作表、作品庫和角色庫。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已開放內部測試。獨立網頁為 https://westicker.lazying.art。共享帳號註冊、圖片與動畫生成、付款仍待接通驗證，並非完整創作服務上線。
 
 ## 引用
 

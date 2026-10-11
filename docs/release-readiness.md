@@ -1,8 +1,10 @@
-# Release readiness: 2026-10-10
+# Release Readiness
 
-Latest source milestone: [chat-first creator, 2026-10-11](chat-studio-20261011.md).
-It adds native/API-connected creation and 63 backend tests, with explicit live
-provider and release gaps. The tables below preserve the earlier release record.
+Current internal release: [chat-workspace beta, 2026-10-11](chat-beta-release-20261011.md).
+iOS 1.0 (6), macOS 1.0 (5) and Android 1.0 (5) are available to internal testers.
+The independent HTTPS creator origin is deployed. Shared-account registration,
+live image/animation and payments remain unqualified. The tables below preserve
+the earlier October 10 release record, not the current build numbers.
 
 **Status: public catalog PWA and native catalog betas. The creator service is
 still a local integration prototype, not ready for real customer payments.**

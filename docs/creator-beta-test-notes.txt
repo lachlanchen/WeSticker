@@ -1,0 +1,3 @@
+Create and Agent are now one native Create workspace, with Library and Characters tabs. Review and edit caption/action tables, upload owned references, approve a character, confirm a quote, review results and export a ZIP. Existing saved local photo drafts remain available without uploading. The public sticker catalog remains available without login.
+
+This is an internal test build. The connected creator service is being qualified separately; availability is shown in the app. Live image/animation generation, marketplace sales and payments are not yet qualified. There are no enabled native purchases. Please test navigation, local draft persistence, GIF playback/pause/share, account linking and the reviewed creation flow when the service is available.

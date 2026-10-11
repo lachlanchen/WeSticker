@@ -45,6 +45,7 @@ def main():
     parser.add_argument("--p12-password-file", type=Path)
     parser.add_argument("--version", default="1.0")
     parser.add_argument("--build", default="1")
+    parser.add_argument("--scope", default="catalog beta")
     parser.add_argument("--installer-keychain", type=Path)
     parser.add_argument("--installer-password-file", type=Path)
     args = parser.parse_args()
@@ -86,6 +87,7 @@ def main():
     archive, export = out / "WeSticker.xcarchive", out / "export"
     old = chains()
     added = str(chain) not in old
+    installer_added = False
     installer_ref, installer_locked = None, False
     sec = None
     try:
@@ -119,6 +121,12 @@ def main():
                 "provisioningProfiles": {BUNDLE: profile["Name"]}, "manageAppVersionAndBuildNumber": False}
         if not ios:
             if args.installer_keychain and args.installer_password_file:
+                installer_path = str(args.installer_keychain.expanduser())
+                if installer_path not in chains():
+                    subprocess.run(["security", "list-keychains", "-d", "user", "-s",
+                                    str(chain), installer_path,
+                                    *[x for x in chains() if x != str(chain)]], check=True)
+                    installer_added = True
                 sec = ctypes.CDLL("/System/Library/Frameworks/Security.framework/Security")
                 sec.SecKeychainOpen.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_void_p)]
                 sec.SecKeychainGetStatus.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint32)]
@@ -136,7 +144,8 @@ def main():
                     if sec.SecKeychainUnlock(installer_ref, len(secret), secret, True):
                         raise RuntimeError("Installer keychain unlock failed")
                     del secret
-            installed = subprocess.check_output(["security", "find-identity", "-v"], text=True)
+            installed = subprocess.check_output(["security", "find-identity", "-v",
+                *([str(args.installer_keychain.expanduser())] if args.installer_keychain else [])], text=True)
             installers = [line for line in installed.splitlines()
                           if "3rd Party Mac Developer Installer:" in line and team in line]
             if len(installers) != 1:
@@ -156,7 +165,7 @@ def main():
         result = {"platform": args.platform, "bundle": BUNDLE, "version": args.version,
                   "build": args.build, "path": str(artifact),
                   "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
-                  "sdk": info.get("DTSDKName"), "scope": "catalog beta", "native_ui": "SwiftUI"}
+                  "sdk": info.get("DTSDKName"), "scope": args.scope, "native_ui": "SwiftUI"}
         private_write(out / "manifest.json", result)
         print(json.dumps(result, indent=2))
     finally:
@@ -165,6 +174,9 @@ def main():
         if added:
             subprocess.run(["security", "list-keychains", "-d", "user", "-s",
                             *[x for x in chains() if x != str(chain)]], check=True)
+        if installer_added:
+            subprocess.run(["security", "list-keychains", "-d", "user", "-s",
+                            *[x for x in chains() if x != str(args.installer_keychain.expanduser())]], check=True)
         subprocess.run(["security", "lock-keychain", str(chain)], check=True)
 
 

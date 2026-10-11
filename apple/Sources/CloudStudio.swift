@@ -47,7 +47,7 @@ private enum StudioSecret {
 }
 
 @MainActor final class CloudStudioStore: ObservableObject {
-    @Published var origin = UserDefaults.standard.string(forKey: "studio-origin") ?? ""
+    @Published var origin = UserDefaults.standard.string(forKey: "studio-origin") ?? "https://westicker.lazying.art"
     @Published var workspace: StudioWorkspace?
     @Published var current: StudioPack?
     @Published var rows: [StudioRow] = [] { didSet { quote = nil } }
@@ -58,11 +58,14 @@ private enum StudioSecret {
     @Published var busy = false
     @Published var dirty = false
     @Published var signedIn = false
+    @Published var needsConsent = false
+    @Published var capabilities: [String: Bool] = [:]
     @Published var refs: [String] = [] { didSet { pendingCharacter = "" } }
     @Published var pendingCharacter = ""
     private var csrf = ""
     private var linkedOrigin = ""
     private var link: (String, String)?
+    private let network = URLSession(configuration: .ephemeral)
 
     func validatedOrigin() throws -> String {
         let value = origin.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
@@ -82,7 +85,7 @@ private enum StudioSecret {
         if !token.isEmpty { req.setValue("Bearer " + token, forHTTPHeaderField: "Authorization") }
         if !csrf.isEmpty { req.setValue(csrf, forHTTPHeaderField: "X-CSRF-Token") }
         if let body { req.httpBody = try JSONSerialization.data(withJSONObject: body); req.setValue("application/json", forHTTPHeaderField: "Content-Type") }
-        let (data, response) = try await URLSession.shared.data(for: req)
+        let (data, response) = try await network.data(for: req)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             let value = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             throw NSError(domain: "Studio", code: (response as? HTTPURLResponse)?.statusCode ?? 0, userInfo: [NSLocalizedDescriptionKey: value?["error"] as? String ?? "The creator service could not complete this request."])
@@ -99,12 +102,20 @@ private enum StudioSecret {
         let base = try validatedOrigin()
         if linkedOrigin != base { workspace = nil; current = nil; rows = []; messages = []; refs = []; dirty = false; csrf = ""; linkedOrigin = base }
         let boot = try json(await request("/api/bootstrap")); csrf = boot["csrf"] as? String ?? ""
-        signedIn = boot["user"] is [String: Any]
+        capabilities = boot["capabilities"] as? [String: Bool] ?? [:]
+        let user = boot["user"] as? [String: Any]
+        signedIn = user != nil
+        needsConsent = signedIn && (user?["consented"] as? NSNumber)?.boolValue != true
         guard signedIn else { workspace = nil; current = nil; rows = []; selected = []; messages = []; refs = []; dirty = false; return }
+        guard !needsConsent else { workspace = nil; return }
         let next = try JSONDecoder().decode(StudioWorkspace.self, from: await request("/api/workspace"))
         workspace = next
         if !dirty, let id = current?.id, let p = next.packs.first(where: { $0.id == id }) { current = p; rows = p.items }
         UserDefaults.standard.set(base, forKey: "studio-origin")
+    }
+    func acceptTerms() async throws {
+        _ = try await request("/api/account/consent", ["adult": true, "terms": true])
+        try await refresh()
     }
     func startLogin() async throws -> URL {
         _ = try validatedOrigin(); try await refresh()
@@ -172,7 +183,7 @@ private enum StudioSecret {
         req.setValue(base, forHTTPHeaderField: "Origin"); req.setValue(csrf, forHTTPHeaderField: "X-CSRF-Token")
         req.setValue("Bearer " + StudioSecret.read(base), forHTTPHeaderField: "Authorization")
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        let (result, response) = try await URLSession.shared.data(for: req); let value = try json(result)
+        let (result, response) = try await network.data(for: req); let value = try json(result)
         guard (response as? HTTPURLResponse)?.statusCode == 201, let id = value["id"] as? String else {
             throw NSError(domain: "Studio", code: 1, userInfo: [NSLocalizedDescriptionKey: value["error"] as? String ?? "Reference upload failed."])
         }
@@ -220,6 +231,8 @@ struct CloudStudioView: View {
     @State private var exportURL: URL?
     @State private var showHistory = false
     @State private var history: [StudioRow] = []
+    @State private var termsAccepted = false
+    @State private var showServiceSettings = false
 
     var body: some View {
         NavigationStack {
@@ -227,6 +240,13 @@ struct CloudStudioView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
                     if !store.signedIn { signInView }
+                    else if store.needsConsent {
+                        Text("Before your first creation").font(.title2.bold())
+                        Link("Creator terms", destination: URL(string: store.origin + "/terms.html")!)
+                        Link("Privacy policy", destination: URL(string: store.origin + "/privacy.html")!)
+                        Toggle("I am 18 or older and accept the creator terms", isOn: $termsAccepted)
+                        Button("Continue") { store.perform { try await store.acceptTerms() } }.disabled(!termsAccepted)
+                    }
                     else if let w = store.workspace {
                         Text("\(w.limits.plan.capitalized) · \(w.limits.credits) credits · \(w.limits.pack_size) per creation").font(.caption).foregroundStyle(.secondary)
                         if section == 2 { libraryView(w) }
@@ -257,7 +277,7 @@ struct CloudStudioView: View {
                 if let data = try await value.loadTransferable(type: Data.self) { try await store.upload(data) }
             } } }
             .task {
-                if !store.origin.isEmpty { try? await store.refresh() }
+                if !store.origin.isEmpty { store.perform { try await store.refresh() } }
                 while !Task.isCancelled {
                     try? await Task.sleep(nanoseconds: 4_000_000_000)
                     if !store.busy && store.workspace?.jobs.contains(where: { ["queued", "running"].contains($0.state) }) == true { try? await store.refresh() }
@@ -267,7 +287,9 @@ struct CloudStudioView: View {
     }
     private var signInView: some View { Group {
         Text("Your own little cast").font(.title2.bold())
-        TextField("HTTPS creator service", text: $store.origin).textFieldStyle(.roundedBorder).autocorrectionDisabled()
+        DisclosureGroup("Service settings", isExpanded: $showServiceSettings) {
+            TextField("HTTPS creator service", text: $store.origin).textFieldStyle(.roundedBorder).autocorrectionDisabled()
+        }
         Button("Sign in with browser") { store.perform { openURL(try await store.startLogin()) } }
         Button("I connected my account") { store.perform { try await store.finishLogin() } }
         Button("Open saved local photo draft") { showLocal = true }
@@ -330,9 +352,10 @@ struct CloudStudioView: View {
         }
         VStack(alignment: .leading) {
             Button("Use uploaded photo") { store.perform { try await store.getQuote("photo") } }
-            Button("Generate references") { store.perform { try await store.getQuote("ai") } }
-            Button("Animate approved") { store.perform { try await store.getQuote("animate") } }
+            Button("Generate references") { store.perform { try await store.getQuote("ai") } }.disabled(store.capabilities["ai_images"] != true)
+            Button("Animate approved") { store.perform { try await store.getQuote("animate") } }.disabled(store.capabilities["animation"] != true)
         }.disabled(store.dirty || store.blocked || store.selected.isEmpty)
+        if store.capabilities["ai_images"] != true { Text("AI image generation is unavailable on this service. Photo creations and saved drafts remain available.").font(.caption).foregroundStyle(.secondary) }
         if let quote = store.quote {
             Text("\(quote.items.count) sticker(s) · \(quote.credits) credits").bold()
             if let reason = quote.reason { Text(reason).font(.caption) }

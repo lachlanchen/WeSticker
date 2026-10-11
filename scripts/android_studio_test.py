@@ -160,6 +160,7 @@ def main():
             tap("Close app")
         tap("Create")
         time.sleep(1)
+        tap("Service settings")
         tap("HTTPS creator service")
         run("shell", "input", "text", cfg["origin"])
         run("shell", "input", "keyevent", "4")

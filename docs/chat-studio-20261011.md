@@ -1,8 +1,11 @@
 # Chat-First Creator Workspace
 
-This is a source/local-test milestone, not a new public deployment or store
-release. The public catalog and previously distributed betas are unchanged.
-AYA shop, purchases and existing WeChat albums are untouched.
+The native chat-workspace candidate is now in internal testing: iOS 1.0 (6),
+macOS 1.0 (5) and Android 1.0 (5). The separate web origin is
+<https://westicker.lazying.art>. This is not a completed cloud-creation launch:
+shared-account registration, image/animation providers and billing remain gated.
+AYA shop, purchases and existing WeChat albums are untouched. See the
+[exact release and qualification record](chat-beta-release-20261011.md).
 
 ![Web chat and artifacts](screenshots/chat-studio-web.png)
 
@@ -76,11 +79,11 @@ No other application's credentials are imported.
 
 | Component | Configuration | Current local evidence |
 | --- | --- | --- |
-| Chat planner | `chat_api_key`, `chat_api_origin`, `chat_model` | Contract fixture and explicit offline edits; live model not configured |
+| Chat planner | `chat_api_key`, `chat_api_origin`, `chat_model` | One real LocalLLM proposal passed; public use awaits account qualification |
 | Image/safety | `image_api_key`, `image_api_origin`, `image_model`, `moderation_model` | Reservation, identity/ownership and failure tests; no paid render |
 | Animation | protected loopback `local_video_url` plus safety provider | Adapter source; new action prompt not rendered live |
 | Photo worker | no external provider | Real browser and Android job completed |
-| Login | existing app-owned `providers` | Local accounts/device-link tested; external-provider matrix remains |
+| Login | app-owned `providers`; optional SDK private directory | Local/device-link and SDK contract tests; live shared registration/callback remain |
 
 Without a chat provider, the UI says it is offline and supports explicit commands
 such as `change 1 to Hello`, `words: Hello, Thanks` and
@@ -91,7 +94,7 @@ mechanical whole-body rotation. Motion quality still needs live validation.
 
 ## Verification
 
-- 63 backend tests: tiers, expiry, ownership, revisions, proposals, trial refunds,
+- 72 backend tests with the optional identity SDK installed: tiers, expiry, ownership, revisions, proposals, trial refunds,
   native-link replay/CSRF/logout, private thumbnails and previous service behavior.
 - Production web build passes. Browser workflow covers real photo-worker output,
   chat apply, direct edits, approval, ZIP, history, reload and library/characters.
@@ -126,8 +129,9 @@ so it cannot overwrite an installed release.
 
 ## Release Gates
 
-Connect and qualify app-owned chat/image/animation services, deploy the private
-creator API behind HTTPS, set the native service origin, validate Apple connected
-workflows and physical-device imports, then qualify subscriptions and publish a
-signed internal candidate. Keep the existing public catalog operational during
-that rollout. No TestFlight, Play or production update was submitted in this round.
+The independent HTTPS origin and native service defaults are deployed; internal
+test builds are available. Complete the exact shared-client registration and real
+browser/native login round-trip, image/safety/animation provider qualification,
+Apple connected workflows, physical-device imports and subscription lifecycle
+tests before calling this a complete creator product. The earlier public catalog
+remains operational. No public store review or production rollout was submitted.

@@ -26,9 +26,9 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · 로컬 개발 업데이트: Create와 Agent를 채팅 중심 작업 공간으로 통합하고 문구·동작 편집표, 비공개 라이브러리와 캐릭터 관리를 추가했습니다. 무료 계정은 한 번에 한 장, 유료 요금제는 최대 8/16/24장입니다. 웹·네이티브 테스트를 기록했으며 실제 AI 검증과 새 스토어 배포는 아직 남아 있습니다. 아래에는 이전 베타 설명도 보존했습니다.
+**2026-10-11** · Create와 Agent를 통합하고 문구·동작 편집표, 라이브러리와 캐릭터 관리를 추가했습니다. iOS 1.0 (6), macOS 1.0 (5), Android 1.0 (5)는 내부 테스터에게 배포되었습니다. 독립 웹 앱은 https://westicker.lazying.art 입니다. 공유 계정 등록, 이미지·애니메이션 생성과 결제는 아직 연결·검증 중이며 완전한 제작 서비스 출시는 아닙니다.
 
-[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android는 Kotlin/Jetpack Compose, iOS/macOS는 SwiftUI 네이티브 앱입니�
 
 ## 검증
 
-백엔드 46개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.
+백엔드 72개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 출시 상태
 
-공개 카탈로그 PWA는 https://aya.lazying.art/westicker/ 에서 운영됩니다. 네이티브 카탈로그는 Google Play 내부 테스트와 Apple TestFlight용입니다. 정확한 배포 상태와 검증 제한은 릴리스 기록을 확인하세요. AI 제작, 로그인, 구독과 판매는 베타에서 비활성화되어 있습니다.
+Create와 Agent를 통합하고 문구·동작 편집표, 라이브러리와 캐릭터 관리를 추가했습니다. iOS 1.0 (6), macOS 1.0 (5), Android 1.0 (5)는 내부 테스터에게 배포되었습니다. 독립 웹 앱은 https://westicker.lazying.art 입니다. 공유 계정 등록, 이미지·애니메이션 생성과 결제는 아직 연결·검증 중이며 완전한 제작 서비스 출시는 아닙니다.
 
 ## 인용
 

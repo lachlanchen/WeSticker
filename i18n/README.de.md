@@ -26,9 +26,9 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Lokales Entwicklungsupdate: Create und Agent bilden einen Chat-Arbeitsbereich mit bearbeitbaren Text- und Aktionstabellen, privater Bibliothek und Figurenverwaltung. Kostenlos entsteht jeweils ein Sticker; bezahlte Stufen erlauben 8/16/24. Web- und native Tests sind dokumentiert. Echte KI-Prüfung und neue Store-Auslieferung stehen noch aus; bisherige Beta-Angaben bleiben unten erhalten.
+**2026-10-11** · Create und Agent sind vereint, mit bearbeitbaren Text- und Aktionstabellen, Bibliothek und Figurenverwaltung. iOS 1.0 (6), macOS 1.0 (5) und Android 1.0 (5) sind für interne Tester verfügbar. Die eigenständige Web-App liegt unter https://westicker.lazying.art. Gemeinsame Kontoregistrierung, Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht freigegeben; der vollständige Kreativdienst ist noch nicht gestartet.
 
-[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Native Android-App mit Kotlin/Jetpack Compose, iOS/macOS mit SwiftUI und separat
 
 ## Prüfung
 
-46 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.
+72 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Veröffentlichungsstand
 
-Die öffentliche Katalog-PWA ist unter https://aya.lazying.art/westicker/ verfügbar. Native Katalogversionen sind für interne Google-Play-Tests und Apple TestFlight vorgesehen. Verfügbarkeit und Testgrenzen stehen im Release-Protokoll. KI-Erstellung, Anmeldung, Abonnements und Verkauf bleiben in diesen Betas deaktiviert.
+Create und Agent sind vereint, mit bearbeitbaren Text- und Aktionstabellen, Bibliothek und Figurenverwaltung. iOS 1.0 (6), macOS 1.0 (5) und Android 1.0 (5) sind für interne Tester verfügbar. Die eigenständige Web-App liegt unter https://westicker.lazying.art. Gemeinsame Kontoregistrierung, Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht freigegeben; der vollständige Kreativdienst ist noch nicht gestartet.
 
 ## Zitieren
 

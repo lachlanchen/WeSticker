@@ -26,9 +26,9 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 [GIF playback, new icon and test-build evidence](docs/native-playback-20261010.md)
 
-**2026-10-11** · Local development: Create and Agent now share a chat-first workspace with editable caption/action tables, private Library and Characters. Free users create one sticker at a time; paid tiers allow 8/16/24. Web and native tests are documented. Live AI qualification and a new store release remain pending; earlier beta details below are preserved.
+**2026-10-11** · Create and Agent are merged, with editable caption/action tables, Library and Characters. iOS 1.0 (6), macOS 1.0 (5) and Android 1.0 (5) are available to internal testers. The separate web app is at https://westicker.lazying.art. Shared-account registration, image/animation generation and payments remain gated; this is not a complete creator-service launch.
 
-[2026-10-11 · API / QA](docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS](docs/chat-beta-release-20261011.md) · [API / QA](docs/chat-studio-20261011.md)
 
 ![Chat studio](docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a
 
 ## Verification
 
-46 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.
+72 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Release Status
 
-The public catalog PWA is live at https://aya.lazying.art/westicker/. Native catalog builds are prepared for Google Play internal testing and Apple TestFlight; see the release record for exact availability and QA limits. Creator AI, login, subscriptions and marketplace sales remain unqualified and disabled in these betas. This is not a completed creator-service launch.
+Create and Agent are merged, with editable caption/action tables, Library and Characters. iOS 1.0 (6), macOS 1.0 (5) and Android 1.0 (5) are available to internal testers. The separate web app is at https://westicker.lazying.art. Shared-account registration, image/animation generation and payments remain gated; this is not a complete creator-service launch.
 
 ## Citation
 

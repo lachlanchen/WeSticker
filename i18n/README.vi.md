@@ -26,9 +26,9 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Cập nhật cục bộ: Create và Agent đã hợp nhất thành không gian trò chuyện với bảng chữ và hành động có thể chỉnh sửa, thư viện và nhân vật riêng tư. Tài khoản miễn phí tạo từng nhãn dán; các gói trả phí cho phép tối đa 8/16/24. Kiểm thử web và ứng dụng gốc đã được ghi lại. Xác minh AI thực tế và bản phát hành mới vẫn chưa hoàn tất; bên dưới giữ lại mô tả beta trước đó.
+**2026-10-11** · Create và Agent đã hợp nhất, có bảng chữ và hành động chỉnh sửa được, thư viện và nhân vật. iOS 1.0 (6), macOS 1.0 (5) và Android 1.0 (5) đã có cho người thử nghiệm nội bộ. Ứng dụng web độc lập ở https://westicker.lazying.art. Đăng ký tài khoản chung, tạo ảnh và hoạt ảnh, thanh toán vẫn chờ kết nối và xác minh; đây chưa phải bản ra mắt dịch vụ sáng tạo hoàn chỉnh.
 
-[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android thuần Kotlin/Jetpack Compose, iOS/macOS dùng SwiftUI và PWA React/Vi
 
 ## Kiểm thử
 
-Đã qua 46 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.
+Đã qua 72 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Trạng thái phát hành
 
-PWA danh mục công khai đã hoạt động tại https://aya.lazying.art/westicker/. Các bản gốc dành cho thử nghiệm nội bộ Google Play và Apple TestFlight; xem hồ sơ phát hành để biết trạng thái và giới hạn kiểm chứng. Tạo bằng AI, đăng nhập, đăng ký trả phí và bán hàng chưa được bật trong các bản beta này.
+Create và Agent đã hợp nhất, có bảng chữ và hành động chỉnh sửa được, thư viện và nhân vật. iOS 1.0 (6), macOS 1.0 (5) và Android 1.0 (5) đã có cho người thử nghiệm nội bộ. Ứng dụng web độc lập ở https://westicker.lazying.art. Đăng ký tài khoản chung, tạo ảnh và hoạt ảnh, thanh toán vẫn chờ kết nối và xác minh; đây chưa phải bản ra mắt dịch vụ sáng tạo hoàn chỉnh.
 
 ## Trích dẫn
 

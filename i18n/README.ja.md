@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · ローカル開発の更新：Create と Agent をチャット中心の画面に統合し、文字・動作の編集表、非公開の作品庫とキャラクター管理を追加しました。無料枠は1枚ずつ、有料プランは最大8/16/24枚です。Web・ネイティブのテスト結果を記録していますが、実際のAI検証と新しいストア配信は未完了です。以下には従来のベータの説明も残しています。
+**2026-10-11** · Create と Agent を統合し、編集できる文字・動作表、ライブラリとキャラクター管理を追加しました。iOS 1.0 (6)、macOS 1.0 (5)、Android 1.0 (5) は内部テストで利用できます。独立した Web アプリは https://westicker.lazying.art です。共有アカウント登録、画像・動画生成、決済の接続と検証は未完了で、制作サービス全体の正式公開ではありません。
 
-[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android は Kotlin/Jetpack Compose、iOS/macOS は SwiftUI のネイティブ実
 
 ## 検証
 
-バックエンド46件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。
+バックエンド72件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## リリース状況
 
-公開カタログ PWA は https://aya.lazying.art/westicker/ で利用できます。ネイティブ版は Google Play 内部テストと Apple TestFlight 向けです。正確な配信状況と検証範囲はリリース記録をご覧ください。AI 制作、ログイン、課金、販売はこのベータでは無効です。
+Create と Agent を統合し、編集できる文字・動作表、ライブラリとキャラクター管理を追加しました。iOS 1.0 (6)、macOS 1.0 (5)、Android 1.0 (5) は内部テストで利用できます。独立した Web アプリは https://westicker.lazying.art です。共有アカウント登録、画像・動画生成、決済の接続と検証は未完了で、制作サービス全体の正式公開ではありません。
 
 ## 引用
 

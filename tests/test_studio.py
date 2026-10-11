@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import time
+from pathlib import Path
 
 import pytest
 from PIL import Image
@@ -308,3 +309,44 @@ def test_private_thumbnail_keeps_original_and_ownership(setup):
     signup(other, "outsider@example.com")
     assert other.get(path + "?preview=1").status_code == 404
     assert c.get(path).data == original.data
+
+
+def test_animation_preview_preserves_all_frames_and_is_private(setup):
+    app, cfg = setup
+    c = app.test_client()
+    signup(c)
+    owner = c.get("/api/bootstrap").json["user"]["id"]
+    path = Path(cfg["state"]) / "assets" / "motion.gif"
+    frames = [Image.new("RGB", (64, 64), color) for color in ("red", "blue")]
+    frames[0].save(path, save_all=True, append_images=frames[1:], duration=120, loop=0)
+    original = path.read_bytes()
+    with database(cfg) as db:
+        db.execute("INSERT INTO assets VALUES(?,?,?,?,?,?,?)", (
+            "motion", owner, "assets/motion.gif", hashlib.sha256(original).hexdigest(),
+            "animation", time.time(), None))
+    response = c.get("/api/assets/motion?preview=1")
+    assert response.status_code == 200
+    assert response.mimetype == "image/gif"
+    assert response.data == original
+    image = Image.open(io.BytesIO(response.data))
+    assert image.n_frames == 2
+    assert image.info["loop"] == 0
+    assert "no-store" in response.headers["Cache-Control"]
+    other = app.test_client()
+    signup(other, "animation-outsider@example.com")
+    assert other.get("/api/assets/motion?preview=1").status_code == 404
+    assert app.test_client().get("/api/assets/motion?preview=1").status_code == 401
+
+
+def test_new_external_account_can_accept_terms_without_workspace_access(setup):
+    app, cfg = setup
+    c = app.test_client()
+    signup(c)
+    owner = c.get("/api/bootstrap").json["user"]["id"]
+    with database(cfg) as db:
+        db.execute("UPDATE users SET consented=0 WHERE id=?", (owner,))
+    assert c.get("/api/bootstrap").json["user"]["consented"] == 0
+    assert c.get("/api/workspace").status_code == 403
+    assert call(c, "/api/account/consent", {"adult": False, "terms": True}).status_code == 400
+    assert call(c, "/api/account/consent", {"adult": True, "terms": True}).status_code == 200
+    assert c.get("/api/workspace").status_code == 200

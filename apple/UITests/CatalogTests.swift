@@ -74,6 +74,7 @@ final class CatalogTests: XCTestCase {
         defer { app.terminate() }
         XCTAssertTrue(app.buttons["Create"].waitForExistence(timeout: 20))
         app.buttons["Create"].tap()
+        app.buttons["Service settings"].tap()
         XCTAssertTrue(app.textFields["HTTPS creator service"].waitForExistence(timeout: 10))
         XCTAssertEqual(app.webViews.count, 0)
         XCTAssertFalse(app.buttons["Agent"].exists)

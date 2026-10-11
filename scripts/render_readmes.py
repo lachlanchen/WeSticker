@@ -74,7 +74,7 @@ for code, t in translations.items():
 
 **2026-10-11** · {t["creator_update"]}
 
-[2026-10-11 · API / QA]({prefix}docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS]({prefix}docs/chat-beta-release-20261011.md) · [API / QA]({prefix}docs/chat-studio-20261011.md)
 
 ![Chat studio]({prefix}docs/screenshots/chat-studio-web.png)
 

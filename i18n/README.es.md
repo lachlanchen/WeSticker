@@ -26,9 +26,9 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Desarrollo local: Create y Agent comparten un espacio de chat con tablas editables de textos y acciones, biblioteca privada y personajes. El plan gratuito crea un adhesivo cada vez; los planes de pago admiten 8/16/24. Las pruebas web y nativas están documentadas. Siguen pendientes la validación real de IA y una nueva publicación en tiendas; se conservan abajo los detalles de la beta anterior.
+**2026-10-11** · Create y Agent están unidos, con tablas editables de textos y acciones, biblioteca y personajes. iOS 1.0 (6), macOS 1.0 (5) y Android 1.0 (5) están disponibles para pruebas internas. La aplicación web independiente está en https://westicker.lazying.art. El registro compartido, la generación de imágenes y animaciones y los pagos siguen pendientes de validación; no es el lanzamiento completo del servicio.
 
-[2026-10-11 · API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android nativo con Kotlin/Jetpack Compose, iOS/macOS con SwiftUI y PWA separada 
 
 ## Verificación
 
-Pasan 46 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.
+Pasan 72 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Estado de publicación
 
-El catálogo PWA está disponible en https://aya.lazying.art/westicker/. Las versiones nativas están destinadas a pruebas internas de Google Play y Apple TestFlight; consulte el registro de versiones para conocer su disponibilidad y límites. Creación con IA, acceso, suscripciones y ventas siguen desactivados en estas betas.
+Create y Agent están unidos, con tablas editables de textos y acciones, biblioteca y personajes. iOS 1.0 (6), macOS 1.0 (5) y Android 1.0 (5) están disponibles para pruebas internas. La aplicación web independiente está en https://westicker.lazying.art. El registro compartido, la generación de imágenes y animaciones y los pagos siguen pendientes de validación; no es el lanzamiento completo del servicio.
 
 ## Cita
 
