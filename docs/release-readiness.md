@@ -22,10 +22,18 @@ The [completion ledger](request-completion-ledger.md) is the current cross-featu
 audit. Android 14, iOS 14 and macOS 11 are available to internal testers with
 compact toolbars. Subscriber language-ZIP downloads now remain in
 WeSticker instead of redirecting to the independent AYA checkout. Native signed
-notification handling is deployed with purchase flags closed; genuine Apple
-Sandbox TEST delivery succeeded. Financial sandbox qualification is separate.
+notification handling is deployed. A bounded owner-only Google license test
+passed real initial purchase, restart/restore, renewal, cancellation, paid-through
+access and expiry; two periods produced exactly two grants. New test purchases
+were then closed while sandbox receipt recovery remained available. Genuine
+Apple Sandbox TEST delivery succeeded, but its financial qualification is still
+separate. See [native payment evidence](native-billing-qualification-20261012.md).
 Android 14 additionally fixes the callback self-cancellation found in an actual
 system-browser login; native sign-in and persistence after restart are verified.
+The root login smoke also checks Create, Library and Account on the live website:
+one authentication screen outside the tabs, with the intended return destination.
+Updated native About wording is source-ready after these distributed builds;
+it is not claimed present in Android14/iOS14/macOS11.
 
 ## Current Entry Flow
 

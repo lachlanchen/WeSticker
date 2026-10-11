@@ -19,7 +19,7 @@ customer content and runtime addresses remain in private handoffs.
 | Real animated sticker generation | Local provider canary passed | Qualify available runtime lifecycle before public activation |
 | Web subscription payments | Live app-owned catalog/Portal/webhook and recovery timer active; web subscriptions enabled after actual sandbox lifecycle and live nonfinancial delivery tests | Ongoing monitoring; native IAP and advanced plan changes remain separate |
 | Subscriber default sticker downloads | Deployed app-owned access routing; all three language ZIPs, guest/expiry and network errors tested; 30 production archives pass CRC checks; live mobile login route verified | Keep AYA orders independent |
-| Native subscriptions | StoreKit/Play UI and server verification implemented; fixtures passed; genuine signed Apple Sandbox TEST delivery succeeded | Financial sandbox/license purchase, restore and lifecycle qualification; TEST is not a purchase |
+| Native subscriptions | Google Play no-charge purchase, restart, restore, real renewal, cancellation, paid-through access and expiry verified; one grant per period. Apple signed Sandbox TEST delivery succeeded | Apple native product/purchase qualification and production API authorization; broader native sales remain closed. TEST is not a purchase |
 | User-created packs for sale | Moderation and payout gates implemented | Verified creator onboarding and commercial operations before enabling sales |
 | Optional WeChat draft uploader | Save-only safety contracts implemented | Customer-isolated browser/container lifecycle and live draft qualification |
 | Clean, lively tab layouts | Compact top-left headers, restrained motion and reviewed PWA/Android/iOS screenshots; exact Android APK and six iOS XCTest cases passed | Full installed macOS layout capture; preserve platform parity |
@@ -44,5 +44,6 @@ customer content and runtime addresses remain in private handoffs.
 - [Social login qualification](social-auth-qualification-20261011.md)
 - [Stripe qualification](stripe-qualification.md)
 - [Subscriber collection downloads](subscriber-downloads-20261012.md)
+- [Native payment qualification](native-billing-qualification-20261012.md)
 - [Chat-led studio](chat-studio-20261011.md)
 - [Compact workspace evidence](compact-workspace-20261012.md)

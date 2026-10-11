@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 
 const origin =
   process.env.WESTICKER_PUBLIC_URL || "https://westicker.lazying.art";
-const out = ".runtime/protected-create-live";
+const out = process.env.WESTICKER_QA_OUTPUT || ".runtime/protected-create-live";
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({
   executablePath: process.env.CHROME || "/usr/bin/google-chrome",
@@ -56,7 +56,17 @@ try {
     .click();
   await page.locator(".sticker-card").first().waitFor();
   await nav.getByRole("button", { name: "Account", exact: true }).click();
-  await page.getByText("Sign in to your account.", { exact: true }).waitFor();
+  await page.getByRole("heading", { name: "Welcome to WeSticker" }).waitFor();
+  assert.equal(await page.locator(".authentication-page").count(), 1);
+  assert.equal(await page.getByRole("navigation", { name: "App navigation" }).count(), 0);
+  assert.equal(await page.getByRole("link", { name: "Continue with LazyingArt", exact: true }).getAttribute("href"),
+    "/auth/lazyingart/start?view=account");
+  await page.getByRole("button", { name: "Back to stickers", exact: true }).click();
+  await nav.getByRole("button", { name: "Library", exact: true }).click();
+  await page.getByRole("heading", { name: "Welcome to WeSticker" }).waitFor();
+  assert.equal(await page.locator(".authentication-page").count(), 1);
+  assert.equal(await page.getByRole("link", { name: "Continue with LazyingArt", exact: true }).getAttribute("href"),
+    "/auth/lazyingart/start?view=library");
   const status = await page.evaluate(async () => {
     const retired = await fetch("/api/guest/chat", {
       method: "POST",
