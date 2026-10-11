@@ -104,6 +104,7 @@ struct StudioRootView: View {
     @StateObject private var cloud = CloudStudioStore()
     @StateObject private var billing = NativeBillingStore()
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var selected = 0
     @State private var authDestination = 1
     @State private var showAuthentication = false
@@ -132,6 +133,7 @@ struct StudioRootView: View {
                             }.frame(maxWidth: .infinity).frame(height: 50)
                                 .foregroundStyle(selected == index ? Color.accentColor : .secondary)
                                 .background(selected == index ? Color.accentColor.opacity(0.09) : .clear, in: RoundedRectangle(cornerRadius: 8))
+                                .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: selected == index)
                         }.buttonStyle(.plain).accessibilityLabel(labels[index])
                             .accessibilityAddTraits(selected == index ? .isSelected : [])
                     }
@@ -237,10 +239,10 @@ struct CreatorView: View {
                     Text("Cloud AI: not connected").font(.caption).foregroundStyle(.secondary)
                     if let error = store.error { Text(error).foregroundStyle(.red) }
                 }.padding(16).frame(maxWidth: 680)
-            }.navigationTitle("Create")
+            }.compactStudioHeader("Create")
                 .toolbar {
                     if let close {
-                        ToolbarItem(placement: .cancellationAction) {
+                        ToolbarItem(placement: .primaryAction) {
                             Button(action: close) { Image(systemName: "xmark") }.accessibilityLabel("Close local draft")
                         }
                     }
@@ -322,7 +324,7 @@ struct AgentView: View {
                     LabeledContent("WeChat upload", value: "Not connected")
                     if let error = store.error { Text(error).foregroundStyle(.red) }
                 }.padding(16).frame(maxWidth: 680)
-            }.navigationTitle("Agent")
+            }.compactStudioHeader("Agent")
         }
         .confirmationDialog("Replace this draft's captions?", isPresented: $replacing) {
             Button("Apply captions") { store.applyPlan(); openCreate() }

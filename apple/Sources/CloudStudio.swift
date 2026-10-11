@@ -302,11 +302,12 @@ struct StudioLoginView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 20) {
                     if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) {
-                        NativeImage(data: data).frame(width: 96, height: 96)
+                        NativeImage(data: data).frame(width: 48, height: 48)
+                            .clipShape(RoundedRectangle(cornerRadius: 8)).accessibilityHidden(true)
                     }
-                    Text("Sign in to WeSticker").font(.title2.bold())
+                    Text("Sign in to WeSticker").font(.headline)
                     VStack(spacing: 12) {
                         ForEach(store.providers) { provider in
                             Button { signIn(provider) } label: {
@@ -331,9 +332,9 @@ struct StudioLoginView: View {
                         }.font(.footnote)
                     }
                 }.padding(24).frame(maxWidth: 460).frame(maxWidth: .infinity)
-            }.navigationTitle("Sign in")
+            }.compactStudioHeader("Sign in")
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
+                    ToolbarItem(placement: .primaryAction) {
                         Button(action: dismiss) { Image(systemName: "xmark") }.accessibilityLabel("Browse stickers").disabled(store.busy)
                     }
                     ToolbarItem(placement: .primaryAction) {
@@ -362,7 +363,7 @@ struct StudioServiceSettings: View {
                     Link("Terms", destination: URL(string: base + "/terms.html")!)
                     Link("Privacy", destination: URL(string: base + "/privacy.html")!)
                 }
-            }.navigationTitle("Service settings").toolbar {
+            }.compactStudioHeader("Service settings").toolbar {
                 Button("Done") { dismiss(); store.perform { try await store.refresh() } }
             }
         }.frame(minWidth: 280, minHeight: 240)
@@ -375,6 +376,7 @@ struct CloudStudioView: View {
     var section: Int = 1
     var onCreate: () -> Void
     @Environment(\.openURL) private var openURL
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var text = ""
     @State private var name = "My character"
     @State private var title = "Everyday moments"
@@ -395,7 +397,7 @@ struct CloudStudioView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-            ScrollViewReader { proxy in ScrollView {
+            GeometryReader { viewport in ScrollViewReader { proxy in ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if section == 2 {
                         Picker("Library view", selection: $libraryPane) {
@@ -412,21 +414,26 @@ struct CloudStudioView: View {
                     } else {
                         if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
                         if let w = store.workspace {
-                            if store.current == nil { chatWelcome }
+                            if store.current == nil {
+                                StudioChatWelcome().frame(maxWidth: .infinity)
+                                    .frame(minHeight: max(0, viewport.size.height - 32))
+                            }
                             else if let p = store.current { editor(p, w) }
                         }
                     }
                     if store.busy { ProgressView() }
                     Color.clear.frame(height: 1).id("chat-bottom")
                 }.padding().frame(maxWidth: 850, alignment: .leading).frame(maxWidth: .infinity)
-            }.onChange(of: store.messages.count) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
-            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            }.onChange(of: store.messages.count) { _ in
+                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) { proxy.scrollTo("chat-bottom", anchor: .bottom) }
+            }
+            } }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 if section == 1 && store.signedIn && !store.needsConsent && store.workspace != nil && pane == 0 {
                     composer.padding().frame(maxWidth: .infinity).background(.regularMaterial)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-            }.navigationTitle(section == 2 ? "Library" : "Create")
-            .toolbar { ToolbarItemGroup {
+            }.compactStudioHeader(section == 2 ? "Library" : "Create")
+            .toolbar { ToolbarItemGroup(placement: .primaryAction) {
                 if section == 2 {
                     Button { store.perform { try await store.refresh() } } label: { Image(systemName: "arrow.clockwise") }.accessibilityLabel("Refresh library").disabled(store.busy)
                 } else {
@@ -439,7 +446,7 @@ struct CloudStudioView: View {
             .sheet(isPresented: $showServiceSettings) { StudioServiceSettings(store: store) }
             .sheet(isPresented: $creating) { NavigationStack { ScrollView { VStack(alignment: .leading, spacing: 16) {
                 if let w = store.workspace { creationForm(w) }
-            }.padding() }.navigationTitle("Character references").toolbar { Button("Done") { creating = false } } }.frame(minWidth: 280, minHeight: 400) }
+            }.padding() }.compactStudioHeader("Character references").toolbar { Button("Done") { creating = false } } }.frame(minWidth: 280, minHeight: 400) }
             .sheet(isPresented: $showLocal) { NavigationStack {
                 CreatorView(store: local, openAgent: { showLocal = false })
                     .toolbar { Button("Close local draft") { showLocal = false } }
@@ -472,11 +479,8 @@ struct CloudStudioView: View {
             Button("Continue") { store.perform { try await store.acceptTerms() } }.disabled(!termsAccepted || store.busy)
         }
     }
-    private var chatWelcome: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) { NativeImage(data: data).frame(width: 80, height: 80) }
-            Text("What shall we make?").font(.title2.bold())
-        }
+    private var canSend: Bool {
+        !store.busy && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !store.dirty && !store.blocked
     }
     private var composer: some View {
         HStack(alignment: .bottom) {
@@ -486,8 +490,11 @@ struct CloudStudioView: View {
                 .accessibilityIdentifier("chat-message-input")
             Button {
                 let message = text; text = ""; store.perform { try await store.chat(message) }
-            } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }.accessibilityLabel("Send message")
-                .disabled(store.busy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.dirty || store.blocked)
+            } label: {
+                Image(systemName: "arrow.up.circle.fill").font(.title)
+                    .scaleEffect(canSend ? 1 : 0.94).frame(width: 44, height: 44)
+                    .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: canSend)
+            }.accessibilityLabel("Send message").disabled(!canSend)
         }.frame(maxWidth: 850)
     }
     @ViewBuilder private func libraryView(_ w: StudioWorkspace) -> some View {
@@ -522,7 +529,7 @@ struct CloudStudioView: View {
         Button("Approve references & start") { store.perform { try await store.create(name: name, title: title, language: language, character: character); creating = false } }.disabled(character.isEmpty && (!rights || store.refs.isEmpty))
     }
     @ViewBuilder private func editor(_ p: StudioPack, _ w: StudioWorkspace) -> some View {
-        Text(p.title).font(.title2.bold())
+        Text(p.title).font(.headline)
         Picker("Creation view", selection: $pane) { Text("Chat").tag(0); Text("Sticker plan").tag(1) }.pickerStyle(.segmented)
         if pane == 0 {
         ForEach(store.messages) { m in

@@ -19,9 +19,8 @@ import kotlinx.coroutines.launch
 @Composable fun BillingAccountScreen(cloud: CloudStudioStore, billing: NativeBillingStore) {
     val activity = LocalContext.current as? Activity
     val scope = rememberCoroutineScope()
-    Scaffold(topBar = { TopAppBar(title = { Text("Account") }) }) { padding ->
+    Scaffold(topBar = { CompactStudioTopBar("Account") }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("WeSticker Account", style = MaterialTheme.typography.titleLarge)
             if (cloud.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
             cloud.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             if (cloud.signedIn) {

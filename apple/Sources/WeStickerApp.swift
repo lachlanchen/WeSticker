@@ -255,9 +255,9 @@ struct CatalogView: View {
                 }
             }
             .padding(16)
-            .navigationTitle("WeSticker")
+            .compactStudioHeader("WeSticker")
             .toolbar {
-                ToolbarItemGroup(placement: .automatic) {
+                ToolbarItemGroup(placement: .primaryAction) {
                     Button { onlySaved.toggle() } label: { Image(systemName: onlySaved ? "heart.fill" : "heart") }.accessibilityLabel("Saved collections")
                     Button { info = true } label: { Image(systemName: "info.circle") }.accessibilityLabel("About this beta")
                 }
@@ -309,6 +309,7 @@ struct CatalogView: View {
                 Text(pack.english).font(.subheadline.weight(.semibold)).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
             }.padding(10).background(active?.id == pack.id ? Color.pink.opacity(0.10) : Color.gray.opacity(0.04), in: RoundedRectangle(cornerRadius: 8))
         }.buttonStyle(.plain)
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: active?.id == pack.id)
     }
     @ViewBuilder private var content: some View {
         if let pack = active {

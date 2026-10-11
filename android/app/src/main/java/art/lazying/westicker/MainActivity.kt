@@ -8,6 +8,8 @@ import androidx.browser.auth.AuthTabIntent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -166,7 +168,7 @@ fun Catalog(packs: List<Pack>, loader: ImageLoader,
         }
     }
     Scaffold(topBar = {
-        TopAppBar(title = { Text("WeSticker", fontWeight = FontWeight.Bold) }, actions = {
+        CompactStudioTopBar("WeSticker", actions = {
             IconButton(onClick = { onlySaved = !onlySaved }) {
                 Icon(if (onlySaved) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder, "Saved collections")
             }
@@ -174,15 +176,17 @@ fun Catalog(packs: List<Pack>, loader: ImageLoader,
         })
     }, snackbarHost = { SnackbarHost(snack) }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)) {
-            Text("Sticker collections", style = MaterialTheme.typography.headlineSmall)
             OutlinedTextField(query, { query = it }, Modifier.fillMaxWidth().padding(vertical = 10.dp),
                 singleLine = true, label = { Text("Search collections") },
                 leadingIcon = { Icon(Icons.Outlined.Search, null) })
             BoxWithConstraints(Modifier.weight(1f)) {
                 val wide = maxWidth >= 700.dp
                 @Composable fun packItem(pack: Pack, modifier: Modifier) {
+                    val selectedColor by animateColorAsState(
+                        if (active?.id == pack.id) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                        animationSpec = tween(160), label = "Collection selection")
                     Surface(onClick = { selected = pack.id }, modifier = modifier, shape = RoundedCornerShape(8.dp),
-                        color = if (active?.id == pack.id) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface) {
+                        color = selectedColor) {
                         Row(Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
                             AsyncImage("file:///android_asset" + pack.stickers[language]!!.first().poster,
                                 null, modifier = Modifier.size(44.dp), imageLoader = loader)

@@ -268,7 +268,7 @@ struct NativeBillingAccountView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("WeSticker Account") {
+                Section {
                     if cloud.busy { ProgressView() }
                     if let error = cloud.error { Text(error).font(.caption).foregroundStyle(.red) }
                     if cloud.signedIn {
@@ -308,7 +308,7 @@ struct NativeBillingAccountView: View {
                     Link("Apple Standard EULA", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
                     Text("Subscriptions renew automatically until cancelled in your App Store account.").font(.footnote).foregroundStyle(.secondary)
                 }
-            }.navigationTitle("Account")
+            }.compactStudioHeader("Account")
         }
     }
     private func period(_ product: Product) -> String {

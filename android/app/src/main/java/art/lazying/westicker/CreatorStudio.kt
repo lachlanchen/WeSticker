@@ -203,7 +203,7 @@ class CreatorStore(private val context: Context) {
         if(uri!=null) { busy=true;scope.launch { try { store.importPhoto(uri) } catch(_:Exception){store.error="Choose a supported photo smaller than 20 MB."}finally{busy=false} } }
     }
     val draft=store.draft
-    Scaffold(topBar={TopAppBar(title={Text("Create")},navigationIcon={
+    Scaffold(topBar={CompactStudioTopBar("Create",navigationIcon={
         onClose?.let { close -> IconButton(onClick=close){Icon(Icons.Outlined.Close,"Close local draft")} }
     },actions={IconButton(onClick=openAgent){Icon(Icons.Outlined.Forum,"Ask Agent")}})}){padding->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
@@ -240,7 +240,7 @@ class CreatorStore(private val context: Context) {
     var plan by rememberSaveable { mutableStateOf(emptyList<String>()) }
     var matched by rememberSaveable { mutableStateOf("daily") }
     var confirm by remember { mutableStateOf(false) }
-    Scaffold(topBar={TopAppBar(title={Text("Agent")})}){padding->
+    Scaffold(topBar={CompactStudioTopBar("Agent")}){padding->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),verticalArrangement=Arrangement.spacedBy(16.dp)){
             Text("On-device planner",style=MaterialTheme.typography.labelLarge)
             Text(store.draft.title,style=MaterialTheme.typography.titleLarge)

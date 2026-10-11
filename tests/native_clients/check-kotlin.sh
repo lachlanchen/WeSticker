@@ -2,6 +2,10 @@
 set -euo pipefail
 
 # No Gradle, SDK downloads, signing, app packaging or store requests.
+if [[ $# -gt 1 || (${1:-} != "" && ${1:-} != "--ui") ]]; then
+    printf 'Usage: %s [--ui]\n' "$0" >&2
+    exit 2
+fi
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cache="${GRADLE_USER_HOME:-$HOME/.gradle}/caches/modules-2/files-2.1"
 sdk="${ANDROID_HOME:?Set ANDROID_HOME to an existing Android SDK}"
@@ -51,6 +55,26 @@ aar androidx.compose.material material-icons-core-android 1.7.8
 aar androidx.compose.material material-icons-extended-android 1.7.8
 plugin="$(artifact org.jetbrains.kotlin kotlin-compose-compiler-plugin-embeddable 2.2.20 jar)"
 "${compile[@]}" -classpath "$cp" -Xplugin="$plugin" -d "$temp/client.jar" \
-    "$sources/BillingRecovery.kt" "$sources/NativeBilling.kt" "$sources/BillingAccountScreen.kt" \
+    "$sources/BillingRecovery.kt" "$sources/NativeBilling.kt" "$sources/BillingAccountScreen.kt" "$sources/StudioChrome.kt" \
     "$root/tests/native_clients/CloudStudioStub.kt"
 printf 'Billing client and Compose Account typecheck passed against cached SDKs (compile-only CloudStudio boundary).\n'
+
+if [[ ${1:-} == "--ui" ]]; then
+    aar androidx.activity activity 1.11.0
+    aar androidx.activity activity-ktx 1.11.0
+    aar androidx.activity activity-compose 1.11.0
+    aar androidx.browser browser 1.9.0
+    aar androidx.core core 1.17.0
+    aar androidx.core core-ktx 1.17.0
+    aar androidx.lifecycle lifecycle-runtime-android 2.9.4
+    aar androidx.lifecycle lifecycle-runtime-compose-android 2.9.4
+    aar androidx.lifecycle lifecycle-viewmodel-android 2.9.4
+    aar androidx.lifecycle lifecycle-viewmodel-savedstate-android 2.9.4
+    aar androidx.savedstate savedstate-android 1.3.1
+    for library in coil coil-base coil-compose coil-compose-base coil-gif; do
+        aar io.coil-kt "$library" 2.7.0
+    done
+    cp+=":$(artifact androidx.lifecycle lifecycle-common-jvm 2.9.4 jar)"
+    "${compile[@]}" -classpath "$cp" -Xplugin="$plugin" -d "$temp/native-ui.jar" "$sources"/*.kt
+    printf 'All native Compose sources typechecked against cached SDKs (no app package).\n'
+fi

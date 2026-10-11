@@ -51,6 +51,7 @@ final class CatalogTests: XCTestCase {
         app.launchArguments += ["-studio-origin", "https://westicker.lazying.art"]
         app.launch()
         XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 20))
+        app.assertCompactHeader("WeSticker", action: "About this beta")
         XCTAssertEqual(app.webViews.count, 0, "The mobile/desktop catalog must be native")
         let preview = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Preview ")).firstMatch
         XCTAssertTrue(preview.waitForExistence(timeout: 20))
@@ -80,6 +81,7 @@ final class CatalogTests: XCTestCase {
         app.buttons["Create"].tap()
         XCTAssertTrue(app.buttons["Continue with LazyingArt"].waitForExistence(timeout: 20))
         XCTAssertTrue(app.staticTexts["Sign in to WeSticker"].exists)
+        app.assertCompactHeader("Sign in", action: "Service settings")
         XCTAssertFalse(app.descendants(matching: .any)["chat-message-input"].exists)
         XCTAssertFalse(app.buttons["Send message"].exists)
         XCTAssertFalse(app.buttons["Characters"].exists)
@@ -99,6 +101,7 @@ final class CatalogTests: XCTestCase {
         XCTAssertTrue(app.buttons["Open saved local photo draft"].waitForExistence(timeout: 10))
         app.buttons["Open saved local photo draft"].tap()
         XCTAssertTrue(app.textFields["Character name"].waitForExistence(timeout: 10))
+        app.assertCompactHeader("Create", action: "Close local draft")
         let character = app.textFields["Character name"]
         character.tap()
         let old = character.value as? String ?? ""
@@ -118,5 +121,34 @@ final class CatalogTests: XCTestCase {
         capture("Native restored draft")
         app.buttons["Close local draft"].tap()
         XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 10))
+    }
+}
+
+extension XCUIApplication {
+    func assertCompactHeader(_ title: String, action: String? = nil,
+                             file: StaticString = #filePath, line: UInt = #line) {
+        let heading = staticTexts.matching(identifier: "studio-toolbar-title")
+        XCTAssertTrue(heading.firstMatch.waitForExistence(timeout: 10), file: file, line: line)
+        let visible = heading.allElementsBoundByIndex.filter { $0.isHittable }
+        XCTAssertEqual(visible.count, 1, "One visible toolbar title", file: file, line: line)
+        guard let label = visible.first else { return }
+        let window = windows.firstMatch.frame
+        XCTAssertEqual(label.label, title, file: file, line: line)
+        XCTAssertGreaterThan(label.frame.width, 0, file: file, line: line)
+        XCTAssertLessThanOrEqual(label.frame.height, 44, file: file, line: line)
+        XCTAssertTrue(window.contains(label.frame), file: file, line: line)
+        #if os(macOS)
+        // The native window controls precede the leading toolbar item.
+        XCTAssertLessThan(label.frame.minX - window.minX, 160, file: file, line: line)
+        #else
+        XCTAssertLessThan(label.frame.minX - window.minX, 80, file: file, line: line)
+        #endif
+        XCTAssertLessThan(label.frame.maxY - window.minY, 120, file: file, line: line)
+        if let action {
+            let button = buttons[action]
+            XCTAssertTrue(button.isHittable, file: file, line: line)
+            XCTAssertLessThan(abs(label.frame.midY - button.frame.midY), 14, file: file, line: line)
+            XCTAssertLessThanOrEqual(label.frame.maxX, button.frame.minX, file: file, line: line)
+        }
     }
 }

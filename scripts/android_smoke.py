@@ -54,6 +54,20 @@ def main():
                 run("shell", "input", "tap", str((x1+x2)//2), str((y1+y2)//2))
                 return
         raise RuntimeError("Missing visible control: " + label)
+    def assert_toolbar(tree, title, action):
+        def nodes(label):
+            return [n for n in tree.iter("node") if (n.get("text") or n.get("content-desc")) == label]
+        headings, actions = nodes(title), nodes(action)
+        assert len(headings) == 1 and len(actions) == 1, "One visible title and action expected"
+        def bounds(node):
+            return tuple(map(int, re.findall(r"\d+", node.get("bounds", ""))))
+        x1, y1, x2, y2 = bounds(headings[0])
+        ax1, ay1, ax2, ay2 = bounds(actions[0])
+        assert x2 > x1 and y2 > y1 and x2 <= ax1, "Title must lead, not overlap actions"
+        assert abs((y1+y2)/2 - (ay1+ay2)/2) <= (ay2-ay1)/2, "Title and actions must share a row"
+    def assert_catalog(tree):
+        assert_toolbar(tree, "WeSticker", "About this beta")
+        assert any("Search collections" in n.get("text", "") for n in tree.iter("node"))
     with urlopen("https://westicker.lazying.art/api/bootstrap", timeout=20) as response:
         configured = json.load(response).get("providers", [])
     provider_labels = {"google": "Google", "apple": "Apple", "github": "GitHub", "lazyingart": "LazyingArt"}
@@ -70,6 +84,7 @@ def main():
         assert all(texts.count(label) == 1 for label in expected)
         assert not any(t in texts for t in ("WeSticker Account", "Manage Play subscriptions", "Send message", "Library", "Characters"))
         assert not any("Stripe" in t or "Checkout" in t for t in texts)
+        assert_toolbar(tree, "Sign in", "Service settings")
         return tree
     with (a.out / "emulator.log").open("w") as log:
         proc = subprocess.Popen([str(a.sdk / "emulator/emulator"), "-avd", "WeSticker_Review_API34",
@@ -102,8 +117,7 @@ def main():
                 tree = capture("01-start-cleared")
             tree = capture("01-catalog")
             texts = [n.get("text", "") or n.get("content-desc", "") for n in tree.iter("node")]
-            if not any("Sticker collections" in t for t in texts):
-                raise RuntimeError("Native catalog is not visible")
+            assert_catalog(tree)
             if "Sign in" in texts or "Plans & credits" in texts:
                 raise RuntimeError("Unqualified beta control is visible")
             if a.account:
@@ -111,7 +125,7 @@ def main():
                 tree = assert_shared_login("account-to-login")
                 tap(tree, "Browse stickers")
                 tree = capture("account-return")
-                assert any("Sticker collections" in n.get("text", "") for n in tree.iter("node"))
+                assert_catalog(tree)
             if a.creator:
                 tap(tree, "Create")
                 tree = assert_shared_login("creator")
@@ -126,7 +140,7 @@ def main():
                 run("shell", "am", "start", "-n", "art.lazying.westicker/.MainActivity")
                 time.sleep(3)
                 tree = capture("creator-reopened")
-                assert any("Sticker collections" in n.get("text", "") for n in tree.iter("node"))
+                assert_catalog(tree)
                 tap(tree, "Library")
                 tree = assert_shared_login("library-reopened")
                 tap(tree, "Open saved local photo draft")

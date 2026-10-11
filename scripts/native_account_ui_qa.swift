@@ -49,6 +49,7 @@ final class NativeAccountReleaseTests: XCTestCase {
         XCTAssertLessThanOrEqual(input.frame.maxY, app.buttons["Create"].frame.minY)
         XCTAssertFalse(app.buttons["Continue with LazyingArt"].exists)
         XCTAssertFalse(app.buttons["Manage App Store subscriptions"].exists)
+        app.assertCompactHeader("Create", action: "Service settings")
         return input
     }
 
@@ -60,6 +61,12 @@ final class NativeAccountReleaseTests: XCTestCase {
         defer { app.terminate() }
         app.buttons["Create"].tap()
         let input = assertComposer(app)
+        let welcome = app.staticTexts["What shall we make?"]
+        XCTAssertTrue(welcome.waitForExistence(timeout: 10))
+        XCTAssertTrue(welcome.isHittable)
+        XCTAssertTrue(app.windows.firstMatch.frame.contains(welcome.frame))
+        XCTAssertLessThan(welcome.frame.height, 44)
+        XCTAssertLessThan(welcome.frame.maxY, input.frame.minY)
         capture("Authenticated fixture clean chat visible composer")
         input.tap(); input.typeText("A friendly sticker idea")
         XCTAssertTrue(app.buttons["Send message"].isEnabled)
@@ -71,6 +78,7 @@ final class NativeAccountReleaseTests: XCTestCase {
         capture("Authenticated fixture composer keyboard unsent")
         app.buttons["Library"].tap()
         XCTAssertTrue(app.buttons["Characters"].waitForExistence(timeout: 10))
+        app.assertCompactHeader("Library", action: "Refresh library")
         app.buttons["Characters"].tap()
         capture("Authenticated fixture Characters inside Library")
         app.buttons["Create"].tap()
@@ -119,8 +127,12 @@ final class NativeAccountReleaseTests: XCTestCase {
             refreshFromLogin(app)
             switch destination {
             case "Create": _ = assertComposer(app)
-            case "Library": XCTAssertTrue(app.buttons["Characters"].waitForExistence(timeout: 10))
-            default: XCTAssertTrue(app.buttons["Manage App Store subscriptions"].waitForExistence(timeout: 10))
+            case "Library":
+                XCTAssertTrue(app.buttons["Characters"].waitForExistence(timeout: 10))
+                app.assertCompactHeader("Library", action: "Refresh library")
+            default:
+                XCTAssertTrue(app.buttons["Manage App Store subscriptions"].waitForExistence(timeout: 10))
+                app.assertCompactHeader("Account")
             }
             XCTAssertFalse(app.staticTexts["Sign in to WeSticker"].exists)
             capture("Fixture restored intended " + destination)
@@ -169,6 +181,7 @@ final class NativeAccountReleaseTests: XCTestCase {
         capture("Public initial Stickers")
         app.buttons["Create"].tap()
         XCTAssertTrue(app.staticTexts["Sign in to WeSticker"].waitForExistence(timeout: 20))
+        app.assertCompactHeader("Sign in", action: "Service settings")
         XCTAssertFalse(app.descendants(matching: .any)["chat-message-input"].exists)
         XCTAssertFalse(app.buttons["Send message"].exists)
         XCTAssertFalse(app.buttons["Manage App Store subscriptions"].exists)

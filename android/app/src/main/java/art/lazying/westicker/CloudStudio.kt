@@ -13,7 +13,10 @@ import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -22,8 +25,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.ImageLoader
@@ -301,15 +308,15 @@ class CloudStudioStore(val context: Context) {
     val scope = rememberCoroutineScope()
     var settings by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { store.run { store.refresh() } }
-    Scaffold(topBar={TopAppBar(title={Text("Sign in")},navigationIcon={
+    Scaffold(topBar={CompactStudioTopBar("Sign in",navigationIcon={
         IconButton(enabled=!store.busy,onClick=dismiss){Icon(Icons.Outlined.Close,"Browse stickers")}
     },actions={
         IconButton(enabled=!store.busy,onClick={settings=true}){Icon(Icons.Outlined.Settings,"Service settings")}
     })}) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(24.dp),
-            horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.spacedBy(24.dp)) {
-            AsyncImage("file:///android_asset/app-icon.png",null,imageLoader=loader,modifier=Modifier.size(96.dp))
-            Text("Sign in to WeSticker",style=MaterialTheme.typography.headlineSmall)
+            horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.spacedBy(20.dp)) {
+            AsyncImage("file:///android_asset/app-icon.png",null,imageLoader=loader,modifier=Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)))
+            Text("Sign in to WeSticker",style=MaterialTheme.typography.titleMedium,fontWeight=FontWeight.SemiBold)
             Column(Modifier.widthIn(max=460.dp).fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(12.dp)) {
                 store.providers.forEach { provider ->
                     Button(enabled=!store.busy,onClick={signIn(provider)},modifier=Modifier.fillMaxWidth()) {
@@ -351,6 +358,23 @@ class CloudStudioStore(val context: Context) {
     },confirmButton={TextButton(onClick={close();scope.launch { store.run { store.refresh() } }}){Text("Done")}})
 }
 
+@Composable private fun StudioChatWelcome(loader: ImageLoader, modifier: Modifier = Modifier) {
+    var appeared by remember { mutableStateOf(false) }
+    // The system duration scale also disables this one-shot entry when motion is reduced.
+    val progress by animateFloatAsState(if(appeared) 1f else 0f, tween(220), label="Chat welcome entry")
+    LaunchedEffect(Unit) { appeared=true }
+    Box(modifier, contentAlignment=Alignment.Center) {
+        Column(Modifier.testTag("chat-welcome").graphicsLayer {
+            alpha=progress;translationY=6.dp.toPx()*(1f-progress)
+        },horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.spacedBy(12.dp)) {
+            AsyncImage("file:///android_asset/app-icon.png",null,imageLoader=loader,
+                modifier=Modifier.size(44.dp).clip(RoundedCornerShape(8.dp)))
+            Text("What shall we make?",style=MaterialTheme.typography.titleMedium,
+                fontWeight=FontWeight.SemiBold,textAlign=TextAlign.Center)
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable fun CloudStudioScreen(store: CloudStudioStore, local: CreatorStore, loader: ImageLoader, section: Int, onCreate: () -> Unit) {
     val context = LocalContext.current; val scope = rememberCoroutineScope()
@@ -362,12 +386,15 @@ class CloudStudioStore(val context: Context) {
     var serviceSettings by remember { mutableStateOf(false) }
     var pane by remember { mutableStateOf(0) }
     var libraryPane by remember { mutableStateOf(0) }
+    val canSend=text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked
+    // Compose animations inherit the system animator duration scale, including zero.
+    val sendScale by animateFloatAsState(if(canSend) 1f else 0.94f, tween(150), label="Send readiness")
     val scroll=rememberScrollState()
     LaunchedEffect(store.messages.size, store.sending) { if(pane==0) scroll.animateScrollTo(scroll.maxValue) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) run { store.upload(uri) } }
     LaunchedEffect(Unit) { if (store.origin.isNotBlank()) store.run { store.refresh() }; while (true) { delay(4000); if (!store.busy && store.workspace?.optJSONArray("jobs")?.objects()?.any { it.optString("state") in listOf("queued", "running") } == true) store.run { store.refresh() } } }
     if (showLocal) { CreatorScreen(local, loader) { showLocal = false }; return }
-    Scaffold(topBar = { TopAppBar(title = { Text(if(section==2) "Library" else "Create") }, actions = {
+    Scaffold(topBar = { CompactStudioTopBar(if(section==2) "Library" else "Create", actions = {
         if(section==2) IconButton(enabled=!store.busy,onClick={run{store.refresh()}}){Icon(Icons.Outlined.Refresh,"Refresh library")}
         else IconButton(enabled=!store.busy&&!store.dirty&&!store.needsConsent,onClick={
             store.current=null;store.messages=emptyList();store.rows=emptyList();store.creating=false;pane=0
@@ -380,13 +407,15 @@ class CloudStudioStore(val context: Context) {
                     Icon(Icons.Outlined.AddPhotoAlternate,"Character references")
                 }
                 OutlinedTextField(text,{text=it.take(2000)},placeholder={Text("Message Aya…")},modifier=Modifier.weight(1f),minLines=1,maxLines=5)
-                IconButton(enabled=text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked,onClick={
+                IconButton(enabled=canSend,onClick={
                     val input=text;text="";run{store.chat(input)}
-                }){Icon(Icons.Outlined.Send,"Send message")}
+                }){Icon(Icons.Outlined.Send,"Send message",Modifier.graphicsLayer { scaleX=sendScale;scaleY=sendScale })}
             }
         }
     }) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll).padding(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+        val welcomeHeight=(maxHeight-32.dp).coerceAtLeast(0.dp)
+        Column(Modifier.fillMaxSize().verticalScroll(scroll).padding(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
             if(section==2) {
                 TabRow(selectedTabIndex=libraryPane) {
                     listOf("Creations","Characters").forEachIndexed { index,label ->
@@ -432,11 +461,10 @@ class CloudStudioStore(val context: Context) {
                         Button(enabled=!store.busy&&(store.character.isNotBlank()||rights&&store.refs.isNotEmpty()),onClick={run{store.create(name,title,language)}}){Text("Approve references & start")}
                     }
                     store.current==null -> {
-                        AsyncImage("file:///android_asset/app-icon.png","Aya and Lala",imageLoader=loader,modifier=Modifier.size(80.dp))
-                        Text("What shall we make?",style=MaterialTheme.typography.headlineSmall)
+                        StudioChatWelcome(loader,Modifier.fillMaxWidth().heightIn(min=welcomeHeight))
                     }
                     else -> {
-                        val p=store.current!!;Text(p.getString("title"),style=MaterialTheme.typography.titleLarge)
+                        val p=store.current!!;Text(p.getString("title"),style=MaterialTheme.typography.titleMedium)
                         TabRow(selectedTabIndex=pane){listOf("Chat","Sticker plan").forEachIndexed{i,label->Tab(selected=pane==i,onClick={pane=i},text={Text(label)})}}
                         if(pane==0){
                         store.messages.forEach{m->
@@ -477,6 +505,7 @@ class CloudStudioStore(val context: Context) {
                 }
             }
         }
+    }
     }
     if(serviceSettings) StudioServiceSettings(store){serviceSettings=false}
     history?.let{items->AlertDialog(onDismissRequest={history=null},title={Text("Preserved versions")},text={Column(Modifier.verticalScroll(rememberScrollState())){items.forEach{r->if(!r.isNull("asset")){StudioImage(store,r.getString("asset"),loader,140);Text(r.getString("label"))}}}},confirmButton={TextButton(onClick={history=null}){Text("Close")}})}
