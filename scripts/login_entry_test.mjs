@@ -25,6 +25,7 @@ try {
   const methods = await browser.newContext({ serviceWorkers: "block" });
   const methodsPage = await methods.newPage();
   const providerStarts = [];
+  let availableMethods = ["google", "apple", "github", "lazyingart"];
   methodsPage.on("request", (request) => {
     if (new URL(request.url()).pathname.startsWith("/auth/"))
       providerStarts.push(request.url());
@@ -38,7 +39,7 @@ try {
         ...data,
         user: null,
         local_accounts: false,
-        providers: ["google", "apple", "github", "lazyingart"],
+        providers: availableMethods,
       },
     });
   });
@@ -68,6 +69,30 @@ try {
   }
   assert.equal(await methodsPage.locator(".app nav").count(), 0);
   assert.deepEqual(providerStarts, []);
+  availableMethods = [];
+  await methodsPage.reload();
+  await methodsPage
+    .getByRole("status")
+    .filter({ hasText: "Sign-in is temporarily unavailable." })
+    .waitFor();
+  assert(
+    await methodsPage
+      .getByRole("button", { name: "Try again", exact: true })
+      .isVisible(),
+  );
+  availableMethods = ["lazyingart"];
+  await methodsPage
+    .getByRole("button", { name: "Try again", exact: true })
+    .click();
+  await methodsPage
+    .getByRole("link", { name: "Continue with LazyingArt", exact: true })
+    .waitFor();
+  assert.equal(
+    await methodsPage
+      .getByRole("button", { name: "Try again", exact: true })
+      .count(),
+    0,
+  );
   await methods.close();
   await page.goto(origin);
   assert.equal(await page.locator(".sign-in-screen").count(), 0);
@@ -224,6 +249,7 @@ try {
         tests: [
           "public catalog",
           "four-provider layout and destinations (availability fixture only)",
+          "empty provider discovery offers retry rather than a blank login",
           "Create sign-in gate",
           "one global login outside tabs for Create/Library/Account",
           "native completion outside chat with real isolated PKCE exchange",

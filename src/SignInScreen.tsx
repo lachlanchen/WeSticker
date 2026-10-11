@@ -264,10 +264,13 @@ export function SignInScreen({
               </>
             )}
             {!boot.local_accounts && !boot.providers.length && (
-              <p role="status">
-                Sign-in is temporarily unavailable. You can still browse
-                stickers.
-              </p>
+              <>
+                <p role="status">
+                  Sign-in is temporarily unavailable. You can still browse
+                  stickers.
+                </p>
+                {onRetry && <button onClick={onRetry}>Try again</button>}
+              </>
             )}
             <div className="login-legal">
               <a href={API + "/terms.html"}>Terms</a>
