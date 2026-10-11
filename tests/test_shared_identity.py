@@ -290,3 +290,140 @@ def test_browser_auth_failure_is_readable_and_does_not_echo_callback(linked, acc
     # API clients keep their structured response and original failure status.
     result = c.get("/auth/lazyingart/callback?state=bad", headers={"Accept": "application/json"})
     assert result.status_code == 401 and isinstance(result.json["error"], str)
+
+
+@pytest.fixture
+def selector(linked, monkeypatch):
+    """App-boundary fixture, not SDK/provider qualification."""
+    app, control = linked
+    adapter = app.extensions["westicker_shared_identity"]
+    adapter.selected = frozenset({"google", "apple", "github", "lazyingart"})
+    control.update(choices=["google", "apple", "lazyingart"], discoveries=0, selections=[])
+    original = adapter.client.authorize
+
+    def available():
+        control["discoveries"] += 1
+        if control["outage"]:
+            raise LinkError("issuer_unavailable")
+        return tuple(control["choices"])
+
+    def authorize(store, binding, **options):
+        control["selections"].append(options)
+        if options.get("provider") not in control["choices"]:
+            raise LinkError("authorization_provider_unavailable")
+        return original(store, binding)
+
+    monkeypatch.setattr(adapter.client, "available_authorization_providers", available, raising=False)
+    monkeypatch.setattr(adapter.client, "authorize", authorize)
+    return app, control, adapter
+
+
+def test_selector_choices_cache_presentation_not_authorization(selector):
+    app, control, adapter = selector
+    c = app.test_client()
+    assert c.get("/api/bootstrap").json["providers"] == ["google", "apple", "lazyingart"]
+    assert c.get("/api/bootstrap").json["providers"] == ["google", "apple", "lazyingart"]
+    assert control["discoveries"] == 1
+    control["choices"].remove("google")
+    assert c.get("/auth/google/start").status_code == 503
+    assert control["selections"] == [{"provider": "google", "reuse_consent": True}]
+    adapter._selection_cache = (0, ())
+    assert c.get("/api/bootstrap").json["providers"] == ["apple", "lazyingart"]
+    assert c.get("/auth/github/start").status_code == 503
+    assert len(control["selections"]) == 1
+
+
+def test_selector_discovery_failure_leaves_legacy_login_reachable(selector):
+    app, control, _ = selector
+    c = app.test_client()
+    control["outage"] = True
+    assert c.get("/api/bootstrap").json["providers"] == ["lazyingart"]
+    assert c.get("/auth/apple/start").status_code == 503
+    assert not control["selections"]
+
+
+def test_selected_social_uses_shared_callback_and_same_account(selector):
+    app, control, _ = selector
+    c = connect(app)
+    first = c.get("/api/bootstrap").json["user"]["id"]
+    response = c.get("/auth/apple/start?view=library")
+    q = parse_qs(urlsplit(response.location).query)
+    assert q["redirect_uri"] == [ORIGIN + "/auth/lazyingart/callback"]
+    assert control["selections"][-1] == {"provider": "apple", "reuse_consent": True}
+    assert c.get("/auth/apple/callback?code=unrelated").status_code == 404
+    callback = "/auth/lazyingart/callback?" + urlencode({"code": "c" * 43, "state": q["state"][0], "iss": "https://identity.example"})
+    assert app.test_client().get(callback).status_code == 401
+    result = c.get(callback)
+    assert result.location == ORIGIN + "/?welcome=1&view=library"
+    assert c.get(callback).status_code == 401
+    assert c.get("/api/bootstrap").json["user"]["id"] == first
+    before = len(control["selections"])
+    assert c.get("/auth/lazyingart/start?view=account").location == ORIGIN + "/?welcome=1&view=account"
+    assert len(control["selections"]) == before
+
+
+def test_native_selection_returns_shared_pkce_link(selector):
+    app, control, _ = selector
+    c = app.test_client()
+    r = c.post("/api/native/link", json={"provider": "apple", "app_return": True, "challenge": "c" * 43}, headers={"Origin": ORIGIN})
+    assert r.status_code == 200
+    assert urlsplit(r.json["url"]).path == "/auth/apple/start"
+    target = urlsplit(r.json["url"])
+    start = c.get(target.path + "?" + target.query)
+    q = parse_qs(urlsplit(start.location).query)
+    assert q["redirect_uri"] == [ORIGIN + "/auth/lazyingart/callback"]
+    result = c.get("/auth/lazyingart/callback?" + urlencode({"code": "c" * 43, "state": q["state"][0], "iss": "https://identity.example"}))
+    assert parse_qs(urlsplit(result.location).query) == {"welcome": ["1"], "native_link": [r.json["id"]], "native_return": ["1"]}
+
+
+def test_selected_provider_cancellation_restores_destination(selector):
+    app, _, _ = selector
+    c = app.test_client()
+    start = c.get("/auth/google/start?view=library")
+    state = parse_qs(urlsplit(start.location).query)["state"][0]
+    callback = "/auth/lazyingart/callback?" + urlencode({"error": "access_denied", "state": state, "iss": "https://identity.example"})
+    assert c.get(callback).location == ORIGIN + "/?login=cancelled&view=library"
+    assert c.get("/api/bootstrap").json["user"] is None
+    assert c.get(callback).status_code == 401
+
+
+def test_unavailable_selection_preserves_an_existing_auth_attempt(selector):
+    app, _, _ = selector
+    c = app.test_client()
+    start = c.get("/auth/google/start?view=library")
+    state = parse_qs(urlsplit(start.location).query)["state"][0]
+    assert c.get("/auth/github/start?view=account").status_code == 503
+    callback = "/auth/lazyingart/callback?" + urlencode({"code": "c" * 43, "state": state, "iss": "https://identity.example"})
+    assert c.get(callback).location == ORIGIN + "/?welcome=1&view=library"
+    assert c.get("/api/bootstrap").json["user"]["name"] == "Test creator"
+
+
+def test_selected_provider_has_no_direct_oauth_fallback(selector):
+    app, control, _ = selector
+    app.config["WESTICKER"]["providers"]["github"] = {"enabled": True}
+    c = app.test_client()
+    assert c.get("/api/bootstrap").json["providers"] == ["google", "apple", "lazyingart"]
+    assert c.get("/auth/github/start").status_code == 503
+    assert c.get("/auth/github/callback").status_code == 404
+    assert not control["selections"]
+
+
+def test_disabled_shared_adapter_never_falls_back_to_other_identity(selector):
+    app, _, adapter = selector
+    app.config["WESTICKER"]["providers"]["apple"] = {"enabled": True}
+    adapter.enabled = False
+    c = app.test_client()
+    assert "apple" not in c.get("/api/bootstrap").json["providers"]
+    assert c.get("/auth/apple/start").status_code == 503
+    assert c.get("/auth/apple/callback").status_code == 404
+
+
+def test_missing_sdk_selector_does_not_advertise_buttons(linked, monkeypatch):
+    app, _ = linked
+    adapter = app.extensions["westicker_shared_identity"]
+    adapter.selected = frozenset({"google", "apple", "github", "lazyingart"})
+    monkeypatch.setattr(adapter.client, "available_authorization_providers", None, raising=False)
+    c = app.test_client()
+    assert c.get("/api/bootstrap").json["providers"] == ["lazyingart"]
+    assert c.get("/auth/google/start").status_code == 503
+    assert c.get("/auth/lazyingart/start").status_code == 302

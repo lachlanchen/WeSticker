@@ -27,6 +27,7 @@ from .guest_chat import register_guest_chat
 from .generation import capabilities as generation_capabilities
 from .local_video_lifecycle import status as animation_status
 from .native_reconcile import MAX_EVENT_BYTES, NOTIFICATION_PATHS
+from .auth import provider_choices
 
 
 class PaymentRequired(HTTPException):
@@ -235,11 +236,7 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
             csrf=user["csrf"] if user else None,
             plans=PLANS,
             themes=THEMES,
-            providers=[
-                p
-                for p in ["google", "apple", "github", "lazyingart"]
-                if cfg.get("providers", {}).get(p, {}).get("enabled")
-            ],
+            providers=provider_choices(cfg, app.extensions.get("westicker_shared_identity")),
             local_accounts=cfg["local_accounts"],
             capabilities={
                 "chat": bool(cfg.get("chat_api_key")),

@@ -6,6 +6,8 @@ credentials or SDK sources are distributed in the native app or public repo.
 
 from pathlib import Path
 import secrets
+import threading
+import time
 
 from flask import abort, redirect, request, session
 
@@ -26,12 +28,46 @@ class SharedIdentity:
         self.client = Client(options)
         self.store = LinkStore(directory / "sessions.sqlite", options, key)
         self.enabled = options.enabled
+        configured = cfg["providers"]["lazyingart"].get("selected_providers", [])
+        if (not isinstance(configured, list)
+                or any(not isinstance(p, str) or p not in {"google", "apple", "github", "lazyingart"} for p in configured)):
+            raise ValueError("Invalid shared sign-in provider selection")
+        self.selected = frozenset(configured)
+        self._selection_cache = (0, ())
+        self._selection_lock = threading.Lock()
 
-    def start(self):
+    def selections(self):
+        """Cache presentation only; the SDK rechecks discovery at authorization."""
+        discover = getattr(self.client, "available_authorization_providers", None)
+        if not self.enabled or not self.selected or not callable(discover):
+            return ()
+        with self._selection_lock:
+            if time.monotonic() >= self._selection_cache[0]:
+                try:
+                    names = discover()
+                    if (not isinstance(names, (list, tuple))
+                            or any(not isinstance(p, str) or p not in {"google", "apple", "github", "lazyingart"} for p in names)):
+                        raise self.error("discovery_not_qualified")
+                    choices = tuple(p for p in ("google", "apple", "github", "lazyingart")
+                                    if p in self.selected and p in names)
+                except self.error:
+                    choices = ()
+                self._selection_cache = (time.monotonic() + 30, choices)
+            return self._selection_cache[1]
+
+    def start(self, provider=None):
         binding = secrets.token_urlsafe(32)
-        session["shared_browser"] = binding
         try:
-            return redirect(self.client.authorize(self.store, binding))
+            if provider is not None:
+                if provider not in self.selections():
+                    abort(503, description="This sign-in method is currently unavailable.")
+                target = self.client.authorize(self.store, binding, provider=provider, reuse_consent=True)
+            elif "lazyingart" in self.selections():
+                target = self.client.authorize(self.store, binding, provider="lazyingart", reuse_consent=True)
+            else:
+                target = self.client.authorize(self.store, binding)
+            session["shared_browser"] = binding
+            return redirect(target)
         except self.error:
             abort(503, description="Account service is unavailable. Your drafts are preserved.")
 

@@ -12,6 +12,7 @@ import requests
 from .store import THEMES, audit, database, limits, uid
 from .generation import capabilities as generation_capabilities
 from .local_video_lifecycle import status as animation_status
+from .auth import provider_choices
 
 
 def clean_rows(rows, maximum, old=None):
@@ -345,7 +346,7 @@ def register_studio(app, cfg):
         if provider is not None:
             if not isinstance(provider, str) or provider not in {"google", "apple", "github", "lazyingart"}:
                 abort(400, description="Choose a supported sign-in method.")
-            if not cfg.get("providers", {}).get(provider, {}).get("enabled"):
+            if provider not in provider_choices(cfg, app.extensions.get("westicker_shared_identity")):
                 abort(503, description="This sign-in method is currently unavailable.")
         id = uid()
         with database(cfg) as db:

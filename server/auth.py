@@ -15,6 +15,13 @@ import requests
 from .store import database, uid
 
 
+def provider_choices(cfg, shared=None):
+    selected = shared.selections() if shared else ()
+    return [p for p in ("google", "apple", "github", "lazyingart")
+            if p in selected or (cfg.get("providers", {}).get(p, {}).get("enabled")
+                                and not (shared and p != "lazyingart" and p in shared.selected))]
+
+
 def register_auth(app, cfg):
     oauth = OAuth(app)
     providers = cfg.get("providers", {})
@@ -25,7 +32,7 @@ def register_auth(app, cfg):
         app.extensions["westicker_shared_identity"] = shared
         providers["lazyingart"]["enabled"] = shared.enabled
     for name, options in providers.items():
-        if not options.get("enabled") or name == "lazyingart":
+        if not options.get("enabled") or name == "lazyingart" or (shared and name in shared.selected):
             continue
         common = {
             "client_id": options["client_id"],
@@ -116,6 +123,18 @@ def register_auth(app, cfg):
 
     @app.get("/auth/<provider>/start")
     def start(provider):
+        keys = ("web_destination", "native_intent", "shared_browser")
+        previous = {key: session[key] for key in keys if key in session}
+        try:
+            return start_checked(provider)
+        except Exception:
+            # An unavailable second choice must not break a pending callback.
+            for key in keys:
+                session.pop(key, None)
+            session.update(previous)
+            raise
+
+    def start_checked(provider):
         # Only app-owned tabs may be restored; this is not an open redirect.
         session.pop("web_destination", None)
         destination = request.args.get("view")
@@ -132,12 +151,18 @@ def register_auth(app, cfg):
                 abort(410, description="Sign-in expired. Return to WeSticker and try again.")
             session["native_intent"] = {"id": link, "expires": row["expires"], "return": request.args.get("native_return") == "1"}
         options = providers.get(provider, {})
-        if not options.get("enabled"):
+        selected_shared = shared and provider != "lazyingart" and provider in shared.selected
+        if ((selected_shared and not shared.enabled)
+                or (not options.get("enabled") and not selected_shared)):
             abort(503, description="This sign-in provider is not connected yet.")
         app.extensions["westicker"]["throttle"](
             "oauth:" + request.remote_addr, 20, 3600
         )
         callback = cfg["origin"] + "/auth/" + provider + "/callback"
+        if selected_shared:
+            # Social choices still return through the single shared callback and
+            # stable issuer/subject. Explicit choice never reuses a local cookie.
+            return shared.start(provider)
         if provider == "lazyingart":
             if shared:
                 try:
@@ -202,7 +227,7 @@ def register_auth(app, cfg):
     @app.get("/auth/<provider>/callback")
     def callback(provider):
         options = providers.get(provider, {})
-        if not options.get("enabled"):
+        if not options.get("enabled") or (shared and provider != "lazyingart" and provider in shared.selected):
             abort(404)
         if provider == "lazyingart":
             if shared:
