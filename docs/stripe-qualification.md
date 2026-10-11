@@ -270,14 +270,43 @@ genuine signed provider receipt, durable inbox completion and one entitlement
 grant **before** any Restore or worker call. No shared route edit is authorized
 merely by this documented prerequisite.
 
+### October 12 Public Delivery Follow-Up
+
+The isolated HTTPS webhook route is now qualified. This supersedes the earlier
+403 result for that test route, not the separate production activation gate.
+
+- One temporary, POST-only exact path on the WeSticker hostname forwarded to a
+  separate loopback tunnel and isolated database. Production routing, accounts,
+  firewall and static release were preserved.
+- Missing signatures returned 400; GET returned 405; production health stayed 200.
+- Stripe delivered genuine test-mode `invoice.paid` and
+  `customer.subscription.created` events. Raw bodies and signing headers passed
+  unchanged. No event was locally re-signed or injected as provider delivery.
+- The invoice granted Pocket and three credits exactly once before any Restore
+  or manual reconciliation call. The simultaneous subscription notification
+  initially returned 503 after durable capture; Stripe retried it successfully.
+  Both inbox entries ended `done`, with one grant after all three deliveries.
+- The subscription was created through Stripe's API with its no-money test Visa.
+  This is public delivery evidence, not a new browser Checkout or real payment.
+- The owned test subscription was canceled, endpoint deleted and temporary Portal
+  configuration disabled. The exact site bytes were restored; root ingress and
+  firewall were unchanged. Local and remote test ports were verified closed.
+
+Private evidence is under `.runtime/stripe-browser-qa/20261012-public-webhook-01/`,
+including `public-delivery-result.json`, delivery receipts, route install/restore
+hashes and cleanup. The private `stripe_webhook_probe.py` and
+`stripe_webhook_edge.py` helpers preserve the exact-run and rollback guards.
+No production credential or sales flag changed.
+
 ## Remaining Release Gates
 
 The deployed runtime has no Stripe credentials. The isolated browser Checkout,
 Restore, Portal opening/cancellation and real-provider bounded-worker cases now
 passed; they do not qualify the deployed endpoint. Before sales authorization,
 configure/prove its exact app-owned test webhook/secret and schedule the parent's
-worker with qualified credentials. Real public webhook delivery, plan changes,
-dispute resolution and asynchronous payment methods remain unqualified. Resolve
+worker with qualified credentials. Public delivery has passed in isolation;
+the deployed production endpoint, plan changes, dispute resolution and
+asynchronous payment methods remain unqualified. Resolve
 the hosted Pocket/Creator label discrepancy before opening sales. Keep
 `stripe_purchase_enabled=false` until explicit approval for the exact deployed
 contract. Native IAP and creator sales remain separate.

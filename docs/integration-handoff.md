@@ -29,9 +29,12 @@ no token is carried in the URL. Account deletion revokes every app-bound session
 for that subject before SDK erasure and local deletion. Native purchases remain
 independent of identity.
 
-Latest inspected central account receipt reported password login active and
-Google/Apple/GitHub not yet activated there. Do not infer that WeSticker social
-login is live because an unrelated app has a login button.
+Current central discovery reports password, Google and Apple enabled; GitHub
+remains disabled. Google has also passed the actual WeSticker round trip.
+Apple reached an existing-account collision and needs explicit dual-proof linking.
+The provider selector contract remains issuer-owned work. See
+[dated provider evidence](social-auth-qualification-20261011.md); central enablement
+alone does not qualify an app login button.
 
 ## Direct web providers
 
@@ -80,10 +83,12 @@ receipts, restore purchases, subscription management and store notifications.
 Native StoreKit 2 and Play Billing bridges, a separate native plans UI and fresh
 server verification now exist; see [native billing](native-billing.md).
 Purchases remain disabled until actual store lifecycle tests pass. Stripe
-checkout remains unavailable in native builds. The bridge implementation belongs
-to the preserved prototype, not the current SwiftUI/Compose catalog beta.
-Port purchase UI and system-browser login to the native hosts, then perform
-real provider lifecycle tests before enabling creator subscriptions.
+checkout remains unavailable in native builds. Native SwiftUI and Compose now
+include purchase/restore contracts and system-browser login with independent PKCE;
+the old Capacitor bridge is historical, not the current host. Current internal
+builds and their exact runtime test scope are recorded in
+[native delivery](native-protected-create-20261011.md). Provider purchase lifecycle
+tests remain necessary before enabling subscriptions.
 
 ## Sources checked
 

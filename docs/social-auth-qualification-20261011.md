@@ -1,6 +1,6 @@
 # Social Sign-In Qualification
 
-Updated 11 October 2026, 16:45 UTC (12 October locally). Public Stickers and the separate,
+Updated 11 October 2026, 17:22 UTC (12 October locally). Public Stickers and the separate,
 authenticated Create workflow remain app-owned. This investigation changed no
 application source, provider configuration, activation flag or store release.
 
@@ -18,7 +18,7 @@ Those central proofs are distinct from a completed WeSticker login.
 | Google through LazyingArt | Normal first-sign-in registration, real Google callback, profile-only app consent, WeSticker callback/session, creator consent and Create workspace all passed. | The permanent owner account is retained. Fresh provider reauthentication and Apple linking are separate checks. |
 | LazyingArt SSO reuse | After app logout, a new consent round-trip reused the exact local account and opened Create. Cancellation returned to the dedicated login screen; consumed app callback replay returned 401 without invalidating the current session. | No new password or forced refresh test was performed in this continuation. |
 | Apple through LazyingArt | Normal first-time registration fields, terms/age consent, saved Apple authentication and ordinary Apple Continue reached the real central callback. | The callback returned `account_exists_use_sign_in`. No successful Apple-to-WeSticker session is claimed; explicit linking must preserve the existing Google-created owner account. |
-| GitHub through LazyingArt | Latest discovery reports disabled. Expanded browser recovery found actual authenticated owner settings access and confirmed the existing dedicated central registration with both callbacks. | Issuer owner has the exact retained browser/tab for credential recovery and real callback qualification. Do not duplicate the registration. Console access is not working GitHub app login. |
+| GitHub through LazyingArt | Latest discovery reports disabled. Expanded browser recovery found actual authenticated owner settings access and confirmed the existing dedicated central registration with both callbacks. | Credential provisioning and callback qualification await issuer pickup. The recovered browser closed after the bounded watch; its original profile and exact reopen procedure are preserved privately. Do not duplicate the registration. Console access is not working GitHub app login. |
 
 The completed Google round-trip returned HTTP 200 bootstrap with an authenticated
 user; normal app creator consent was accepted and the actual Create workspace
@@ -97,7 +97,21 @@ app login route and must not treat this requested contract as implemented.
 
 ## Repeated Consent Diagnosis
 
-A fresh real-browser trace with the retained authenticated app session found:
+The app-owned session-reuse fix is now independently verified in the real retained
+owner browser. At 16:54 UTC, bootstrap returned 200 with an authenticated account;
+`/auth/lazyingart/start?view=library` returned 302 directly to the app Library
+destination (`view=library`), without visiting issuer authorization or consent.
+The trace retained host, path and `view`, not the complete query string; it does
+not establish the presence or absence of other parameters such as `welcome=1`.
+The subsequent bootstrap returned 200 with the same nonempty local
+account ID. A separate settled-page check confirmed the visible Library heading,
+Library tabs and creation library, with no login screen. Both owned tabs closed;
+the retained account/session and other owners' tabs were preserved. No new OAuth
+exchange, account, chat, render or purchase was needed. This closes the unnecessary
+redirect for a currently valid app session; it does not qualify expired-session
+login, provider selection or issuer consent reuse.
+
+Before that fix, the 16:27 UTC real-browser trace found:
 
 1. App bootstrap returned 200 with an authenticated user.
 2. An explicit visit to `/auth/lazyingart/start` returned 302.
@@ -108,11 +122,11 @@ A fresh real-browser trace with the retained authenticated app session found:
 5. Returning to the app without submitting the form preserved the existing app
    account/session. The owned trace tab was closed; no exchange remains active.
 
-This reproduces repeated consent, not a redirect loop or lost cookie. The active
+That reproduced repeated consent, not a redirect loop or lost cookie. The active
 issuer's profile authorization GET unconditionally renders consent after checking
 the central session; it does not consult a reusable profile-consent grant. The
-app start also creates a new authorization attempt whenever invoked. The parent
-can avoid unnecessary starts when the intended app session is already valid.
+old app start also created a new authorization attempt whenever invoked. The
+parent's deployed fix now avoids that unnecessary start for a valid session.
 
 Remembering consent requires issuer-owned durable grants and qualification, not
 auto-clicking Continue or skipping authentication. A proposed implementation must
@@ -137,12 +151,30 @@ normal reopening of an inactive, previously owner-selected saved profile reached
 authenticated GitHub developer settings and the existing central application's
 actual settings page. Both expected callbacks were present. No profile/cookie
 copy, token injection, MFA bypass, registration or secret-generation action was
-used. The issuer owner received the exact retained browser/tab for recovery;
+used. The issuer handoff records the exact recovered browser/profile for recovery;
 no current blanket owner-login blocker is claimed. Separate XYQ and preserved
 OnlyIdeas profile checks reached sign-in, and their temporary inspection windows
-were closed. The recovered owner browser is retained solely for issuer recovery,
-with its cleanup ownership recorded privately. No provider contract or callback
+were closed. The recovered owner browser was subsequently closed normally at
+the bounded-watch deadline; its saved profile and reopen instructions remain
+preserved privately. No provider contract or callback
 qualification is inferred from that recovered console access.
+
+At 17:00 UTC discovery still reported GitHub disabled and no provider-selection
+extension. Read-only inspection of the existing dedicated GitHub registration
+also confirmed an enabled new-client-secret control. No secret was generated:
+issuer delegation and a private credential destination were requested, not
+received. This is console capability evidence, not credential provisioning or a
+passed code exchange; a protected action could still require normal Confirm
+access. A source-informed, explicitly proposed integration plan is prepared
+privately for the issuer. No proposed selector field is a supported contract.
+
+The bounded handoff watch ended at 17:22 UTC without a supported contract,
+explicit implementation/provisioning delegation or issuer response file. The
+consolidated pickup request remains in the issuer's actual shared queue; queued
+is not acknowledged or implemented. With no observed active pickup, only the
+reopened browser was closed, and its process exit and closed port were verified.
+Other browsers, the shared desktop, saved profiles and permanent owner account
+were preserved. No additional account, chat, render or payment call occurred.
 
 Related evidence: [original app login qualification](login-chat-release-20261011.md)
 and [integration ownership](integration-handoff.md). Private central-owner and

@@ -8,7 +8,8 @@ one real-provider qualification and is enabled. A local animation canary passed,
 but public animation remains disabled until its runtime lifecycle is available.
 Social-provider app qualification is recorded [separately](social-auth-qualification-20261011.md).
 Payments remain gated; a real Stripe sandbox Checkout and
-Portal test passed, but public webhook delivery has not. The tables below preserve
+Portal test passed, and genuine public signed webhook delivery passed against
+isolated test state. Production payment activation remains separate. The tables below preserve
 the earlier October 10 release record, not the current build numbers or gates.
 
 **Status: public catalog and login/chat beta, not ready for customer payments.**

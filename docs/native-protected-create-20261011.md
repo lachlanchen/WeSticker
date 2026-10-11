@@ -1,8 +1,19 @@
 # Native Protected Create
 
-Owner correction, started 2026-10-11; interim internal delivery completed 2026-10-12.
-This supersedes the anonymous-chat entry policy, not the preserved historical
-build receipts. No formal review, purchases or sales activation are authorized.
+Current unified-auth delivery, 2026-10-12. This supersedes the anonymous-chat
+entry policy and interim tab-level login UI, not their historical receipts.
+No formal review, purchases or sales activation are authorized.
+
+## Current Delivery
+
+| Platform | Current Build | Verified Delivery | Receipt under `.runtime/releases/` |
+| --- | --- | --- | --- |
+| Android | 1.0 (12) | Available to internal testers; not reviewed | `android-1.0-12/play-receipt.json` and `.png` |
+| iOS | 1.0 (13) | VALID / IN_BETA_TESTING; WeSticker Internal, one tester | `ios-1.0-13/testflight.json` |
+| macOS | 1.0 (10) | VALID / IN_BETA_TESTING; WeSticker Internal, one tester | `macos-1.0-10/testflight.json` |
+
+These are the only current candidates. Prior builds are explicitly historical
+below. Provider discovery changes do not require another binary.
 
 ## Current Source
 
@@ -26,7 +37,11 @@ build receipts. No formal review, purchases or sales activation are authorized.
 - The explicit SwiftUI scroll/composer VStack and Compose keyboard insets remain.
   There is no native Stripe checkout link. Native sales remain disabled.
 
-## Qualification
+## Current Qualification
+
+Final source checkpoint: `052f2f0de78660ba2b51ef46fe5cfbded4b2d240`.
+Native input hashes: `.runtime/native-shared-auth-20261012/source-sha256-052f2f0.txt`.
+The older checksum snapshot is retained for held-candidate provenance only.
 
 Shared-route source checks: 28 passed across protected entry, native catalog,
 native purchase contracts, fixture discovery and stopped-simulator cleanup.
@@ -34,16 +49,112 @@ Receipt: `.runtime/native-shared-auth-20261012/source-contracts.xml`.
 Kotlin recovery42 and the cached-SDK Compose Account typecheck passed. Swift root,
 cloud and release-test parser checks passed. These checks are not runtime UI or
 live OAuth receipts. The final candidates are Android12, iOS13 and macOS10;
-delivery and new visual QA are pending. Additional qualified providers are a
+All three are internally available. Additional qualified providers are a
 server-discovery change and do not require another binary.
+
+Android12's exact signed APK passed the shared-root public navigation, dismissal,
+saved local draft restart, preview, native sharing and GIF pause/resume checks.
+GIF unique frames were 5/1/5. The live LazyingArt-only auth and public catalog
+captures were visually reviewed; the owned emulator was stopped. Receipt:
+`android-1.0-12/qa/result.json`. Play readback confirms build12 available to
+internal testers, released 2026-10-12 01:05 HKT, not reviewed. Receipts:
+`android-1.0-12/play-receipt.json` and `.png`. Only missing deobfuscation/debug
+symbols were recommended; no release errors or supported-device losses.
+The held Android11 draft was discarded while retaining its uploaded bundle in
+the provider library and its local upload/QA evidence.
+
+Android12 APK SHA-256:
+`75ec7cec58f920050af9dc78604aa888d9a1cf0bc0e0b29b37ddca354483ae02`.
+Android12 AAB SHA-256:
+`2b8a263faed46fd37e8921e500ced4eac2fd43c178e97f7b6d130dc50a306eee`.
+Current reviewed captures: `android-1.0-12/qa/creator.png` (live root auth),
+`qa/01-catalog.png` (public starting view), and `qa/library-to-login.png`.
+
+iOS13 is archived/exported from the final source. All six XCTest cases passed
+with zero failures (227.568 seconds): catalog/GIF/share, saved draft persistence,
+visible/hittable composer typing and keyboard/tab return, expiry/unavailable
+discovery, live shared-route entry and fixture destination/provider cancellation.
+Each configured fixture provider sent its selected name and valid S256 challenge;
+all four system-auth consent cancellations returned to the hittable public catalog
+before browser navigation. This does not prove a real issuer round trip.
+The fixture recorded no unexpected requests, real authentication or model/store
+actions. The simulator was shut down and its fixture-origin preference cleared.
+IPA SHA-256:
+`a329dd677de6008bdd29c28eb4783d38ac11cd408eb4fa1786d9ce3285fef541`.
+Apple validation/upload succeeded. Readback confirms iOS13 VALID and
+IN_BETA_TESTING in the existing WeSticker Internal group with one tester.
+Receipt: `ios-1.0-13/testflight.json`; build/delivery ID
+`5d390e0c-f993-462e-b6e9-07eb10d254ee`. No external or formal review was submitted.
+
+macOS10's universal arm64/x86_64 archive/export passed. The app's deep/strict
+signature and the existing Apple-issued Mac installer signature were verified.
+PKG SHA-256:
+`fc3075a59847748541b01d345a7904189c24f7c6bfab7c296b4a310a77050705`.
+Apple validation/upload succeeded, delivery ID
+`88e5edb1-9fc7-42ff-a936-95ee0e93e6fb`. Readback confirms VALID and IN_BETA_TESTING
+in WeSticker Internal with one tester; receipt `macos-1.0-10/testflight.json`.
+No new Mac GUI-pass claim: the existing
+SSH AppKit/SwiftUI capture limitation remains, without another probe or redesign.
+Both existing app and installer keychains are locked again.
+
+## Current Screenshots
+
+Android12's reviewed root auth, catalog and Library-entry captures are under
+`android-1.0-12/qa/` as listed above. Current iOS13 captures, visually reviewed
+under `ios-1.0-13/qa-images/`:
+
+- Live shared root auth: `E5C0E5F5-495D-4345-857D-2FB1224A0BC5.png`.
+- Public starting catalog: `5E893B1D-1998-43D4-9C5F-BCEF40DA04F3.png`.
+- Authenticated fixture composer: `4B5B95BD-A8E0-4F97-A7D2-067E3FA0EA9F.png`.
+- Fixture keyboard, typed but unsent: `E54EC562-74BB-4DE5-BEE3-3CC48F9E5770.png`.
+- Four-provider layout, fixture only: `6D399C47-02F5-42E2-9492-489D7CB9CDE9.png`.
+- Fixture cancellation to catalog: `9E5069EC-3FE0-46B8-BD5A-A58DBC823374.png`.
+
+Live discovery advertised LazyingArt only at capture. Four-provider and
+authenticated layout screenshots are not live OAuth qualification receipts.
+
+## Current Sync and Cleanup
+
+Current Android12 APK/AAB, iOS13 IPA and macOS10 PKG are copied and hash-verified
+in the owner's `Share/WeSticker/2026-10-12-unified-auth/` Nutstore folder, alongside
+per-platform evidence. This proves local folder contents, not completed cloud
+synchronization. Final provider receipts are included in each release folder.
+
+Android5588, the owned iOS simulator and loopback fixture are stopped. Temporary
+iOS QA source was removed and its fixture-origin preference cleared. Existing
+app and installer keychains are locked. No owned build, app, emulator, simulator
+or fixture server remains running. Shared store browser/VM and other projects
+are preserved. Final host check: 56 GiB available RAM; swap70/135 GiB.
+
+Current source hashes and both 28-test JUnit receipts are under
+`.runtime/native-shared-auth-20261012/`; the final repeat passed in 1.77 seconds.
+Reviewed capture hashes are in `reviewed-screenshots-sha256.txt` there.
+
+```sh
+.venv/bin/python -m pytest -q tests/test_native_login_gate.py tests/test_native_ui_fixture.py tests/test_native_purchase_clients.py tests/test_native_catalog.py
+```
+
+Current UI runners: `scripts/android_smoke.py --creator --account` against the
+exact Android12 APK, and `scripts/apple_release_qa.py ios --build 13` against the
+source-matched Apple candidate. Complete logs and artifact manifests are retained
+under `.runtime/releases/<platform>-1.0-<build>/`.
+
+No real OAuth account, model call or purchase was used for this release QA. The
+previous disposable native identity was already deleted. Parent owns social
+qualification, web/backend, README/translations and all commits. Since source
+checkpoint `052f2f0`, this worker changed only this tracked delivery doc; runtime
+receipts are private and no worker commit was made.
+
+## Historical Held Candidates
 
 Android11 and iOS12 were signed/exported once before the final browser-cancel
 routing fix. Android11 passed exact-APK release smoke, with GIF counts 5/1/5,
-and its AAB is uploaded to a Play draft only, not internally released. iOS12
+and its AAB was uploaded to a Play draft only, not internally released. That
+owned draft is now discarded, with the uploaded bundle retained in the library. iOS12
 is not uploaded: five of six XCTest cases passed, including root navigation,
 intended Create/Library/Account restoration and the four-provider fixture. Two
 assertions in the expiry case failed because the test omitted the explicit
-Library refresh; the harness is corrected for the next run. Its visible composer
+Library refresh; the corrected harness subsequently passed against iOS13. Its visible composer
 and four-provider fixture captures were reviewed, but the suite is not a pass.
 These two candidates are preserved and do not represent the final cancellation
 behavior: cancelling the system browser now clears the root gate and returns
@@ -55,36 +166,25 @@ the shared live login/local-draft checks, then failed an experimental loopback H
 provider fixture because the release APK correctly blocks cleartext HTTP. Failed
 evidence is preserved in `android-1.0-11/qa-http-fixture-blocked/`; it is not a
 four-provider screenshot or a passed release run. No app security policy was
-relaxed and no binary rebuilt. The release smoke is rerun on the same APK without
+relaxed and no binary rebuilt. The release smoke was rerun on the same APK without
 that unsupported fixture; iOS provides the separate four-provider fixture scope.
 The rerun passed after a separate startup-only /sdcard readiness failure; both
 failed attempts are retained. UI dumps now use fresh task-unique temporary paths.
 
-The interim delivery below had 21 passing checks across protected entry, native catalog,
-native purchase contracts and the layout fixture. These are not provider receipts.
-Retained recovery suites also passed: Kotlin 42 checks and Swift 37 checks,
-without store/network access. The cached-SDK Compose Account typecheck passed.
-
-Release UI tests distinguish live public bootstrap/navigation from a loopback-only
-authenticated layout fixture. That fixture has no credentials or model/store
-operations; composer typing remains unsent. It tests visible/hittable input,
-keyboard clearance, tab return, expired-session refresh and unavailable provider
-presentation. It is not evidence of a new live OAuth round trip.
-
-The previously qualified disposable live native identity was deleted. No new
-identity or owner-account authentication is performed by this release worker.
-Central provider qualification remains with its owner.
-
-## Interim Candidates
+## Historical Interim Delivery
 
 These accepted binaries predate the shared-route correction. Their screenshots
 remain interim evidence, not proof of the current source's unified authentication.
 
-| Platform | Candidate | Current State |
+| Platform | Historical Build | State Recorded at Interim Delivery |
 | --- | --- | --- |
 | Android | 1.0 (10) | Exact-APK QA passed; available to Play internal testers, not reviewed |
 | iOS | 1.0 (11) | Five XCTest cases and visual review passed; VALID and IN_BETA_TESTING in WeSticker Internal |
 | macOS | 1.0 (9) | Universal archive/export and signatures passed; VALID and IN_BETA_TESTING in WeSticker Internal; GUI limitation below |
+
+The interim suite had 21 passing source checks, with Kotlin42/Swift37 recovery
+checks and cached Compose Account typecheck. Its 21-test JUnit receipt remains
+under `.runtime/native-protected-create-20261011/`; this is not the current suite.
 
 Android10's exact signed APK passed public initial Home, protected Create,
 Account-to-login, nested Characters, local-draft restart, preview and native
@@ -132,34 +232,12 @@ Reviewed interim captures, relative to `.runtime/releases/`:
 
 Do not label fixture chat as a fresh live authentication or model response.
 
-macOS GUI qualification retains the previously disclosed SSH capture/accessibility
-limitation. No repeated GUI probe or product redesign is planned to work around
-that test-host limitation; compile, signature and source checks are separate.
-There is no new macOS GUI-pass claim and no old guest-chat screenshot presented
-as a current Mac capture. iOS authenticated layout evidence is a fixture, while
-Android's current exact-APK smoke covers signed-out navigation and local use.
+Historical macOS9 GUI QA had the disclosed SSH AppKit/SwiftUI capture limitation;
+its failed probe is retained, not relabeled as a product failure or GUI pass.
+The old `Share/WeSticker/2026-10-12-protected-create/` Nutstore folder contains
+only that earlier Android10/iOS11/macOS9 delivery. It is not the current folder.
 
-No commits are made by this worker. Parent owns the cumulative commit, public web,
-backend, README/translations and general auth coordination.
-
-All four binaries were copied into the existing owner's local Nutstore folder
-`Share/WeSticker/2026-10-12-protected-create/`; copied hashes match the release
-artifacts. Local folder verification does not independently establish cloud sync.
-Android5588, the owned iOS simulator and the loopback fixture are stopped. Existing
-app and installer keychains are locked again. The central owner's shared store
-browser/VM and other projects were preserved.
-
-Focused verification command:
-
-```sh
-.venv/bin/python -m pytest -q tests/test_native_login_gate.py tests/test_native_ui_fixture.py tests/test_native_purchase_clients.py tests/test_native_catalog.py
-```
-
-Native UI runners: `scripts/android_smoke.py --creator --account` against the
-exact Android10 APK, and `scripts/apple_release_qa.py ios --build 11` against the
-source-matched Apple candidate. Their SDK/root/artifact paths and complete logs
-are retained in private release evidence. The final source file hashes and
-21-test JUnit receipt are under `.runtime/native-protected-create-20261011/`.
+## Source Scope
 
 Exact cumulative worker file scope (20 paths, including removals):
 
