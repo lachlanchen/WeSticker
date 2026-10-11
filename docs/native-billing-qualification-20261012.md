@@ -16,6 +16,13 @@ The later actual Android13 login test below found an independent native callback
 cancellation defect. Parent fixed it in Android14; real login persistence and the
 first no-charge purchase/restore now pass. No billing API change was needed.
 
+Current parent checkpoint: Android15 is available to internal testers; iOS14
+and macOS11 remain in TestFlight. Live backend `a0299f0024990686` preserves
+native verification/recovery while new native sales stay closed. All four web
+provider routes and the managed animation lifecycle are now qualified separately.
+The current full checkout suite passes458 tests. Earlier build/test/runtime
+paragraphs below are retained as chronological evidence, not current gates.
+
 Parent reports backend `d720d57b94b16f11` deployed with the sandbox delivery gate
 and catalog diagnostics, native config still off, and a five-minute shared native/
 Stripe reconciliation timer whose initial batch had zero errors. This worker's
@@ -98,7 +105,8 @@ production URL is untouched. The first TEST returned4040007 despite the saved UR
 After independent URL readback and propagation time, one separate recorded TEST
 succeeded and its signature verified online. No unknown payment was retried.
 The authorized team IAP key is distinct from the release-upload key, and uses
-WeSticker-specific request/verifier identity. Production401 remains unresolved.
+WeSticker-specific request/verifier identity. Production401 was initially
+unresolved; the later read-only authorization triage below narrows its cause.
 The earlier unsuccessful public delivery is preserved separately. The new real
 TEST receipt is `release-7ccf64903b559f57/apple-test-status.json`. Read-only live
 database counts after this delivery are zero for native subscriptions, lookups,
@@ -108,8 +116,50 @@ A bounded production401 diagnostic verifies the signing key's local signature,
 exact bundle/header, issuer equality with the app's ASC release configuration and
 five-minute expiry. The official SDK token and a fresh token with explicit `iat`
 both return Sandbox200 and Production401. No key was changed. Production access
-remains unqualified; do not assert that app review/release will fix it without a
-new successful provider check. Apple Sandbox purchase testing is independent.
+remains unqualified without a new successful provider check. Apple Sandbox
+purchase testing is independent.
+
+### Apple Production401 authorization triage
+
+At04:10HKT, fresh ASC GETs for the exact WeSticker app and its complete version
+list returned200. Only iOS1.0 and macOS1.0 exist, both
+`PREPARE_FOR_SUBMISSION`; no released version was observed. Local comparisons
+confirmed live/staged app and IAP credential references match, the key and issuer
+match canonical metadata, the private key bytes match their canonical source,
+and the issuer matches the release configuration. IAP and upload keys remain
+distinct; key group/other permissions are zero. The release config contains a
+Mac-local upload-key path; this Linux read used the existing canonical local
+copy with the same key ID in memory, without rewriting configuration.
+
+At04:12HKT the existing authorized ASC browser independently showed the configured
+IAP key in its single Active row and the matching issuer. Private receipts are
+`apple-authorization-context.json`, `apple-iap-key-active.json` and its protected
+screenshot. Only navigation/readback occurred; Generate, Edit, Download and Revoke
+were not used. The owned inspection tab was closed; shared browser/peer tabs remain.
+
+An [Apple App Store Commerce Engineer states that production API access requires
+a production release](https://developer.apple.com/forums/thread/806452).
+WeSticker's draft-only state is consistent with that restriction. This is a
+provider-supported diagnosis, not a successful production authorization receipt
+or proof of exact activation timing. No inactive/mismatched key or missing
+app-specific grant was identified, so no rotation, wider role grant or sibling
+app change is indicated. The canonical key owner's04:12HKT response confirms the
+existing IAP reference is correct and authorized for this WeSticker scope; no
+duplicate provisioning or wider grant is needed. That response is a private
+credential/path handback, not a new provider test; the Active UI readback above
+is this worker's separate direct evidence.
+
+The remaining production prerequisite is the ordinary authorized WeSticker
+app/product review and production release, followed by a fresh read-only
+Production Server API check before opening production native sales. Do not
+publish merely as a diagnostic or claim approval alone enables access. If401
+persists after release, escalate the preserved app-specific correlation receipts
+to Apple through the canonical operator. Do not add an authorization-error
+fallback: existing WeSticker verification explicitly selects and verifies the
+allowed environment; EchoMind's established pattern also does not downgrade401.
+This continuation sent no StoreKit request, notification TEST or purchase,
+changed no provider/config/source state, and left Apple's pilot closed. No Mini
+GUI allocation response was present at the bounded continuation check.
 
 Google uses a newly provisioned dedicated WeSticker Publisher identity and private
 mode0600 credential, with no Cloud project roles. Normal runtime access is exactly
@@ -351,6 +401,11 @@ condition, not a claim the iPad is off or requires a new owner login. The validl
 pinned Mini remains preferred after its active owner returns or allocates a lane.
 The current SHI binding and live player were rechecked without GUI input; an
 explicit bounded response was requested, with no automatic takeover at expiry.
+At03:50HKT neither owner had returned a response or allocated slot; polling stopped
+at that bound. Queue acceptance is not a GUI grant. Parent then confirmed healthy
+API `b5c8cdd2055b6752` with official SDK `4eb95cfa`, Google new purchases closed
+and Apple unchanged. API cutover is no longer a blocker for the next coordinated
+Apple session. No Apple native install, product sheet or payment is claimed yet.
 
 ## Evidence and tests
 

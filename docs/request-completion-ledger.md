@@ -19,7 +19,7 @@ customer content and runtime addresses remain in private handoffs.
 | Real animated sticker generation | Two real sequential items passed the managed start, unload, drain and stop lifecycle; enabled on the live service | Prompt/visual acceptance remains per result; the canary is not a publication-ready pack |
 | Web subscription payments | Live app-owned catalog/Portal/webhook and recovery timer active; web subscriptions enabled after actual sandbox lifecycle and live nonfinancial delivery tests | Ongoing monitoring; native IAP and advanced plan changes remain separate |
 | Subscriber default sticker downloads | Deployed app-owned access routing; all three language ZIPs, guest/expiry and network errors tested; 30 production archives pass CRC checks; live mobile login route verified | Keep AYA orders independent |
-| Native subscriptions | Google Play no-charge purchase, restart, restore, real renewal, cancellation, paid-through access and expiry verified; one grant per period. Apple signed Sandbox TEST delivery succeeded | Apple native product/purchase qualification and production API authorization; broader native sales remain closed. TEST is not a purchase |
+| Native subscriptions | Google Play no-charge purchase, restart, restore, real renewal, cancellation, paid-through access and expiry verified; one grant per period. Apple signed Sandbox TEST delivery succeeded; configured IAP key independently verified Active | Apple installed native product/purchase test awaits the shared Mac GUI lane; production API needs app release and a successful fresh check. Broader native sales remain closed. TEST is not a purchase |
 | User-created packs for sale | Moderation and payout gates implemented | Verified creator onboarding and commercial operations before enabling sales |
 | Optional WeChat draft uploader | Save-only safety contracts implemented | Customer-isolated browser/container lifecycle and live draft qualification |
 | Clean, lively tab layouts | Compact top-left headers, restrained motion and reviewed PWA/Android/iOS screenshots; exact Android APK and six iOS XCTest cases passed | Full installed macOS layout capture; preserve platform parity |
@@ -31,6 +31,27 @@ chat/login browser checks. Android 15 also verifies current About copy, three
 configured provider labels at capture time, local draft persistence, share and
 GIF pixel changes (5 playing / 1 paused / 5 resumed). Provider visibility can
 change through qualified service configuration without rebuilding the app.
+
+## Remaining Completion Boundaries
+
+These are unfinished requirements, not features silently dropped from the plan:
+
+1. Qualify the actual Apple native product sheet and no-charge purchase/restore
+   in an allocated shared Mac lane, then complete the app/product review package.
+   The authorized key is Active; do not rotate it to work around prerelease API
+   restrictions. Production sales require their own successful post-release check.
+2. Complete broader native subscription lifecycle cases and provider-specific
+   native sign-in checks without confusing existing web or fixture evidence.
+3. Qualify creator payout onboarding, moderation and actual marketplace delivery
+   before enabling users' commercial listings.
+4. Qualify customer-isolated WeChat browser provisioning and saved draft readback;
+   the existing agent is draft-only and may not submit platform review.
+5. Localize the app interface. Three GIF lettering languages and 11 README
+   translations do not make the app UI multilingual.
+
+The existing public catalog, authenticated chat, approved image/animation
+generation and web subscriptions remain available while these are completed.
+No broader public store approval or all-features-complete claim is made.
 
 ## Completion Rules
 
