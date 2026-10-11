@@ -19,11 +19,13 @@ the earlier October 10 release record, not the current build numbers or gates.
 Native IAP, public animation and creator marketplace are not yet fully qualified.**
 
 The [completion ledger](request-completion-ledger.md) is the current cross-feature
-audit. Android 13, iOS 14 and macOS 11 are available to internal testers with
+audit. Android 14, iOS 14 and macOS 11 are available to internal testers with
 compact toolbars. Subscriber language-ZIP downloads now remain in
 WeSticker instead of redirecting to the independent AYA checkout. Native signed
 notification handling is deployed with purchase flags closed; genuine Apple
 Sandbox TEST delivery succeeded. Financial sandbox qualification is separate.
+Android 14 additionally fixes the callback self-cancellation found in an actual
+system-browser login; native sign-in and persistence after restart are verified.
 
 ## Current Entry Flow
 

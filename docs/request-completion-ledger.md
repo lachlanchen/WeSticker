@@ -9,8 +9,8 @@ customer content and runtime addresses remain in private handoffs.
 | Default stickers visible without login | Live public catalog, 10 packs and 156 animations; three lettering languages | Preserve public access during creator changes |
 | Compact pack list with GIFs immediately visible | Implemented and browser-tested; native GIF play/pause/resume pixel checks passed; compact PWA and native headers delivered | Full installed macOS window QA remains separate from its native GIF component test |
 | Independent app and PWA | Independent HTTPS origin; native SwiftUI iOS/macOS and Compose Android | Keep platform parity; no WebView replacement |
-| Test-build delivery | Android 13 internal; iOS 14 and macOS 11 VALID and in internal TestFlight with compact toolbars | Ongoing service qualification; not public store approval |
-| One root login outside tabs | Implemented on web and native; intended destination and draft preserved | Retest after provider completion |
+| Test-build delivery | Android 14 internal; iOS 14 and macOS 11 VALID and in internal TestFlight with compact toolbars | Ongoing service qualification; not public store approval |
+| One root login outside tabs | Implemented on web and native; Android 14 fixes an actual callback cancellation defect and remains signed in after restart | Retest direct provider entries after issuer completion |
 | Google, Apple, GitHub and LazyingArt login | LazyingArt, Google and Apple-through-LazyingArt verified end to end; Apple explicit linking and a separate Apple-only login retain the original account | GitHub activation and supported direct-provider routing qualification |
 | Create and Agent merged into chat | Conversation-first Create, references, editable revisioned sticker plan and explicit application | Keep chat uncluttered and complete real render delivery tests |
 | Characters and generated work in Library | Account-scoped characters, references, collections and artifacts implemented | Ongoing cross-platform regression checks |
