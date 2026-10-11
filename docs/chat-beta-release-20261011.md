@@ -1,5 +1,8 @@
 # Chat Workspace Internal Release
 
+Historical earlier release. The [login/chat update](login-chat-release-20261011.md)
+supersedes its build numbers and pending password-login status.
+
 Verified 11 October 2026. Create and Agent share one workspace, with editable
 caption/action tables, Library and Characters. The saved on-device photo editor
 remains accessible. iOS and macOS are SwiftUI; Android is Compose, not WebViews.

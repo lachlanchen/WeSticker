@@ -52,6 +52,7 @@ export type Item = {
 };
 export type Draft = {
   id: string;
+  character_id?: string | null;
   title: string;
   theme: string;
   language: string;

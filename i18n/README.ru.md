@@ -6,7 +6,7 @@
 
 *Ваш персонаж. Эмоции на каждый день.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Независимая студия стикеров Aya и друзей, личных персонажей и авторских наборов. Стандартные работы доступны без входа; личные фотографии обрабатываются в закрытой рабочей области. Существующий магазин AYA не изменён.
 
@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Create и Agent объединены: доступны редактируемые таблицы подписей и действий, библиотека и персонажи. iOS 1.0 (6), macOS 1.0 (5) и Android 1.0 (5) доступны внутренним тестировщикам. Отдельное веб-приложение: https://westicker.lazying.art. Общая регистрация, генерация изображений и анимации и платежи ещё не прошли полную проверку; это не запуск завершённого сервиса создания.
+**2026-10-11** · Вход по паролю LazyingArt и создание через чат доступны на https://westicker.lazying.art. Начните разговор, добавьте референсы позже и отредактируйте план стикеров. Внутренние тестовые версии: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Вход через социальные сервисы, генерация изображений и анимации ИИ и платежи пока отключены.
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ python3 scripts/dev.py start
 
 ## Проверки
 
-Пройдены 72 серверных тестов и два теста безопасности агента. Реальный браузер проверил скачивание, загрузку фото, подтверждение персонажа, фоторежим, тексты, ZIP и удаление аккаунта на мобильной и настольной ширине. Это не проверка реальной оплаты или AI-сервиса.
+Пройдены 77 серверных тестов и два теста безопасности агента. Реальный браузер проверил скачивание, загрузку фото, подтверждение персонажа, фоторежим, тексты, ZIP и удаление аккаунта на мобильной и настольной ширине. Это не проверка реальной оплаты или AI-сервиса.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Статус выпуска
 
-Create и Agent объединены: доступны редактируемые таблицы подписей и действий, библиотека и персонажи. iOS 1.0 (6), macOS 1.0 (5) и Android 1.0 (5) доступны внутренним тестировщикам. Отдельное веб-приложение: https://westicker.lazying.art. Общая регистрация, генерация изображений и анимации и платежи ещё не прошли полную проверку; это не запуск завершённого сервиса создания.
+Вход по паролю LazyingArt и создание через чат доступны на https://westicker.lazying.art. Начните разговор, добавьте референсы позже и отредактируйте план стикеров. Внутренние тестовые версии: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Вход через социальные сервисы, генерация изображений и анимации ИИ и платежи пока отключены.
 
 ## Цитирование
 

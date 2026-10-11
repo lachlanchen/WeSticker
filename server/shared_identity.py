@@ -42,7 +42,11 @@ class SharedIdentity:
             tokens, identity = self.client.complete(self.store, callback, binding)
             identifier = self.store.save_session(tokens, identity)
             return identity, identifier
-        except (self.error, UnicodeError):
+        except self.error as exc:
+            if exc.code == "authorization_cancelled":
+                return None, None
+            abort(401, description="Sign-in could not be completed. Start a fresh sign-in; your draft is preserved.")
+        except UnicodeError:
             abort(401, description="Sign-in could not be completed. Start a fresh sign-in; your draft is preserved.")
 
     def associate(self, user_id, identity, identifier):
@@ -78,4 +82,16 @@ class SharedIdentity:
         with database(self.cfg) as db:
             row = db.execute("SELECT * FROM shared_grants WHERE user_id=?", (user_id,)).fetchone()
         if row:
-            self.store.erase_subject(row["subject"])
+            try:
+                # Each login can leave an app-bound SDK session. Revoke all of
+                # this subject's sessions before erasure, including older logins.
+                with self.store.transaction() as db:
+                    identifiers = [r[0] for r in db.execute(
+                        "SELECT id FROM sessions WHERE subject=? AND state!='revoked'",
+                        (row["subject"],),
+                    )]
+                for identifier in identifiers:
+                    self.store.sign_out(self.client, identifier, expected_subject=row["subject"])
+                self.store.erase_subject(row["subject"])
+            except self.error:
+                abort(503, description="Account deletion is waiting for sign-in revocation. Your data is preserved; please retry deletion shortly.")

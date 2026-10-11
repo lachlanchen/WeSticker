@@ -68,6 +68,7 @@ class CloudStudioStore(val context: Context) {
     var dirty by mutableStateOf(false)
     var error by mutableStateOf<String?>(null)
     var creating by mutableStateOf(false)
+    var sending by mutableStateOf(false)
     var character by mutableStateOf("")
     private var csrf = ""
     private var linkedOrigin = ""
@@ -88,17 +89,20 @@ class CloudStudioStore(val context: Context) {
         }
         return store.getKey(alias, null) as SecretKey
     }
-    fun token(): String {
-        val saved = prefs.getString("token:" + base(), null) ?: return ""
+    fun token(): String = readSecret("token:")
+    private fun readSecret(slot: String): String {
+        val saved = prefs.getString(slot + base(), null) ?: return ""
         return try { val parts = saved.split('.'); val cipher = Cipher.getInstance("AES/GCM/NoPadding")
             cipher.init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, Base64.decode(parts[0], Base64.NO_WRAP)))
             String(cipher.doFinal(Base64.decode(parts[1], Base64.NO_WRAP)), Charsets.UTF_8)
         } catch (_: Exception) { "" }
     }
-    private fun saveToken(value: String) {
+    private fun saveToken(value: String) = saveSecret("token:", value)
+    private fun saveSecret(slot: String, value: String) {
+        if(value.isEmpty()) { prefs.edit().remove(slot + base()).commit(); return }
         val cipher = Cipher.getInstance("AES/GCM/NoPadding"); cipher.init(Cipher.ENCRYPT_MODE, key())
         val encrypted = cipher.doFinal(value.toByteArray())
-        prefs.edit().putString("token:" + base(), Base64.encodeToString(cipher.iv, Base64.NO_WRAP) + "." + Base64.encodeToString(encrypted, Base64.NO_WRAP)).apply()
+        prefs.edit().putString(slot + base(), Base64.encodeToString(cipher.iv, Base64.NO_WRAP) + "." + Base64.encodeToString(encrypted, Base64.NO_WRAP)).commit()
     }
     suspend fun bytes(path: String, body: ByteArray? = null, method: String? = null, content: String = "application/json"): ByteArray {
         val base = base(); val auth = token(); val csrfValue = csrf
@@ -125,6 +129,7 @@ class CloudStudioStore(val context: Context) {
         try { block() } catch (e: Exception) { error = e.message ?: "Request failed" } finally { busy = false }
     }
     suspend fun refresh() {
+        flushLogout()
         if (linkedOrigin != base()) { workspace = null; current = null; rows = emptyList(); selected = emptySet(); quote = null; character = ""; messages = emptyList(); refs = emptyList(); dirty = false; csrf = ""; linkedOrigin = base() }
         val boot = api("/api/bootstrap"); csrf = boot.optString("csrf").takeUnless { it == "null" } ?: ""
         capabilities = boot.optJSONObject("capabilities") ?: JSONObject()
@@ -144,18 +149,40 @@ class CloudStudioStore(val context: Context) {
         refresh()
         val verifier = newStudioID() + newStudioID()
         val challenge = Base64.encodeToString(MessageDigest.getInstance("SHA-256").digest(verifier.toByteArray()), Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
-        val result = api("/api/native/link", JSONObject().put("challenge", challenge))
-        link = result.getString("id") to verifier; return result.getString("url")
+        val result = api("/api/native/link", JSONObject().put("challenge", challenge).put("app_return", true))
+        link = result.getString("id") to verifier
+        saveSecret("pending:", JSONObject().put("id",link!!.first).put("verifier",verifier).put("expires",System.currentTimeMillis()+600000).toString())
+        return result.getString("url")
     }
-    suspend fun finishLogin() {
-        val pair = link ?: return refresh()
+    fun cancelLogin() { link = null; saveSecret("pending:", "") }
+    suspend fun finishLogin(uri: Uri) {
+        if(link == null) readSecret("pending:").takeIf{it.isNotEmpty()}?.let { saved ->
+            val value=JSONObject(saved)
+            if(value.getLong("expires")>System.currentTimeMillis()) link=value.getString("id") to value.getString("verifier")
+        }
+        val pair = link ?: error("Sign-in expired. Please try again.")
+        require(uri.scheme=="art.lazying.westicker" && uri.host=="auth" && uri.path=="/complete" && uri.getQueryParameter("link")==pair.first) { "This sign-in does not match your device." }
         val result = api("/api/native/link/${pair.first}/exchange", JSONObject().put("verifier", pair.second))
-        if (!result.has("token")) { error = "Approve Connect device in your browser, then check again."; return }
-        saveToken(result.getString("token")); link = null; refresh()
+        require(result.has("token")) { "Sign-in has not been approved. Please try again." }
+        saveToken(result.getString("token")); cancelLogin(); refresh()
     }
     suspend fun signOut() {
-        api("/api/auth/logout", JSONObject()); prefs.edit().remove("token:" + base()).apply()
+        saveSecret("logout:", JSONObject().put("token",token()).put("csrf",csrf).toString()); saveToken(""); cancelLogin()
         signedIn = false; csrf = ""; workspace = null; current = null; rows = emptyList(); selected = emptySet(); quote = null; character = ""; messages = emptyList(); refs = emptyList(); dirty = false; link = null
+        flushLogout()
+    }
+    private suspend fun flushLogout() {
+        val pending=readSecret("logout:"); if(pending.isBlank()) return
+        val origin=base();val value=JSONObject(pending)
+        val done=withContext(Dispatchers.IO) {
+            try { val c=URL(origin+"/api/auth/logout").openConnection() as HttpURLConnection
+                try { c.requestMethod="POST"; c.connectTimeout=8000;c.readTimeout=8000;c.instanceFollowRedirects=false
+                    c.setRequestProperty("Origin",origin);c.setRequestProperty("Authorization","Bearer ${value.getString("token")}");c.setRequestProperty("X-CSRF-Token",value.getString("csrf"))
+                    c.responseCode in 200..299 || c.responseCode==401
+                } finally { c.disconnect() }
+            } catch(_:Exception) { false }
+        }
+        if(done) saveSecret("logout:", "")
     }
     suspend fun open(pack: JSONObject) {
         current = pack; rows = pack.getJSONArray("items").objects(); selected = rows.take(1).map { it.getString("id") }.toSet(); dirty = false; creating = false; quote = null
@@ -170,9 +197,15 @@ class CloudStudioStore(val context: Context) {
         dirty = false; quote = null; refresh()
     }
     suspend fun chat(text: String) {
+        if(current==null){
+            val id=api("/api/packs",JSONObject().put("title",text.take(60)).put("language","en").put("theme","daily")).getString("id")
+            refresh();open(workspace!!.getJSONArray("packs").objects().first{it.getString("id")==id})
+        }
         val id = current!!.getString("id")
-        api("/api/packs/$id/chat", JSONObject().put("text", text).put("attempt", UUID.randomUUID().toString()))
-        messages = api("/api/packs/$id/conversation").getJSONArray("messages").objects()
+        val attempt=UUID.randomUUID().toString();messages=messages+JSONObject().put("id",attempt).put("text",text).put("state","working")
+        sending=true
+        try { api("/api/packs/$id/chat", JSONObject().put("text", text).put("attempt", attempt)) }
+        finally { sending=false; messages = api("/api/packs/$id/conversation").getJSONArray("messages").objects() }
     }
     suspend fun getQuote(kind: String) { quote = api("/api/packs/${current!!.getString("id")}/quote", JSONObject().put("kind", kind).put("items", JSONArray(selected.sorted()))) }
     suspend fun generate() {
@@ -210,6 +243,10 @@ class CloudStudioStore(val context: Context) {
     suspend fun create(name: String, title: String, language: String) {
         if (character.isBlank()) character = api("/api/characters", JSONObject().put("name", name).put("style", "figurine").put("refs", JSONArray(refs))).getString("id")
         api("/api/characters/$character/lock", JSONObject().put("approved", true))
+        if(current!=null && current!!.isNull("character_id")){
+            api("/api/packs/${current!!.getString("id")}/character",JSONObject().put("character",character).put("revision",current!!.getInt("revision")))
+            creating=false;refresh();return
+        }
         val id = api("/api/packs", JSONObject().put("character", character).put("title", title).put("language", language).put("theme", "daily")).getString("id")
         refresh(); open(workspace!!.getJSONArray("packs").objects().first { it.getString("id") == id })
     }
@@ -238,23 +275,45 @@ class CloudStudioStore(val context: Context) {
     var history by remember { mutableStateOf<List<JSONObject>?>(null) }
     var acceptedTerms by remember { mutableStateOf(false) }
     var serviceSettings by remember { mutableStateOf(false) }
+    var pane by remember { mutableStateOf(0) }
+    val activity=context as? MainActivity
+    LaunchedEffect(activity?.authResult, activity?.authCancelled) {
+        while(store.busy) delay(50)
+        if(activity?.authResult!=null){val uri=activity.authResult!!;activity.clearAuthenticationResult();scope.launch{store.run{store.finishLogin(uri)}}}
+        else if(activity?.authCancelled==true){activity.clearAuthenticationResult();store.cancelLogin()}
+    }
+    val scroll=rememberScrollState()
+    LaunchedEffect(store.messages.size, store.sending) { if(pane==0) scroll.animateScrollTo(scroll.maxValue) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) run { store.upload(uri) } }
     LaunchedEffect(Unit) { if (store.origin.isNotBlank()) store.run { store.refresh() }; while (true) { delay(4000); if (!store.busy && store.workspace?.optJSONArray("jobs")?.objects()?.any { it.optString("state") in listOf("queued", "running") } == true) store.run { store.refresh() } } }
     if (showLocal) { CreatorScreen(local, loader) { showLocal = false }; return }
     Scaffold(topBar = { TopAppBar(title = { Text(when(section) {2 -> "Library"; 3 -> "Characters"; else -> "Create"}) }, actions = {
         IconButton(enabled=!store.busy,onClick={run{store.refresh()}}){Icon(Icons.Outlined.Refresh,"Refresh workspace")}
-        if(store.signedIn){IconButton(onClick={store.creating=true;onCreate()}){Icon(Icons.Outlined.Add,"New creation")};IconButton(onClick={run{store.signOut()}}){Icon(Icons.Outlined.Logout,"Sign out")}}
-    }) }) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
+        if(store.signedIn){IconButton(enabled=!store.busy&&!store.dirty,onClick={store.current=null;store.messages=emptyList();store.rows=emptyList();store.creating=false;pane=0;onCreate()}){Icon(Icons.Outlined.Add,"New creation")};IconButton(onClick={run{store.signOut()}}){Icon(Icons.Outlined.Logout,"Sign out")}}
+    }) }, bottomBar={
+        if(store.signedIn&&!store.needsConsent&&section==1&&!store.creating&&pane==0) Surface {
+            Row(Modifier.fillMaxWidth().imePadding().padding(12.dp),verticalAlignment=Alignment.Bottom,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                IconButton(enabled=!store.busy,onClick={store.creating=true}){Icon(Icons.Outlined.AddPhotoAlternate,"Character references")}
+                OutlinedTextField(text,{text=it.take(2000)},placeholder={Text("Message Aya…")},modifier=Modifier.weight(1f),minLines=1,maxLines=5)
+                IconButton(enabled=text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked,onClick={val input=text;text="";run{store.chat(input)}}){Icon(Icons.Outlined.Send,"Send message")}
+            }
+        }
+    }) { padding ->
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll).padding(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
             store.error?.let { Text(it, color=MaterialTheme.colorScheme.error) }
             if (store.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
             if(!store.signedIn){
-                Text("Your own little cast",style=MaterialTheme.typography.titleLarge)
-                TextButton(onClick={serviceSettings=!serviceSettings}){Text("Service settings")}
-                if(serviceSettings) OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
-                Button(enabled=!store.busy,onClick={run{context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.startLogin())))}}){Text("Sign in with browser")}
-                TextButton(enabled=!store.busy,onClick={run{store.finishLogin()}}){Text("I connected my account")}
+                Spacer(Modifier.height(24.dp))
+                AsyncImage("file:///android_asset/app-icon.png","Aya and Lala",imageLoader=loader,modifier=Modifier.size(112.dp))
+                Text("Your own little cast",style=MaterialTheme.typography.headlineMedium)
+                Text("Welcome to WeSticker",color=MaterialTheme.colorScheme.onSurfaceVariant)
+                Button(enabled=!store.busy,onClick={run{val url=store.startLogin();requireNotNull(activity).beginAuthentication(url)}},modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)){Icon(Icons.Outlined.AccountCircle,null);Spacer(Modifier.width(8.dp));Text(if(store.busy)"Connecting…" else "Continue with LazyingArt")}
                 TextButton(onClick={showLocal=true}){Text("Open saved local photo draft")}
+                Row(verticalAlignment=Alignment.CenterVertically){
+                    listOf("Terms" to "/terms.html","Privacy" to "/privacy.html").forEach{(label,path)->TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+path)))}){Text(label)}}
+                    IconButton(onClick={serviceSettings=!serviceSettings}){Icon(Icons.Outlined.Settings,"Service settings")}
+                }
+                if(serviceSettings) OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
             } else if(store.needsConsent) {
                 Text("Before your first creation",style=MaterialTheme.typography.titleLarge)
                 TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+"/terms.html")))}){Text("Creator terms")}
@@ -274,7 +333,8 @@ class CloudStudioStore(val context: Context) {
                         Row{val refs=c.getJSONArray("refs");for(i in 0 until minOf(refs.length(),4))StudioImage(store,refs.getString(i),loader,65)}
                         TextButton(onClick={store.character=c.getString("id");store.creating=true;onCreate()}){Text("Create with ${c.getString("name")}")};HorizontalDivider()
                     }
-                    store.creating || store.current==null -> {
+                    store.creating -> {
+                        TextButton(onClick={store.creating=false}){Text("Back to chat")}
                         Text("Who are we creating?",style=MaterialTheme.typography.titleLarge)
                         TextButton(onClick={store.character=""}){Text("New character")}
                         chars.forEach{c->FilterChip(store.character==c.getString("id"),{store.character=c.getString("id")},label={Text(c.getString("name"))})}
@@ -288,17 +348,26 @@ class CloudStudioStore(val context: Context) {
                         Row(horizontalArrangement=Arrangement.spacedBy(6.dp)){listOf("en" to "English","zh" to "中文","ja" to "日本語").forEach{(id,label)->FilterChip(language==id,{language=id},label={Text(label)})}}
                         Button(enabled=!store.busy&&(store.character.isNotBlank()||rights&&store.refs.isNotEmpty()),onClick={run{store.create(name,title,language)}}){Text("Approve references & start")}
                     }
+                    store.current==null -> {
+                        AsyncImage("file:///android_asset/app-icon.png","Aya and Lala",imageLoader=loader,modifier=Modifier.size(80.dp))
+                        Text("What shall we make?",style=MaterialTheme.typography.headlineSmall)
+                        listOf("A cheerful hello sticker","Help me choose my character","Something funny for a busy day").forEach { suggestion -> OutlinedButton(onClick={text=suggestion}){Text(suggestion)} }
+                    }
                     else -> {
                         val p=store.current!!;Text(p.getString("title"),style=MaterialTheme.typography.titleLarge)
+                        TabRow(selectedTabIndex=pane){listOf("Chat","Sticker plan").forEachIndexed{i,label->Tab(selected=pane==i,onClick={pane=i},text={Text(label)})}}
+                        if(pane==0){
                         store.messages.forEach{m->
                             Text(m.getString("text"),fontWeight=FontWeight.Bold)
                             m.optJSONObject("result")?.let{result->Text(result.getString("reply"));result.optJSONArray("items")?.let{proposed->
                                 proposed.objects().forEach{row->Text(row.getString("label"),fontWeight=FontWeight.Medium);Text(row.optString("action"),style=MaterialTheme.typography.bodySmall);HorizontalDivider()}
                                 TextButton(enabled=!store.busy&&!store.dirty&&!store.blocked&&result.optInt("revision",-1)==p.getInt("revision"),onClick={run{store.save(proposed,result.getInt("revision"))}}){Text("Apply table")}
                             }}
+                            if(m.optString("state")=="working")Text("Aya is thinking…",style=MaterialTheme.typography.bodySmall)
+                            if(m.optString("state")=="failed")Text("Reply interrupted. Your draft is saved.",style=MaterialTheme.typography.bodySmall)
                         }
-                        OutlinedTextField(text,{text=it.take(2000)},label={Text("Message your sticker assistant")},modifier=Modifier.fillMaxWidth(),minLines=2)
-                        Button(enabled=text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked,onClick={run{store.chat(text);text=""}}){Icon(Icons.Outlined.Send,null);Text("Send message")}
+                        }else{
+                        if(p.isNull("character_id")) Button(onClick={store.creating=true}){Text("Choose character references")}
                         HorizontalDivider();Text("Sticker plan",style=MaterialTheme.typography.titleMedium)
                         store.rows.forEachIndexed{i,row->val id=row.getString("id")
                             Row(verticalAlignment=Alignment.Top){Checkbox(store.selected.contains(id),{checked->store.selected=if(checked)store.selected+id else store.selected-id;store.quote=null})
@@ -321,6 +390,7 @@ class CloudStudioStore(val context: Context) {
                         store.quote?.let{q->Text("${q.getJSONArray("items").length()} sticker(s) · ${q.getInt("credits")} credits",fontWeight=FontWeight.Bold);if(!q.isNull("reason"))Text(q.getString("reason"));Button(enabled=q.getBoolean("can_generate")&&!store.busy,onClick={run{store.generate()}}){Text("Confirm generation")};TextButton(onClick={store.quote=null}){Text("Cancel")}}
                         Button(enabled=!store.busy&&!store.dirty&&store.rows.all{it.optBoolean("approved")},onClick={run{store.export()}}){Text("Export reviewed ZIP")}
                         TextButton(onClick={run{history=store.api("/api/packs/${p.getString("id")}/versions").getJSONArray("versions").objects().flatMap{it.getJSONArray("items").objects()}}}){Text("Version history")}
+                        }
                     }
                 }
             }

@@ -79,7 +79,9 @@ def create_app(override=None):
                 ).fetchone()
                 g.user = dict(row) if row else None
             shared = app.extensions.get("westicker_shared_identity")
-            if g.user and shared and request.path != "/api/auth/logout":
+            # A pending remote revocation must not prevent a CSRF-protected
+            # retry of local logout or account deletion.
+            if g.user and shared and request.path not in {"/api/auth/logout", "/api/account/delete"}:
                 shared.validate(g.user["id"])
         if required and not g.user:
             abort(401, description="Sign in to keep your creations private.")
@@ -523,8 +525,8 @@ def create_app(override=None):
     def pack():
         user = current()
         body = request.get_json() or {}
-        c = owned("characters", body.get("character", ""))
-        if not c["locked"]:
+        c = owned("characters", body["character"]) if body.get("character") else None
+        if c and not c["locked"]:
             abort(409, description="Approve the character reference first.")
         title = str(body.get("title", "")).strip()
         theme = body.get("theme", "daily")
@@ -564,7 +566,7 @@ def create_app(override=None):
                 (
                     id,
                     user["id"],
-                    c["id"],
+                    c["id"] if c else None,
                     title,
                     theme,
                     language,
@@ -576,6 +578,24 @@ def create_app(override=None):
                 ),
             )
         return jsonify(id=id), 201
+
+    @app.post("/api/packs/<id>/character")
+    def attach_character(id):
+        p = owned("packs", id)
+        body = request.get_json() or {}
+        c = owned("characters", body.get("character", ""))
+        if not c["locked"]:
+            abort(409, description="Approve the character reference first.")
+        with database(cfg) as db:
+            db.execute("BEGIN IMMEDIATE")
+            live = db.execute("SELECT * FROM packs WHERE id=?", (id,)).fetchone()
+            if live["status"] != "draft" or live["revision"] != body.get("revision"):
+                abort(409, description="This draft changed. Reload before attaching references.")
+            if live["character_id"] or db.execute("SELECT id FROM jobs WHERE pack_id=?", (id,)).fetchone():
+                abort(409, description="This creation already has a character. Start a new creation to change it.")
+            db.execute("UPDATE packs SET character_id=?,revision=revision+1,updated=? WHERE id=?",
+                       (c["id"], time.time(), id))
+        return jsonify(ok=True)
 
     @app.patch("/api/packs/<id>")
     def update_pack(id):
@@ -635,6 +655,8 @@ def create_app(override=None):
                 )
             if not limits(user)["animation"]:
                 abort(403, description="Animation is available with Creator or Studio.")
+        if not p["character_id"]:
+            abort(409, description="Choose and approve your character references first.")
         c = owned("characters", p["character_id"])
         for ref in json.loads(c["refs"]):
             image = owned("assets", ref)

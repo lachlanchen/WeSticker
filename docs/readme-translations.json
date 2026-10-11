@@ -1,6 +1,6 @@
 {
   "en": {
-    "creator_update": "Create and Agent are merged, with editable caption/action tables, Library and Characters. iOS 1.0 (6), macOS 1.0 (5) and Android 1.0 (5) are available to internal testers. The separate web app is at https://westicker.lazying.art. Shared-account registration, image/animation generation and payments remain gated; this is not a complete creator-service launch.",
+    "creator_update": "LazyingArt password sign-in and chat-first creation are live at https://westicker.lazying.art. Start a conversation, add references later and review editable sticker plans. Internal test builds: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Social-provider login, AI image/animation rendering and payments are not yet enabled.",
     "tag": "Your character. Everyday expressions.",
     "intro": "An independent sticker studio for Aya and friends, personal characters and creator collections. Browse the default artwork without signing in; use a private workspace to prepare your own. The existing AYA shop is unchanged.",
     "headings": [
@@ -20,12 +20,12 @@
     "plans": "Proposed monthly subscriptions: Pocket $0.99 / 3 image credits; Creator $9.99 / 40 credits; Studio $24.99 / 120 credits and optional upload assistance. Photo mode is free; animation uses 3 credits. Billing is disabled until connected and qualified.",
     "start": "Python 3.12+, Node 22+, a CJK font and Chromium for browser tests. The script creates a private local demo configuration; it does not borrow another app's credentials. Open http://127.0.0.1:18642. Stop with `python3 scripts/dev.py stop`.",
     "inside": "Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a separate React/Vite PWA. The private creator prototype uses Python and SQLite. The interface is English; sticker lettering supports Chinese, English and Japanese.",
-    "tests": "72 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.",
-    "status": "Create and Agent are merged, with editable caption/action tables, Library and Characters. iOS 1.0 (6), macOS 1.0 (5) and Android 1.0 (5) are available to internal testers. The separate web app is at https://westicker.lazying.art. Shared-account registration, image/animation generation and payments remain gated; this is not a complete creator-service launch.",
+    "tests": "77 backend tests and two browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These are not live payment or AI-provider tests.",
+    "status": "LazyingArt password sign-in and chat-first creation are live at https://westicker.lazying.art. Start a conversation, add references later and review editable sticker plans. Internal test builds: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Social-provider login, AI image/animation rendering and payments are not yet enabled.",
     "cite": "Code is MIT; artwork has separate rights. Cite this repository when using the software in research."
   },
   "zh-Hans": {
-    "creator_update": "Create 与 Agent 已合并，支持可编辑的文字与动作表、作品库和角色库。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已开放内部测试。独立网页为 https://westicker.lazying.art。共享账号注册、图片与动画生成、支付仍待接通验证，并非完整创作服务上线。",
+    "creator_update": "LazyingArt 密码登录与聊天式创作已在 https://westicker.lazying.art 上线。可以先聊天，随后添加参考图并编辑表情方案。内部测试版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社交登录、AI 图像与动画生成、支付尚未启用。",
     "tag": "你的角色，日常的小表情。",
     "intro": "独立的表情创作工坊：可以欣赏阿芽与伙伴们的作品，也能创建自己的角色与表情系列。默认作品无需登录即可浏览，个人素材在私有工作区处理。已有 AYA 商店保持不变。",
     "headings": [
@@ -45,12 +45,12 @@
     "plans": "月费拟定为 Pocket $0.99 / 3 图像额度、Creator $9.99 / 40 额度、Studio $24.99 / 120 额度及可选上传助手。照片模式免费，动画消耗 3 额度。支付接入与验证之前不开放收费。",
     "start": "需要 Python 3.12+、Node 22+、中日韩字体及浏览器测试用 Chromium。脚本只生成本项目的私有演示配置，不借用其他应用凭据。打开 http://127.0.0.1:18642；用 `python3 scripts/dev.py stop` 停止。",
     "inside": "Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 独立使用 React/Vite。私有创作原型使用 Python 和 SQLite。界面为英文，表情文字支持中英日三种语言。",
-    "tests": "72 项后端测试及 2 项浏览器代理安全测试通过。真实浏览器完成访客下载、照片上传、角色确认、照片表情生成、文字审核、ZIP 导出和账号删除，并检查桌面与移动宽度。这不代表真实支付或模型服务已经验证。",
-    "status": "Create 与 Agent 已合并，支持可编辑的文字与动作表、作品库和角色库。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已开放内部测试。独立网页为 https://westicker.lazying.art。共享账号注册、图片与动画生成、支付仍待接通验证，并非完整创作服务上线。",
+    "tests": "77 项后端测试及 2 项浏览器代理安全测试通过。真实浏览器完成访客下载、照片上传、角色确认、照片表情生成、文字审核、ZIP 导出和账号删除，并检查桌面与移动宽度。这不代表真实支付或模型服务已经验证。",
+    "status": "LazyingArt 密码登录与聊天式创作已在 https://westicker.lazying.art 上线。可以先聊天，随后添加参考图并编辑表情方案。内部测试版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社交登录、AI 图像与动画生成、支付尚未启用。",
     "cite": "源代码采用 MIT 协议，角色及美术资产单独授权。研究中使用本软件时请引用本仓库。"
   },
   "zh-Hant": {
-    "creator_update": "Create 與 Agent 已合併，支援可編輯的文字與動作表、作品庫和角色庫。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已開放內部測試。獨立網頁為 https://westicker.lazying.art。共享帳號註冊、圖片與動畫生成、付款仍待接通驗證，並非完整創作服務上線。",
+    "creator_update": "LazyingArt 密碼登入與聊天式創作已在 https://westicker.lazying.art 上線。可以先聊天，隨後加入參考圖並編輯貼圖方案。內部測試版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社群登入、AI 圖像與動畫生成、付款尚未啟用。",
     "tag": "你的角色，日常的小表情。",
     "intro": "獨立的貼圖創作工坊：可以欣賞阿芽與夥伴們的作品，也能建立自己的角色與貼圖系列。預設作品無需登入即可瀏覽，個人素材在私有工作區處理。既有 AYA 商店保持不變。",
     "headings": [
@@ -70,12 +70,12 @@
     "plans": "月費擬定為 Pocket $0.99 / 3 影像額度、Creator $9.99 / 40 額度、Studio $24.99 / 120 額度及可選上傳助手。照片模式免費，動畫消耗 3 額度。付款串接與驗證之前不開放收費。",
     "start": "需要 Python 3.12+、Node 22+、中日韓字型及瀏覽器測試用 Chromium。腳本只建立本專案的私有示範設定，不借用其他應用憑證。開啟 http://127.0.0.1:18642；以 `python3 scripts/dev.py stop` 停止。",
     "inside": "Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 獨立使用 React/Vite。私人創作原型使用 Python 和 SQLite。介面為英文，貼圖文字支援中英日三種語言。",
-    "tests": "72 項後端測試與 2 項瀏覽器代理安全測試通過。真實瀏覽器完成訪客下載、照片上傳、角色確認、照片貼圖生成、文字審核、ZIP 匯出與帳號刪除，並檢查桌面及行動寬度。這不代表真實付款或模型服務已驗證。",
-    "status": "Create 與 Agent 已合併，支援可編輯的文字與動作表、作品庫和角色庫。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已開放內部測試。獨立網頁為 https://westicker.lazying.art。共享帳號註冊、圖片與動畫生成、付款仍待接通驗證，並非完整創作服務上線。",
+    "tests": "77 項後端測試與 2 項瀏覽器代理安全測試通過。真實瀏覽器完成訪客下載、照片上傳、角色確認、照片貼圖生成、文字審核、ZIP 匯出與帳號刪除，並檢查桌面及行動寬度。這不代表真實付款或模型服務已驗證。",
+    "status": "LazyingArt 密碼登入與聊天式創作已在 https://westicker.lazying.art 上線。可以先聊天，隨後加入參考圖並編輯貼圖方案。內部測試版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社群登入、AI 圖像與動畫生成、付款尚未啟用。",
     "cite": "原始碼採用 MIT 授權，角色及美術資產另行授權。研究中使用本軟體時請引用本倉庫。"
   },
   "ja": {
-    "creator_update": "Create と Agent を統合し、編集できる文字・動作表、ライブラリとキャラクター管理を追加しました。iOS 1.0 (6)、macOS 1.0 (5)、Android 1.0 (5) は内部テストで利用できます。独立した Web アプリは https://westicker.lazying.art です。共有アカウント登録、画像・動画生成、決済の接続と検証は未完了で、制作サービス全体の正式公開ではありません。",
+    "creator_update": "https://westicker.lazying.art で LazyingArt のパスワードログインとチャット中心の制作を利用できます。会話を始めてから参考画像を追加し、スタンプ案を編集できます。内部テスト版は iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。外部サービスでのログイン、AI 画像・動画生成、決済はまだ利用できません。",
     "tag": "あなたのキャラクターで、毎日の気持ちを。",
     "intro": "阿芽と仲間たちの作品を楽しみ、自分だけのキャラクターとスタンプを作る独立したスタジオです。標準作品はログインなしで閲覧でき、個人素材は非公開の作業領域で扱います。既存の AYA ショップは変更していません。",
     "headings": [
@@ -95,12 +95,12 @@
     "plans": "月額案は Pocket $0.99 / 画像3クレジット、Creator $9.99 / 40、Studio $24.99 / 120 と任意のアップロード支援。写真モードは無料、アニメーションは3クレジット。決済の接続・検証までは販売しません。",
     "start": "Python 3.12+、Node 22+、CJK フォント、ブラウザーテスト用 Chromium が必要です。他アプリの認証情報は流用せず、専用の非公開デモ設定を作成します。http://127.0.0.1:18642 を開き、`python3 scripts/dev.py stop` で停止します。",
     "inside": "Android は Kotlin/Jetpack Compose、iOS/macOS は SwiftUI のネイティブ実装です。PWA は独立した React/Vite、非公開の制作試作版は Python と SQLite を使用。画面は英語、スタンプ文字は中国語・英語・日本語です。",
-    "tests": "バックエンド72件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。",
-    "status": "Create と Agent を統合し、編集できる文字・動作表、ライブラリとキャラクター管理を追加しました。iOS 1.0 (6)、macOS 1.0 (5)、Android 1.0 (5) は内部テストで利用できます。独立した Web アプリは https://westicker.lazying.art です。共有アカウント登録、画像・動画生成、決済の接続と検証は未完了で、制作サービス全体の正式公開ではありません。",
+    "tests": "バックエンド77件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。",
+    "status": "https://westicker.lazying.art で LazyingArt のパスワードログインとチャット中心の制作を利用できます。会話を始めてから参考画像を追加し、スタンプ案を編集できます。内部テスト版は iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。外部サービスでのログイン、AI 画像・動画生成、決済はまだ利用できません。",
     "cite": "コードは MIT、キャラクターと画像は別の権利条件です。研究に利用する際は本リポジトリを引用してください。"
   },
   "ko": {
-    "creator_update": "Create와 Agent를 통합하고 문구·동작 편집표, 라이브러리와 캐릭터 관리를 추가했습니다. iOS 1.0 (6), macOS 1.0 (5), Android 1.0 (5)는 내부 테스터에게 배포되었습니다. 독립 웹 앱은 https://westicker.lazying.art 입니다. 공유 계정 등록, 이미지·애니메이션 생성과 결제는 아직 연결·검증 중이며 완전한 제작 서비스 출시는 아닙니다.",
+    "creator_update": "https://westicker.lazying.art 에서 LazyingArt 비밀번호 로그인과 채팅 중심의 제작을 이용할 수 있습니다. 대화부터 시작하고 나중에 참고 이미지를 추가하여 스티커 계획을 편집하세요. 내부 테스트 버전은 iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7)입니다. 소셜 로그인, AI 이미지·애니메이션 생성, 결제는 아직 활성화되지 않았습니다.",
     "tag": "나만의 캐릭터로 전하는 일상의 마음.",
     "intro": "Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드는 독립 스튜디오입니다. 기본 작품은 로그인 없이 볼 수 있으며 개인 자료는 비공개 작업 공간에서 처리합니다. 기존 AYA 상점은 변경하지 않았습니다.",
     "headings": [
@@ -120,12 +120,12 @@
     "plans": "월 요금 제안: Pocket $0.99 / 이미지 3크레딧, Creator $9.99 / 40, Studio $24.99 / 120 및 선택형 업로드 지원. 사진 모드는 무료이며 애니메이션은 3크레딧입니다. 결제 연결과 검증 전에는 판매하지 않습니다.",
     "start": "Python 3.12+, Node 22+, CJK 글꼴, 브라우저 테스트용 Chromium이 필요합니다. 다른 앱의 인증 정보를 빌리지 않고 독립된 비공개 데모 설정을 만듭니다. http://127.0.0.1:18642에서 열고 `python3 scripts/dev.py stop`으로 중지합니다.",
     "inside": "Android는 Kotlin/Jetpack Compose, iOS/macOS는 SwiftUI 네이티브 앱입니다. 별도 PWA는 React/Vite, 비공개 제작 시제품은 Python과 SQLite를 사용합니다. 화면은 영어이며 스티커 문구는 중국어·영어·일본어입니다.",
-    "tests": "백엔드 72개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.",
-    "status": "Create와 Agent를 통합하고 문구·동작 편집표, 라이브러리와 캐릭터 관리를 추가했습니다. iOS 1.0 (6), macOS 1.0 (5), Android 1.0 (5)는 내부 테스터에게 배포되었습니다. 독립 웹 앱은 https://westicker.lazying.art 입니다. 공유 계정 등록, 이미지·애니메이션 생성과 결제는 아직 연결·검증 중이며 완전한 제작 서비스 출시는 아닙니다.",
+    "tests": "백엔드 77개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.",
+    "status": "https://westicker.lazying.art 에서 LazyingArt 비밀번호 로그인과 채팅 중심의 제작을 이용할 수 있습니다. 대화부터 시작하고 나중에 참고 이미지를 추가하여 스티커 계획을 편집하세요. 내부 테스트 버전은 iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7)입니다. 소셜 로그인, AI 이미지·애니메이션 생성, 결제는 아직 활성화되지 않았습니다.",
     "cite": "코드는 MIT이며 캐릭터와 그림은 별도 권리가 적용됩니다. 연구에 사용할 때 이 저장소를 인용해 주세요."
   },
   "fr": {
-    "creator_update": "Create et Agent sont réunis, avec tableaux de textes et d’actions modifiables, bibliothèque et personnages. iOS 1.0 (6), macOS 1.0 (5) et Android 1.0 (5) sont disponibles en test interne. L’application web indépendante est sur https://westicker.lazying.art. L’inscription partagée, la génération d’images et d’animations et les paiements restent à qualifier : le service de création complet n’est pas encore lancé.",
+    "creator_update": "La connexion par mot de passe LazyingArt et la création par chat sont disponibles sur https://westicker.lazying.art. Commencez par discuter, ajoutez vos références ensuite et modifiez le plan de stickers. Versions de test internes : iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). La connexion via des services tiers, la génération d’images et d’animations par IA et les paiements ne sont pas encore activés.",
     "tag": "Votre personnage, vos petites expressions du quotidien.",
     "intro": "Un studio indépendant pour Aya et ses amis, vos personnages et vos collections. Les créations par défaut sont visibles sans connexion ; les photos personnelles restent dans un espace privé. La boutique AYA existante est inchangée.",
     "headings": [
@@ -145,12 +145,12 @@
     "plans": "Abonnements mensuels proposés : Pocket 0,99 $ / 3 crédits image ; Creator 9,99 $ / 40 ; Studio 24,99 $ / 120 et assistance d’envoi facultative. Le mode photo est gratuit ; une animation coûte 3 crédits. Aucun paiement avant connexion et validation.",
     "start": "Python 3.12+, Node 22+, police CJK et Chromium pour les tests navigateur. Le script crée une configuration de démonstration privée, sans emprunter les identifiants d’une autre application. Ouvrez http://127.0.0.1:18642. Arrêtez avec `python3 scripts/dev.py stop`.",
     "inside": "Android natif en Kotlin/Jetpack Compose, iOS/macOS en SwiftUI et PWA séparée en React/Vite. Le prototype privé de création utilise Python et SQLite. Interface anglaise, textes des stickers en chinois, anglais et japonais.",
-    "tests": "72 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.",
-    "status": "Create et Agent sont réunis, avec tableaux de textes et d’actions modifiables, bibliothèque et personnages. iOS 1.0 (6), macOS 1.0 (5) et Android 1.0 (5) sont disponibles en test interne. L’application web indépendante est sur https://westicker.lazying.art. L’inscription partagée, la génération d’images et d’animations et les paiements restent à qualifier : le service de création complet n’est pas encore lancé.",
+    "tests": "77 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.",
+    "status": "La connexion par mot de passe LazyingArt et la création par chat sont disponibles sur https://westicker.lazying.art. Commencez par discuter, ajoutez vos références ensuite et modifiez le plan de stickers. Versions de test internes : iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). La connexion via des services tiers, la génération d’images et d’animations par IA et les paiements ne sont pas encore activés.",
     "cite": "Code sous MIT ; illustrations sous droits distincts. Citez ce dépôt pour un usage scientifique."
   },
   "es": {
-    "creator_update": "Create y Agent están unidos, con tablas editables de textos y acciones, biblioteca y personajes. iOS 1.0 (6), macOS 1.0 (5) y Android 1.0 (5) están disponibles para pruebas internas. La aplicación web independiente está en https://westicker.lazying.art. El registro compartido, la generación de imágenes y animaciones y los pagos siguen pendientes de validación; no es el lanzamiento completo del servicio.",
+    "creator_update": "El inicio de sesión con contraseña de LazyingArt y la creación por chat están disponibles en https://westicker.lazying.art. Empieza conversando, añade referencias después y edita el plan de stickers. Pruebas internas: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). El acceso con proveedores sociales, la generación de imágenes y animaciones con IA y los pagos aún no están habilitados.",
     "tag": "Tu personaje. Tus expresiones de cada día.",
     "intro": "Un estudio independiente para Aya y sus amigos, personajes personales y colecciones de creadores. Las obras predeterminadas se ven sin iniciar sesión; las fotos personales se procesan en privado. La tienda AYA existente no cambia.",
     "headings": [
@@ -170,12 +170,12 @@
     "plans": "Suscripciones mensuales propuestas: Pocket 0,99 USD / 3 créditos de imagen; Creator 9,99 USD / 40; Studio 24,99 USD / 120 y asistencia opcional. El modo foto es gratuito; una animación cuesta 3 créditos. Cobros desactivados hasta conectar y validar.",
     "start": "Python 3.12+, Node 22+, fuente CJK y Chromium para pruebas. El script crea una configuración privada de demostración sin reutilizar credenciales ajenas. Abre http://127.0.0.1:18642. Detén con `python3 scripts/dev.py stop`.",
     "inside": "Android nativo con Kotlin/Jetpack Compose, iOS/macOS con SwiftUI y PWA separada con React/Vite. El prototipo privado de creación usa Python y SQLite. Interfaz en inglés; textos en chino, inglés y japonés.",
-    "tests": "Pasan 72 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.",
-    "status": "Create y Agent están unidos, con tablas editables de textos y acciones, biblioteca y personajes. iOS 1.0 (6), macOS 1.0 (5) y Android 1.0 (5) están disponibles para pruebas internas. La aplicación web independiente está en https://westicker.lazying.art. El registro compartido, la generación de imágenes y animaciones y los pagos siguen pendientes de validación; no es el lanzamiento completo del servicio.",
+    "tests": "Pasan 77 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.",
+    "status": "El inicio de sesión con contraseña de LazyingArt y la creación por chat están disponibles en https://westicker.lazying.art. Empieza conversando, añade referencias después y edita el plan de stickers. Pruebas internas: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). El acceso con proveedores sociales, la generación de imágenes y animaciones con IA y los pagos aún no están habilitados.",
     "cite": "Código MIT; ilustraciones con derechos separados. Cita el repositorio si lo usas en investigación."
   },
   "de": {
-    "creator_update": "Create und Agent sind vereint, mit bearbeitbaren Text- und Aktionstabellen, Bibliothek und Figurenverwaltung. iOS 1.0 (6), macOS 1.0 (5) und Android 1.0 (5) sind für interne Tester verfügbar. Die eigenständige Web-App liegt unter https://westicker.lazying.art. Gemeinsame Kontoregistrierung, Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht freigegeben; der vollständige Kreativdienst ist noch nicht gestartet.",
+    "creator_update": "LazyingArt-Passwortanmeldung und chatbasierte Gestaltung sind unter https://westicker.lazying.art verfügbar. Beginne ein Gespräch, füge später Referenzen hinzu und bearbeite den Stickerplan. Interne Testversionen: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Anmeldung über soziale Anbieter, KI-Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht aktiviert.",
     "tag": "Deine Figur. Kleine Gefühle für jeden Tag.",
     "intro": "Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creator-Sammlungen. Standardmotive sind ohne Anmeldung sichtbar; persönliche Fotos bleiben im privaten Arbeitsbereich. Der bestehende AYA-Shop wird nicht verändert.",
     "headings": [
@@ -195,12 +195,12 @@
     "plans": "Monatliche Preisvorschläge: Pocket 0,99 USD / 3 Bild-Credits; Creator 9,99 USD / 40; Studio 24,99 USD / 120 und optionaler Upload-Assistent. Fotomodus kostenlos, Animation 3 Credits. Abrechnung bleibt bis zur Anbindung und Prüfung deaktiviert.",
     "start": "Python 3.12+, Node 22+, CJK-Schrift und Chromium für Browsertests. Das Skript erstellt eine private Demo-Konfiguration ohne fremde App-Zugangsdaten. http://127.0.0.1:18642 öffnen; mit `python3 scripts/dev.py stop` beenden.",
     "inside": "Native Android-App mit Kotlin/Jetpack Compose, iOS/macOS mit SwiftUI und separate React/Vite-PWA. Der private Erstellungsprototyp nutzt Python und SQLite. Oberfläche Englisch; Stickertexte Chinesisch, Englisch und Japanisch.",
-    "tests": "72 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.",
-    "status": "Create und Agent sind vereint, mit bearbeitbaren Text- und Aktionstabellen, Bibliothek und Figurenverwaltung. iOS 1.0 (6), macOS 1.0 (5) und Android 1.0 (5) sind für interne Tester verfügbar. Die eigenständige Web-App liegt unter https://westicker.lazying.art. Gemeinsame Kontoregistrierung, Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht freigegeben; der vollständige Kreativdienst ist noch nicht gestartet.",
+    "tests": "77 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.",
+    "status": "LazyingArt-Passwortanmeldung und chatbasierte Gestaltung sind unter https://westicker.lazying.art verfügbar. Beginne ein Gespräch, füge später Referenzen hinzu und bearbeite den Stickerplan. Interne Testversionen: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Anmeldung über soziale Anbieter, KI-Bild- und Animationsgenerierung sowie Zahlungen sind noch nicht aktiviert.",
     "cite": "Code unter MIT; Bildmaterial mit eigenen Rechten. Bei wissenschaftlicher Nutzung bitte dieses Repository zitieren."
   },
   "ru": {
-    "creator_update": "Create и Agent объединены: доступны редактируемые таблицы подписей и действий, библиотека и персонажи. iOS 1.0 (6), macOS 1.0 (5) и Android 1.0 (5) доступны внутренним тестировщикам. Отдельное веб-приложение: https://westicker.lazying.art. Общая регистрация, генерация изображений и анимации и платежи ещё не прошли полную проверку; это не запуск завершённого сервиса создания.",
+    "creator_update": "Вход по паролю LazyingArt и создание через чат доступны на https://westicker.lazying.art. Начните разговор, добавьте референсы позже и отредактируйте план стикеров. Внутренние тестовые версии: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Вход через социальные сервисы, генерация изображений и анимации ИИ и платежи пока отключены.",
     "tag": "Ваш персонаж. Эмоции на каждый день.",
     "intro": "Независимая студия стикеров Aya и друзей, личных персонажей и авторских наборов. Стандартные работы доступны без входа; личные фотографии обрабатываются в закрытой рабочей области. Существующий магазин AYA не изменён.",
     "headings": [
@@ -220,12 +220,12 @@
     "plans": "Предлагаемые месячные тарифы: Pocket $0.99 / 3 кредита изображений; Creator $9.99 / 40; Studio $24.99 / 120 и дополнительная помощь с загрузкой. Фоторежим бесплатен, анимация стоит 3 кредита. Оплата отключена до подключения и проверки.",
     "start": "Нужны Python 3.12+, Node 22+, шрифт CJK и Chromium для тестов. Скрипт создаёт закрытые настройки демо без чужих учётных данных. Откройте http://127.0.0.1:18642; остановка: `python3 scripts/dev.py stop`.",
     "inside": "Нативный Android на Kotlin/Jetpack Compose, iOS/macOS на SwiftUI и отдельная PWA на React/Vite. Закрытый прототип создания использует Python и SQLite. Интерфейс английский; тексты стикеров на китайском, английском и японском.",
-    "tests": "Пройдены 72 серверных тестов и два теста безопасности агента. Реальный браузер проверил скачивание, загрузку фото, подтверждение персонажа, фоторежим, тексты, ZIP и удаление аккаунта на мобильной и настольной ширине. Это не проверка реальной оплаты или AI-сервиса.",
-    "status": "Create и Agent объединены: доступны редактируемые таблицы подписей и действий, библиотека и персонажи. iOS 1.0 (6), macOS 1.0 (5) и Android 1.0 (5) доступны внутренним тестировщикам. Отдельное веб-приложение: https://westicker.lazying.art. Общая регистрация, генерация изображений и анимации и платежи ещё не прошли полную проверку; это не запуск завершённого сервиса создания.",
+    "tests": "Пройдены 77 серверных тестов и два теста безопасности агента. Реальный браузер проверил скачивание, загрузку фото, подтверждение персонажа, фоторежим, тексты, ZIP и удаление аккаунта на мобильной и настольной ширине. Это не проверка реальной оплаты или AI-сервиса.",
+    "status": "Вход по паролю LazyingArt и создание через чат доступны на https://westicker.lazying.art. Начните разговор, добавьте референсы позже и отредактируйте план стикеров. Внутренние тестовые версии: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Вход через социальные сервисы, генерация изображений и анимации ИИ и платежи пока отключены.",
     "cite": "Код MIT; права на изображения отдельные. При исследовательском использовании ссылайтесь на репозиторий."
   },
   "vi": {
-    "creator_update": "Create và Agent đã hợp nhất, có bảng chữ và hành động chỉnh sửa được, thư viện và nhân vật. iOS 1.0 (6), macOS 1.0 (5) và Android 1.0 (5) đã có cho người thử nghiệm nội bộ. Ứng dụng web độc lập ở https://westicker.lazying.art. Đăng ký tài khoản chung, tạo ảnh và hoạt ảnh, thanh toán vẫn chờ kết nối và xác minh; đây chưa phải bản ra mắt dịch vụ sáng tạo hoàn chỉnh.",
+    "creator_update": "Đăng nhập bằng mật khẩu LazyingArt và sáng tạo qua trò chuyện đã có tại https://westicker.lazying.art. Bắt đầu trò chuyện, thêm ảnh tham khảo sau và chỉnh sửa kế hoạch nhãn dán. Bản thử nghiệm nội bộ: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Đăng nhập mạng xã hội, tạo ảnh và hoạt ảnh AI, thanh toán chưa được bật.",
     "tag": "Nhân vật của bạn. Cảm xúc mỗi ngày.",
     "intro": "Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân vật do người dùng tạo. Xem bộ mặc định không cần đăng nhập; ảnh cá nhân được xử lý trong không gian riêng. Cửa hàng AYA hiện tại không thay đổi.",
     "headings": [
@@ -245,12 +245,12 @@
     "plans": "Giá tháng đề xuất: Pocket 0,99 USD / 3 tín dụng ảnh; Creator 9,99 USD / 40; Studio 24,99 USD / 120 và hỗ trợ tải lên tùy chọn. Chế độ ảnh miễn phí; hoạt ảnh tốn 3 tín dụng. Thanh toán chưa bật trước khi kết nối và kiểm chứng.",
     "start": "Cần Python 3.12+, Node 22+, phông CJK và Chromium để kiểm thử. Lệnh tạo cấu hình demo riêng, không dùng thông tin đăng nhập của ứng dụng khác. Mở http://127.0.0.1:18642; dừng bằng `python3 scripts/dev.py stop`.",
     "inside": "Android thuần Kotlin/Jetpack Compose, iOS/macOS dùng SwiftUI và PWA React/Vite riêng. Bản mẫu sáng tạo riêng tư dùng Python và SQLite. Giao diện tiếng Anh; chữ nhãn dán có tiếng Trung, Anh và Nhật.",
-    "tests": "Đã qua 72 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.",
-    "status": "Create và Agent đã hợp nhất, có bảng chữ và hành động chỉnh sửa được, thư viện và nhân vật. iOS 1.0 (6), macOS 1.0 (5) và Android 1.0 (5) đã có cho người thử nghiệm nội bộ. Ứng dụng web độc lập ở https://westicker.lazying.art. Đăng ký tài khoản chung, tạo ảnh và hoạt ảnh, thanh toán vẫn chờ kết nối và xác minh; đây chưa phải bản ra mắt dịch vụ sáng tạo hoàn chỉnh.",
+    "tests": "Đã qua 77 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.",
+    "status": "Đăng nhập bằng mật khẩu LazyingArt và sáng tạo qua trò chuyện đã có tại https://westicker.lazying.art. Bắt đầu trò chuyện, thêm ảnh tham khảo sau và chỉnh sửa kế hoạch nhãn dán. Bản thử nghiệm nội bộ: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Đăng nhập mạng xã hội, tạo ảnh và hoạt ảnh AI, thanh toán chưa được bật.",
     "cite": "Mã nguồn MIT; hình ảnh có quyền riêng. Vui lòng trích dẫn kho mã khi dùng trong nghiên cứu."
   },
   "ar": {
-    "creator_update": "دُمج Create وAgent مع جداول قابلة للتحرير للنصوص والحركات ومكتبة وشخصيات. تتوفر iOS 1.0 (6) وmacOS 1.0 (5) وAndroid 1.0 (5) للمختبرين الداخليين. تطبيق الويب المستقل على https://westicker.lazying.art. ما زال تسجيل الحساب المشترك وتوليد الصور والرسوم المتحركة والدفع بانتظار التحقق؛ هذه ليست خدمة إنشاء مكتملة الإطلاق.",
+    "creator_update": "يتوفر تسجيل الدخول بكلمة مرور LazyingArt والإنشاء عبر المحادثة على https://westicker.lazying.art. ابدأ المحادثة ثم أضف الصور المرجعية وعدّل خطة الملصقات. إصدارات الاختبار الداخلي: iOS 1.0 (7)، macOS 1.0 (6)، Android 1.0 (7). تسجيل الدخول عبر الخدمات الاجتماعية وتوليد الصور والرسوم المتحركة بالذكاء الاصطناعي والدفع غير مفعلة بعد.",
     "tag": "شخصيتك، وتعابيرك الصغيرة كل يوم.",
     "intro": "استوديو مستقل لملصقات Aya وأصدقائها ولشخصيات المستخدمين ومجموعاتهم. يمكن مشاهدة الأعمال الافتراضية دون تسجيل الدخول، بينما تُعالج الصور الشخصية في مساحة خاصة. متجر AYA الحالي لم يتغير.",
     "headings": [
@@ -270,8 +270,8 @@
     "plans": "الاشتراكات الشهرية المقترحة: Pocket بسعر 0.99 دولار و3 أرصدة صور؛ Creator بسعر 9.99 و40 رصيداً؛ Studio بسعر 24.99 و120 رصيداً مع مساعدة رفع اختيارية. وضع الصور مجاني والتحريك يستهلك 3 أرصدة. الدفع معطل حتى الربط والتحقق.",
     "start": "يتطلب Python 3.12+ وNode 22+ وخط CJK وChromium لاختبارات المتصفح. ينشئ البرنامج إعداد عرض خاصاً دون استعارة بيانات اعتماد تطبيق آخر. افتح http://127.0.0.1:18642 وأوقفه عبر `python3 scripts/dev.py stop`.",
     "inside": "تطبيق Android أصلي باستخدام Kotlin/Jetpack Compose وتطبيقا iOS/macOS باستخدام SwiftUI، مع PWA منفصلة بـ React/Vite. نموذج الإنشاء الخاص يستخدم Python وSQLite. الواجهة بالإنجليزية ونصوص الملصقات بالصينية والإنجليزية واليابانية.",
-    "tests": "نجح 72 اختباراً للخادم واختبارا أمان للوكيل. تحقق متصفح حقيقي من التنزيل والرفع وتأكيد الشخصية وإنشاء ملصقات الصور ومراجعة النص وZIP وحذف الحساب على أحجام الهاتف والحاسوب. ليست هذه اختبارات دفع فعلي أو مزود ذكاء اصطناعي حي.",
-    "status": "دُمج Create وAgent مع جداول قابلة للتحرير للنصوص والحركات ومكتبة وشخصيات. تتوفر iOS 1.0 (6) وmacOS 1.0 (5) وAndroid 1.0 (5) للمختبرين الداخليين. تطبيق الويب المستقل على https://westicker.lazying.art. ما زال تسجيل الحساب المشترك وتوليد الصور والرسوم المتحركة والدفع بانتظار التحقق؛ هذه ليست خدمة إنشاء مكتملة الإطلاق.",
+    "tests": "نجح 77 اختباراً للخادم واختبارا أمان للوكيل. تحقق متصفح حقيقي من التنزيل والرفع وتأكيد الشخصية وإنشاء ملصقات الصور ومراجعة النص وZIP وحذف الحساب على أحجام الهاتف والحاسوب. ليست هذه اختبارات دفع فعلي أو مزود ذكاء اصطناعي حي.",
+    "status": "يتوفر تسجيل الدخول بكلمة مرور LazyingArt والإنشاء عبر المحادثة على https://westicker.lazying.art. ابدأ المحادثة ثم أضف الصور المرجعية وعدّل خطة الملصقات. إصدارات الاختبار الداخلي: iOS 1.0 (7)، macOS 1.0 (6)، Android 1.0 (7). تسجيل الدخول عبر الخدمات الاجتماعية وتوليد الصور والرسوم المتحركة بالذكاء الاصطناعي والدفع غير مفعلة بعد.",
     "cite": "الكود بترخيص MIT، والرسوم لها حقوق منفصلة. يرجى الاستشهاد بالمستودع عند استخدامه في البحث."
   }
 }

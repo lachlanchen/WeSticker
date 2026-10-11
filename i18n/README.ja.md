@@ -6,7 +6,7 @@
 
 *あなたのキャラクターで、毎日の気持ちを。*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 阿芽と仲間たちの作品を楽しみ、自分だけのキャラクターとスタンプを作る独立したスタジオです。標準作品はログインなしで閲覧でき、個人素材は非公開の作業領域で扱います。既存の AYA ショップは変更していません。
 
@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Create と Agent を統合し、編集できる文字・動作表、ライブラリとキャラクター管理を追加しました。iOS 1.0 (6)、macOS 1.0 (5)、Android 1.0 (5) は内部テストで利用できます。独立した Web アプリは https://westicker.lazying.art です。共有アカウント登録、画像・動画生成、決済の接続と検証は未完了で、制作サービス全体の正式公開ではありません。
+**2026-10-11** · https://westicker.lazying.art で LazyingArt のパスワードログインとチャット中心の制作を利用できます。会話を始めてから参考画像を追加し、スタンプ案を編集できます。内部テスト版は iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。外部サービスでのログイン、AI 画像・動画生成、決済はまだ利用できません。
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android は Kotlin/Jetpack Compose、iOS/macOS は SwiftUI のネイティブ実
 
 ## 検証
 
-バックエンド72件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。
+バックエンド77件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## リリース状況
 
-Create と Agent を統合し、編集できる文字・動作表、ライブラリとキャラクター管理を追加しました。iOS 1.0 (6)、macOS 1.0 (5)、Android 1.0 (5) は内部テストで利用できます。独立した Web アプリは https://westicker.lazying.art です。共有アカウント登録、画像・動画生成、決済の接続と検証は未完了で、制作サービス全体の正式公開ではありません。
+https://westicker.lazying.art で LazyingArt のパスワードログインとチャット中心の制作を利用できます。会話を始めてから参考画像を追加し、スタンプ案を編集できます。内部テスト版は iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。外部サービスでのログイン、AI 画像・動画生成、決済はまだ利用できません。
 
 ## 引用
 

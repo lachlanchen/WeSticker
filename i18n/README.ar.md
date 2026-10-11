@@ -6,7 +6,7 @@
 
 *شخصيتك، وتعابيرك الصغيرة كل يوم.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 استوديو مستقل لملصقات Aya وأصدقائها ولشخصيات المستخدمين ومجموعاتهم. يمكن مشاهدة الأعمال الافتراضية دون تسجيل الدخول، بينما تُعالج الصور الشخصية في مساحة خاصة. متجر AYA الحالي لم يتغير.
 
@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · دُمج Create وAgent مع جداول قابلة للتحرير للنصوص والحركات ومكتبة وشخصيات. تتوفر iOS 1.0 (6) وmacOS 1.0 (5) وAndroid 1.0 (5) للمختبرين الداخليين. تطبيق الويب المستقل على https://westicker.lazying.art. ما زال تسجيل الحساب المشترك وتوليد الصور والرسوم المتحركة والدفع بانتظار التحقق؛ هذه ليست خدمة إنشاء مكتملة الإطلاق.
+**2026-10-11** · يتوفر تسجيل الدخول بكلمة مرور LazyingArt والإنشاء عبر المحادثة على https://westicker.lazying.art. ابدأ المحادثة ثم أضف الصور المرجعية وعدّل خطة الملصقات. إصدارات الاختبار الداخلي: iOS 1.0 (7)، macOS 1.0 (6)، Android 1.0 (7). تسجيل الدخول عبر الخدمات الاجتماعية وتوليد الصور والرسوم المتحركة بالذكاء الاصطناعي والدفع غير مفعلة بعد.
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ python3 scripts/dev.py start
 
 ## التحقق
 
-نجح 72 اختباراً للخادم واختبارا أمان للوكيل. تحقق متصفح حقيقي من التنزيل والرفع وتأكيد الشخصية وإنشاء ملصقات الصور ومراجعة النص وZIP وحذف الحساب على أحجام الهاتف والحاسوب. ليست هذه اختبارات دفع فعلي أو مزود ذكاء اصطناعي حي.
+نجح 77 اختباراً للخادم واختبارا أمان للوكيل. تحقق متصفح حقيقي من التنزيل والرفع وتأكيد الشخصية وإنشاء ملصقات الصور ومراجعة النص وZIP وحذف الحساب على أحجام الهاتف والحاسوب. ليست هذه اختبارات دفع فعلي أو مزود ذكاء اصطناعي حي.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## حالة الإصدار
 
-دُمج Create وAgent مع جداول قابلة للتحرير للنصوص والحركات ومكتبة وشخصيات. تتوفر iOS 1.0 (6) وmacOS 1.0 (5) وAndroid 1.0 (5) للمختبرين الداخليين. تطبيق الويب المستقل على https://westicker.lazying.art. ما زال تسجيل الحساب المشترك وتوليد الصور والرسوم المتحركة والدفع بانتظار التحقق؛ هذه ليست خدمة إنشاء مكتملة الإطلاق.
+يتوفر تسجيل الدخول بكلمة مرور LazyingArt والإنشاء عبر المحادثة على https://westicker.lazying.art. ابدأ المحادثة ثم أضف الصور المرجعية وعدّل خطة الملصقات. إصدارات الاختبار الداخلي: iOS 1.0 (7)، macOS 1.0 (6)، Android 1.0 (7). تسجيل الدخول عبر الخدمات الاجتماعية وتوليد الصور والرسوم المتحركة بالذكاء الاصطناعي والدفع غير مفعلة بعد.
 
 ## الاستشهاد
 

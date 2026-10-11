@@ -165,21 +165,22 @@ def main():
         run("shell", "input", "text", cfg["origin"])
         run("shell", "input", "keyevent", "4")
         tree("01-create")
-        tap("Sign in with browser")
+        tap("Continue with LazyingArt")
         time.sleep(4)
         with sqlite3.connect(Path(cfg["state"]) / "westicker.sqlite") as db:
             added = {r[0] for r in db.execute("SELECT id FROM native_links")} - previous
         assert len(added) == 1, "Native app must start exactly one link"
-        request(f"/api/native/link/{added.pop()}/approve", {"approved": True})
+        approved = request(f"/api/native/link/{added.pop()}/approve", {"approved": True})
         run(
             "shell",
             "am",
             "start",
-            "-n",
-            "art.lazying.westicker.debug/art.lazying.westicker.MainActivity",
+            "-a",
+            "android.intent.action.VIEW",
+            "-d",
+            approved["return_url"],
+            "art.lazying.westicker.debug",
         )
-        time.sleep(1)
-        tap("I connected my account")
         time.sleep(2)
         tap("Library")
         time.sleep(1)
@@ -199,6 +200,7 @@ def main():
         p = next(p for p in data["packs"] if p["id"] == pack)
         assert p["items"][0]["label"] == "Howdy"
         tree("03-chat-and-plan")
+        tap("Sticker plan")
         tap("Use uploaded photo", True)
         time.sleep(1)
         tap("Confirm generation", True)

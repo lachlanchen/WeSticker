@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import pwd
+import re
 import subprocess
 import tarfile
 import time
@@ -51,7 +52,29 @@ def main():
         owner = pwd.getpwnam("lazystudio")
         os.chown(conf, 0, owner.pw_gid)
         release = root / "releases" / digest[:16]
+        existed = release.exists()
         release.mkdir(parents=True, exist_ok=True)
+        manifest = cfg.get("files")
+        base_name = cfg.get("base_release")
+        if existed and manifest is not None:
+            assert all(not p.is_symlink() for p in release.rglob("*"))
+            actual = {str(p.relative_to(release)): hashlib.sha256(p.read_bytes()).hexdigest()
+                      for p in release.rglob("*") if p.is_file()}
+            assert actual == manifest, "Existing immutable release differs"
+        if base_name:
+            assert re.fullmatch(r"[a-f0-9]{16}", base_name) and base_name != release.name
+            base = root / "releases" / base_name
+            assert base.is_dir() and not base.is_symlink() and isinstance(manifest, dict)
+            for path in base.rglob("*"):
+                assert not path.is_symlink()
+                if path.is_file():
+                    relative = str(path.relative_to(base))
+                    if relative not in manifest:
+                        continue
+                    dst = release / relative
+                    dst.parent.mkdir(parents=True, exist_ok=True)
+                    if not dst.exists():
+                        os.link(path, dst)
         total = 0
         with tarfile.open(archive) as src:
             for entry in src:
@@ -63,13 +86,24 @@ def main():
                 dst = release / name
                 dst.parent.mkdir(parents=True, exist_ok=True)
                 value = src.extractfile(entry).read()
+                if manifest is not None:
+                    assert manifest.get(str(name)) == hashlib.sha256(value).hexdigest()
                 if dst.exists():
-                    assert not dst.is_symlink() and dst.read_bytes() == value
+                    assert not dst.is_symlink()
+                    if dst.read_bytes() != value:
+                        assert base_name and not existed, "Existing snapshot differs"
+                        dst.unlink()  # Detach the staged hardlink; the old release stays unchanged.
+                        dst.write_bytes(value)
                 else:
                     with dst.open("xb") as f:
                         f.write(value)
                 dst.chmod(0o644)
         assert (release / "index.html").is_file()
+        if manifest is not None:
+            assert isinstance(manifest, dict) and 1 <= len(manifest) <= 5000
+            actual = {str(p.relative_to(release)): hashlib.sha256(p.read_bytes()).hexdigest()
+                      for p in release.rglob("*") if p.is_file() and not p.is_symlink()}
+            assert actual == manifest, "Incomplete or changed static snapshot"
         username = "westicker-tunnel"
         try:
             account = pwd.getpwnam(username)

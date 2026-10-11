@@ -35,6 +35,11 @@ try {
     .getByRole("button", { name: "Create account", exact: true })
     .click();
   account = true;
+  await page.getByRole("heading", { name: "What shall we make?" }).waitFor();
+  await page.getByLabel("Message your sticker assistant").fill("change 1 to Hello there");
+  await page.getByRole("button", {name: "Send message", exact: true}).click();
+  await page.getByRole("button", {name: "Apply table", exact: true}).click();
+  await page.getByRole("button", {name: "Character references", exact: true}).click();
   await page.getByRole("heading", { name: "Who are we creating?" }).waitFor();
   await page.getByLabel("Name", { exact: true }).fill("Studio review mascot");
   await page.getByRole("checkbox", { name: /permission to use/ }).check();
@@ -42,7 +47,6 @@ try {
     .locator(".studio-start input[type=file]")
     .setInputFiles("public/icon-192.png");
   await page.locator(".reference-strip img").first().waitFor();
-  await page.getByLabel("Collection name").fill("A small hello");
   await page
     .getByRole("button", { name: "Approve references & start" })
     .click();
@@ -56,7 +60,7 @@ try {
     .getByLabel("Message your sticker assistant")
     .fill("change 1 to Hello there");
   await page.getByRole("button", { name: "Send message", exact: true }).click();
-  await page.getByRole("button", { name: "Apply table", exact: true }).click();
+  await page.locator('.chat-exchange').nth(1).getByRole("button", { name: "Apply table", exact: true }).click();
   await page.waitForFunction(
     () =>
       document.querySelector('[aria-label="Caption 1"]').value ===
@@ -90,6 +94,7 @@ try {
   await page.getByRole("button", { name: "Close version history" }).click();
   for (const width of [390, 768, 1360]) {
     await page.setViewportSize({ width, height: 1000 });
+    if(width < 1050) await page.getByRole("tab",{name:"Chat",exact:true}).click();
     await page.screenshot({
       path: `${out}/create-${width}.png`,
       fullPage: true,
@@ -100,10 +105,14 @@ try {
       ),
       `overflow at ${width}`,
     );
+    if(width < 1050) {
+      await page.getByRole("tab",{name:"Sticker plan",exact:true}).click();
+      await page.screenshot({path: `${out}/plan-${width}.png`,fullPage:true});
+    }
   }
   await page.reload();
-  await page.getByRole("button", { name: "My library", exact: true }).click();
-  await page.getByRole("button", { name: /A small hello/ }).click();
+  await page.getByRole("button", { name: /^(My library|Library)$/ }).first().click();
+  await page.getByRole("button", { name: /change 1 to Hello there/ }).click();
   await page.waitForFunction(
     () =>
       document.querySelector('[aria-label="Caption 1"]')?.value ===
@@ -139,6 +148,10 @@ try {
   console.log(
     "Chat studio browser workflow passed. No paid generation submitted.",
   );
+} catch(error) {
+  await page.screenshot({path: out + "/failure.png",fullPage:true});
+  await writeFile(out + "/failure.txt",await page.locator("body").innerText());
+  throw error;
 } finally {
   if (account)
     await page

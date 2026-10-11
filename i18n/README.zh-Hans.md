@@ -6,7 +6,7 @@
 
 *你的角色，日常的小表情。*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 独立的表情创作工坊：可以欣赏阿芽与伙伴们的作品，也能创建自己的角色与表情系列。默认作品无需登录即可浏览，个人素材在私有工作区处理。已有 AYA 商店保持不变。
 
@@ -26,9 +26,9 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Create 与 Agent 已合并，支持可编辑的文字与动作表、作品库和角色库。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已开放内部测试。独立网页为 https://westicker.lazying.art。共享账号注册、图片与动画生成、支付仍待接通验证，并非完整创作服务上线。
+**2026-10-11** · LazyingArt 密码登录与聊天式创作已在 https://westicker.lazying.art 上线。可以先聊天，随后添加参考图并编辑表情方案。内部测试版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社交登录、AI 图像与动画生成、支付尚未启用。
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 独
 
 ## 验证结果
 
-72 项后端测试及 2 项浏览器代理安全测试通过。真实浏览器完成访客下载、照片上传、角色确认、照片表情生成、文字审核、ZIP 导出和账号删除，并检查桌面与移动宽度。这不代表真实支付或模型服务已经验证。
+77 项后端测试及 2 项浏览器代理安全测试通过。真实浏览器完成访客下载、照片上传、角色确认、照片表情生成、文字审核、ZIP 导出和账号删除，并检查桌面与移动宽度。这不代表真实支付或模型服务已经验证。
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 发布状态
 
-Create 与 Agent 已合并，支持可编辑的文字与动作表、作品库和角色库。iOS 1.0 (6)、macOS 1.0 (5) 和 Android 1.0 (5) 已开放内部测试。独立网页为 https://westicker.lazying.art。共享账号注册、图片与动画生成、支付仍待接通验证，并非完整创作服务上线。
+LazyingArt 密码登录与聊天式创作已在 https://westicker.lazying.art 上线。可以先聊天，随后添加参考图并编辑表情方案。内部测试版本：iOS 1.0 (7)、macOS 1.0 (6)、Android 1.0 (7)。第三方社交登录、AI 图像与动画生成、支付尚未启用。
 
 ## 引用
 

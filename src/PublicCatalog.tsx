@@ -6,10 +6,11 @@ import {
   ImagePlus,
   Library,
   Users,
+  LogOut,
 } from "lucide-react";
 import { Studio } from "./Studio";
 import { StickerBrowser } from "./StickerBrowser";
-import type { Pack, Sticker } from "./api";
+import {api, setCSRF, type Boot, type Pack, type Sticker} from "./api";
 
 const base = import.meta.env.BASE_URL;
 const asset = (path: string) =>
@@ -29,7 +30,7 @@ export function PublicCatalog() {
   const [view, setView] = useState<
     "stickers" | "create" | "library" | "characters" | "saved"
   >(
-    new URLSearchParams(location.search).has("native_link")
+    ["native_link", "welcome", "login"].some(k => new URLSearchParams(location.search).has(k))
       ? "create"
       : "stickers",
   );
@@ -42,6 +43,12 @@ export function PublicCatalog() {
   ] as const;
   const [preview, setPreview] = useState<Sticker | null>(null);
   const [error, setError] = useState("");
+  const [account, setAccount] = useState<Boot | null>(null);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [accountBusy, setAccountBusy] = useState(false);
+  const [accountError, setAccountError] = useState("");
+  const [accountEpoch, setAccountEpoch] = useState(0);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
   useEffect(() => {
     fetch(base + "catalog.json")
       .then((r) => {
@@ -128,6 +135,7 @@ export function PublicCatalog() {
         <header className="topbar">
           <strong>WeSticker</strong>
           <span>Creator beta</span>
+          {account?.user && <button className="icon-button" aria-label="Your account" onClick={() => setAccountOpen(true)}><Users size={20}/></button>}
           <button
             className="icon-button"
             aria-label="Saved collections"
@@ -138,7 +146,7 @@ export function PublicCatalog() {
         </header>
         <main>
           {view === "create" || view === "library" || view === "characters" ? (
-            <Studio section={view} onSection={setView} />
+            <Studio key={accountEpoch} section={view} onSection={setView} onAccount={setAccount} />
           ) : error ? (
             <p role="alert">{error}</p>
           ) : (
@@ -179,6 +187,28 @@ export function PublicCatalog() {
           </button>
         ))}
       </nav>
+      {accountOpen && account?.user && <div className="modal-backdrop" onClick={() => setAccountOpen(false)}>
+        <section className="auth-modal" role="dialog" aria-modal="true" aria-label="Your account" onClick={e => e.stopPropagation()}>
+          <button className="icon-button close" aria-label="Close account" onClick={() => setAccountOpen(false)}><X/></button>
+          <h2>{account.user.name}</h2>
+          <p>LazyingArt account</p>
+          {accountError && <p role="alert">{accountError}</p>}
+          <button className="button outline full" disabled={accountBusy} onClick={async()=>{
+            setAccountBusy(true);setAccountError("");
+            try {setCSRF(account.csrf);await api('/api/auth/logout',{});setAccount(null);setAccountOpen(false);setAccountEpoch(n=>n+1);}
+            catch(e){setAccountError((e as Error).message);}finally{setAccountBusy(false);}
+          }}><LogOut size={18}/> Sign out of WeSticker</button>
+          <details><summary>Delete my WeSticker account</summary>
+            <p>Your private WeSticker creations and uploads will be deleted. Your LazyingArt account and other apps stay unchanged.</p>
+            <label>Type DELETE<input value={deleteConfirmation} onChange={e=>setDeleteConfirmation(e.target.value)}/></label>
+            <button className="button outline full" disabled={deleteConfirmation!=="DELETE"||accountBusy} onClick={async()=>{
+              setAccountBusy(true);setAccountError("");
+              try{setCSRF(account.csrf);await api('/api/account/delete',{confirmation:'DELETE'});setAccount(null);setAccountOpen(false);setAccountEpoch(n=>n+1);}
+              catch(e){setAccountError((e as Error).message);}finally{setAccountBusy(false);}
+            }}>Delete WeSticker account</button>
+          </details>
+        </section>
+      </div>}
       {preview && (
         <div className="modal-backdrop" onClick={() => setPreview(null)}>
           <section

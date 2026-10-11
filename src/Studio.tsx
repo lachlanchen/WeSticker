@@ -111,6 +111,8 @@ export function Studio({
     { id: string; state: string; items: Item[] }[] | null
   >(null);
   const [creating, setCreating] = useState(false);
+  const [showReferences, setShowReferences] = useState(false);
+  const [pane, setPane] = useState("chat");
   const [linkApproved, setLinkApproved] = useState(false);
   const [localView, setLocalView] = useState<"create" | "agent" | null>(null);
   const [creatorAction, setCreatorAction] = useState<
@@ -269,6 +271,12 @@ export function Studio({
       setCharacter(id);
     }
     await api(`/api/characters/${id}/lock`, { approved: true });
+    if (pack && !creating && !pack.character_id) {
+      await api(`/api/packs/${pack.id}/character`, { character: id, revision: pack.revision });
+      await refresh();
+      setShowReferences(false);
+      return;
+    }
     const made = await api<{ id: string }>("/api/packs", {
       character: id,
       title,
@@ -278,11 +286,20 @@ export function Studio({
     const next = await api<Workspace>("/api/workspace");
     setW(next);
     await open(next.packs.find((p) => p.id === made.id)!);
+    setShowReferences(false);
   }
   async function send() {
-    if (!pack || !text.trim()) return;
+    if (!text.trim()) return;
     if (dirty) throw Error("Save the table before asking for a revision.");
     const input = text.trim();
+    let current = pack;
+    if (!current || creating) {
+      const made = await api<{id: string}>("/api/packs", {title: input.slice(0, 60), language, theme: "daily"});
+      const next = await api<Workspace>("/api/workspace");
+      setW(next);
+      current = next.packs.find(p => p.id === made.id)!;
+      await open(current);
+    }
     const attempt = newID();
     setMessages((old) => [
       ...old,
@@ -290,10 +307,10 @@ export function Studio({
     ]);
     setText("");
     try {
-      await api(`/api/packs/${pack.id}/chat`, { text: input, attempt });
+      await api(`/api/packs/${current.id}/chat`, { text: input, attempt });
     } finally {
       const result = await api<{ messages: Message[] }>(
-        `/api/packs/${pack.id}/conversation`,
+        `/api/packs/${current.id}/conversation`,
       );
       setMessages(result.messages);
     }
@@ -314,6 +331,12 @@ export function Studio({
     await refresh();
   }
   const link = new URLSearchParams(location.search).get("native_link");
+  const appReturn = new URLSearchParams(location.search).get("native_return") === "1";
+  const composer = <form className="studio-composer" onSubmit={e => {e.preventDefault(); run(send);}}>
+    <button type="button" title="Character references" aria-label="Character references" onClick={() => setShowReferences(!showReferences)}><ImagePlus size={20}/></button>
+    <textarea aria-label="Message your sticker assistant" placeholder="Tell Aya what you have in mind…" value={text} maxLength={2000} onChange={e => setText(e.target.value)} rows={2}/>
+    <button className="primary" aria-label="Send message" title="Send message" disabled={busy || !text.trim() || dirty || locked}><ArrowUp size={20}/></button>
+  </form>;
   if (localView)
     return (
       <section className="creator-workspace">
@@ -375,11 +398,12 @@ export function Studio({
                 disabled={busy}
                 onClick={() =>
                   run(async () => {
-                    await api(
+                    const result = await api<{return_url: string}>(
                       `/api/native/link/${encodeURIComponent(link)}/approve`,
                       { approved: true },
                     );
                     setLinkApproved(true);
+                    if (appReturn && result.return_url === `art.lazying.westicker://auth/complete?link=${link}`) location.assign(result.return_url);
                   })
                 }
               >
@@ -388,6 +412,7 @@ export function Studio({
             </div>
           )}
           {linkApproved && <p role="status">Connected. Return to the app.</p>}
+          {linkApproved && appReturn && <a className="button primary" href={`art.lazying.westicker://auth/complete?link=${link}`}>Return to WeSticker</a>}
           {section === "characters" ? (
             <div className="character-library">
               {w.characters.map((c) => (
@@ -405,6 +430,7 @@ export function Studio({
                     onClick={() => {
                       setCharacter(c.id);
                       setCreating(true);
+                      setShowReferences(true);
                       onSection?.("create");
                     }}
                   >
@@ -418,6 +444,7 @@ export function Studio({
                   setCharacter("");
                   setRefs([]);
                   setCreating(true);
+                  setShowReferences(true);
                   onSection?.("create");
                 }}
               >
@@ -486,8 +513,9 @@ export function Studio({
                   <Plus size={18} />
                 </button>
               </div>
-              {!pack || creating ? (
+              {showReferences ? (
                 <div className="studio-start">
+                  <button onClick={() => setShowReferences(false)}><X size={16}/> Back to chat</button>
                   <h2>Who are we creating?</h2>
                   <label>
                     Character
@@ -596,8 +624,20 @@ export function Studio({
                     <Check size={18} /> Approve references & start
                   </button>
                 </div>
+              ) : !pack || creating ? (
+                <div className="chat-welcome">
+                  <img src={import.meta.env.BASE_URL + "icon-192.png"} alt="Aya and Lala" width="80" height="80"/>
+                  <h2>What shall we make?</h2>
+                  <div className="chat-suggestions">
+                    {["A cheerful hello sticker", "Help me choose my character", "Something funny for a busy day"].map(s => <button key={s} onClick={() => setText(s)}>{s}</button>)}
+                  </div>
+                  {composer}
+                </div>
               ) : (
-                <div className="chat-studio">
+                <div className={`chat-studio pane-${pane}`}>
+                  <div className="studio-pane-switch" role="tablist" aria-label="Creation view">
+                    {[["chat", "Chat"], ["plan", "Sticker plan"]].map(([id, label]) => <button key={id} role="tab" aria-selected={pane === id} onClick={() => setPane(id)}>{label}</button>)}
+                  </div>
                   <div className="studio-chat">
                     <div className="chat-transcript" aria-live="polite">
                       <div className="studio-greeting">
@@ -620,7 +660,7 @@ export function Studio({
                               {m.result?.reply ||
                                 (m.state === "failed"
                                   ? "The request failed. Your draft is unchanged."
-                                  : "Preparing your table…")}
+                                  : "Aya is thinking…")}
                             </p>
                             {m.result?.items && (
                               <>
@@ -669,32 +709,10 @@ export function Studio({
                       ))}
                       <div ref={bottom} />
                     </div>
-                    <form
-                      className="studio-composer"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        run(send);
-                      }}
-                    >
-                      <textarea
-                        aria-label="Message your sticker assistant"
-                        placeholder="A warmer smile, a little wave…"
-                        value={text}
-                        maxLength={2000}
-                        onChange={(e) => setText(e.target.value)}
-                        rows={3}
-                      />
-                      <button
-                        className="primary"
-                        aria-label="Send message"
-                        title="Send message"
-                        disabled={busy || !text.trim() || locked}
-                      >
-                        <ArrowUp size={20} />
-                      </button>
-                    </form>
+                    {composer}
                   </div>
                   <div className="studio-artifacts">
+                    {!pack.character_id && <button className="primary" onClick={() => setShowReferences(true)}><ImagePlus size={18}/> Choose character references</button>}
                     <header>
                       <h2>Sticker plan</h2>
                       <span>
@@ -1052,16 +1070,22 @@ function StudioLogin({
     <div className="studio-login">
       <img src={import.meta.env.BASE_URL + "icon-192.png"} alt="Aya and Lala" />
       <h2>Your own little cast</h2>
+      {new URLSearchParams(location.search).get("login") === "cancelled" && <p role="status">Sign-in cancelled. Your drafts are safe.</p>}
       <p>
         Sign in to keep your characters, conversations and creations together.
       </p>
       {boot.providers.map((provider) => (
         <a
-          className="button"
+          className="button primary"
           key={provider}
-          href={API + "/auth/" + provider + "/start"}
+          href={API + "/auth/" + provider + "/start" + (() => {
+            const params = new URLSearchParams(location.search);
+            const query = new URLSearchParams();
+            for (const key of ["native_link", "native_return"]) if (params.has(key)) query.set(key, params.get(key)!);
+            return query.size ? "?" + query : "";
+          })()}
         >
-          Continue with {provider}
+          Continue with {provider === "lazyingart" ? "LazyingArt" : provider.charAt(0).toUpperCase() + provider.slice(1)}
         </a>
       ))}
       {boot.local_accounts && (
@@ -1127,8 +1151,9 @@ function StudioLogin({
         </form>
       )}
       {!boot.local_accounts && !boot.providers.length && (
-        <p>Account service is not connected on this deployment yet.</p>
+        <p role="status">Sign-in is temporarily unavailable. Your saved local drafts are still available.</p>
       )}
+      <div className="login-legal"><a href={API + "/terms.html"}>Terms</a><a href={API + "/privacy.html"}>Privacy</a></div>
     </div>
   );
 }

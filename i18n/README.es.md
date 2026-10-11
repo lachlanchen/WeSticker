@@ -6,7 +6,7 @@
 
 *Tu personaje. Tus expresiones de cada día.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Un estudio independiente para Aya y sus amigos, personajes personales y colecciones de creadores. Las obras predeterminadas se ven sin iniciar sesión; las fotos personales se procesan en privado. La tienda AYA existente no cambia.
 
@@ -26,9 +26,9 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Create y Agent están unidos, con tablas editables de textos y acciones, biblioteca y personajes. iOS 1.0 (6), macOS 1.0 (5) y Android 1.0 (5) están disponibles para pruebas internas. La aplicación web independiente está en https://westicker.lazying.art. El registro compartido, la generación de imágenes y animaciones y los pagos siguen pendientes de validación; no es el lanzamiento completo del servicio.
+**2026-10-11** · El inicio de sesión con contraseña de LazyingArt y la creación por chat están disponibles en https://westicker.lazying.art. Empieza conversando, añade referencias después y edita el plan de stickers. Pruebas internas: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). El acceso con proveedores sociales, la generación de imágenes y animaciones con IA y los pagos aún no están habilitados.
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android nativo con Kotlin/Jetpack Compose, iOS/macOS con SwiftUI y PWA separada 
 
 ## Verificación
 
-Pasan 72 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.
+Pasan 77 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Estado de publicación
 
-Create y Agent están unidos, con tablas editables de textos y acciones, biblioteca y personajes. iOS 1.0 (6), macOS 1.0 (5) y Android 1.0 (5) están disponibles para pruebas internas. La aplicación web independiente está en https://westicker.lazying.art. El registro compartido, la generación de imágenes y animaciones y los pagos siguen pendientes de validación; no es el lanzamiento completo del servicio.
+El inicio de sesión con contraseña de LazyingArt y la creación por chat están disponibles en https://westicker.lazying.art. Empieza conversando, añade referencias después y edita el plan de stickers. Pruebas internas: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). El acceso con proveedores sociales, la generación de imágenes y animaciones con IA y los pagos aún no están habilitados.
 
 ## Cita
 

@@ -1,15 +1,14 @@
 # Release Readiness
 
-Current internal release: [chat-workspace beta, 2026-10-11](chat-beta-release-20261011.md).
-iOS 1.0 (6), macOS 1.0 (5) and Android 1.0 (5) are available to internal testers.
-The independent HTTPS creator origin is deployed. Shared-account registration,
-live image/animation and payments remain unqualified. The tables below preserve
+Current internal release: [login/chat beta, 2026-10-11](login-chat-release-20261011.md).
+iOS 1.0 (7), macOS 1.0 (6) and Android 1.0 (7) are available to internal testers.
+The independent HTTPS creator origin has real password sign-in and conversational
+chat. Social login, live image/animation and payments remain unqualified. The tables below preserve
 the earlier October 10 release record, not the current build numbers.
 
-**Status: public catalog PWA and native catalog betas. The creator service is
-still a local integration prototype, not ready for real customer payments.**
+**Status: public catalog and login/chat beta, not ready for customer payments.**
 
-The owner installed iOS build 3. Creation and the assistant are intentionally
+The owner previously installed iOS build 3. Creation and the assistant were intentionally
 not claimed as available in that binary. They are the next milestone in the
 [native creator plan](native-creator-plan.md), not a completed delivery.
 

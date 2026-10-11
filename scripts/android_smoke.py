@@ -79,7 +79,7 @@ def main():
                 tap(tree, "Create")
                 time.sleep(2)
                 tree = capture("creator")
-                assert any(n.get("text") == "Sign in with browser" for n in tree.iter("node"))
+                assert any(n.get("text") == "Continue with LazyingArt" for n in tree.iter("node"))
                 assert not any(n.get("text") == "Agent" for n in tree.iter("node"))
                 assert any(n.get("content-desc") == "Library" or n.get("text") == "Library" for n in tree.iter("node"))
                 assert any(n.get("content-desc") == "Characters" or n.get("text") == "Characters" for n in tree.iter("node"))

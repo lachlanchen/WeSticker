@@ -3,6 +3,7 @@
 import base64
 import hashlib
 import secrets
+import re
 import time
 from urllib.parse import urlencode
 
@@ -93,11 +94,27 @@ def register_auth(app, cfg):
             shared.associate(id, *grant)
         response = app.extensions["westicker"]["login_user"](id, ttl=ttl)
         response.status_code = 302
-        response.headers["Location"] = cfg["origin"] + "/?welcome=1"
+        intent = session.pop("native_intent", None)
+        query = {"welcome": "1"}
+        if intent and intent["expires"] > time.time():
+            query["native_link"] = intent["id"]
+            if intent["return"]:
+                query["native_return"] = "1"
+        response.headers["Location"] = cfg["origin"] + "/?" + urlencode(query)
         return response
 
     @app.get("/auth/<provider>/start")
     def start(provider):
+        session.pop("native_intent", None)
+        link = request.args.get("native_link", "")
+        if link:
+            if not re.fullmatch(r"[a-f0-9]{32}", link):
+                abort(400)
+            with database(cfg) as db:
+                row = db.execute("SELECT expires FROM native_links WHERE id=? AND used=0 AND expires>?", (link, time.time())).fetchone()
+            if not row:
+                abort(410, description="Sign-in expired. Return to WeSticker and try again.")
+            session["native_intent"] = {"id": link, "expires": row["expires"], "return": request.args.get("native_return") == "1"}
         options = providers.get(provider, {})
         if not options.get("enabled"):
             abort(503, description="This sign-in provider is not connected yet.")
@@ -161,6 +178,9 @@ def register_auth(app, cfg):
         if provider == "lazyingart":
             if shared:
                 identity, identifier = shared.complete()
+                if identity is None:
+                    session.pop("native_intent", None)
+                    return redirect(cfg["origin"] + "/?login=cancelled")
                 return activate(identity.issuer, identity.subject, identity.display_name,
                                 grant=(identity, identifier))
             flow = session.pop("lazyingart", None)

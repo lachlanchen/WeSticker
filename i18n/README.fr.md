@@ -6,7 +6,7 @@
 
 *Votre personnage, vos petites expressions du quotidien.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Un studio indépendant pour Aya et ses amis, vos personnages et vos collections. Les créations par défaut sont visibles sans connexion ; les photos personnelles restent dans un espace privé. La boutique AYA existante est inchangée.
 
@@ -26,9 +26,9 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Create et Agent sont réunis, avec tableaux de textes et d’actions modifiables, bibliothèque et personnages. iOS 1.0 (6), macOS 1.0 (5) et Android 1.0 (5) sont disponibles en test interne. L’application web indépendante est sur https://westicker.lazying.art. L’inscription partagée, la génération d’images et d’animations et les paiements restent à qualifier : le service de création complet n’est pas encore lancé.
+**2026-10-11** · La connexion par mot de passe LazyingArt et la création par chat sont disponibles sur https://westicker.lazying.art. Commencez par discuter, ajoutez vos références ensuite et modifiez le plan de stickers. Versions de test internes : iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). La connexion via des services tiers, la génération d’images et d’animations par IA et les paiements ne sont pas encore activés.
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android natif en Kotlin/Jetpack Compose, iOS/macOS en SwiftUI et PWA séparée e
 
 ## Vérification
 
-72 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.
+77 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## État de publication
 
-Create et Agent sont réunis, avec tableaux de textes et d’actions modifiables, bibliothèque et personnages. iOS 1.0 (6), macOS 1.0 (5) et Android 1.0 (5) sont disponibles en test interne. L’application web indépendante est sur https://westicker.lazying.art. L’inscription partagée, la génération d’images et d’animations et les paiements restent à qualifier : le service de création complet n’est pas encore lancé.
+La connexion par mot de passe LazyingArt et la création par chat sont disponibles sur https://westicker.lazying.art. Commencez par discuter, ajoutez vos références ensuite et modifiez le plan de stickers. Versions de test internes : iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). La connexion via des services tiers, la génération d’images et d’animations par IA et les paiements ne sont pas encore activés.
 
 ## Citation
 

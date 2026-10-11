@@ -4,12 +4,13 @@ import CryptoKit
 import Security
 import ImageIO
 import UniformTypeIdentifiers
+import AuthenticationServices
 
 struct StudioRow: Codable, Identifiable {
     var id: String; var label: String; var action: String?; var asset: String?; var approved: Bool
 }
 struct StudioPack: Codable, Identifiable {
-    var id: String; var title: String; var items: [StudioRow]; var revision: Int; var character_id: String
+    var id: String; var title: String; var items: [StudioRow]; var revision: Int; var character_id: String?
 }
 struct StudioCharacter: Codable, Identifiable {
     var id: String; var name: String; var refs: [String]; var locked: Bool
@@ -60,12 +61,14 @@ private enum StudioSecret {
     @Published var signedIn = false
     @Published var needsConsent = false
     @Published var capabilities: [String: Bool] = [:]
+    @Published var sending = false
     @Published var refs: [String] = [] { didSet { pendingCharacter = "" } }
     @Published var pendingCharacter = ""
     private var csrf = ""
     private var linkedOrigin = ""
     private var link: (String, String)?
     private let network = URLSession(configuration: .ephemeral)
+    private let authentication = StudioAuthentication()
 
     func validatedOrigin() throws -> String {
         let value = origin.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
@@ -100,6 +103,7 @@ private enum StudioSecret {
     }
     func refresh() async throws {
         let base = try validatedOrigin()
+        await flushLogout(base)
         if linkedOrigin != base { workspace = nil; current = nil; rows = []; messages = []; refs = []; dirty = false; csrf = ""; linkedOrigin = base }
         let boot = try json(await request("/api/bootstrap")); csrf = boot["csrf"] as? String ?? ""
         capabilities = boot["capabilities"] as? [String: Bool] ?? [:]
@@ -121,19 +125,47 @@ private enum StudioSecret {
         _ = try validatedOrigin(); try await refresh()
         let verifier = UUID().uuidString.replacingOccurrences(of: "-", with: "") + UUID().uuidString.replacingOccurrences(of: "-", with: "")
         let digest = Data(SHA256.hash(data: Data(verifier.utf8))).base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
-        let result = try json(await request("/api/native/link", ["challenge": digest]))
+        let result = try json(await request("/api/native/link", ["challenge": digest, "app_return": true]))
         guard let id = result["id"] as? String, let address = result["url"] as? String, let url = URL(string: address) else { throw URLError(.badServerResponse) }
         link = (id, verifier); return url
     }
-    func finishLogin() async throws {
+    func signIn() async throws {
+        do {
+            let url = try await startLogin()
+            let result = try await authentication.open(url)
+            let query = URLComponents(url: result, resolvingAgainstBaseURL: false)?.queryItems
+            guard result.scheme == "art.lazying.westicker", result.host == "auth", result.path == "/complete",
+                  query?.first(where: { $0.name == "link" })?.value == link?.0 else { throw URLError(.badServerResponse) }
+            try await finishLogin()
+        } catch {
+            link = nil
+            if (error as NSError).domain == ASWebAuthenticationSessionError.errorDomain && (error as NSError).code == ASWebAuthenticationSessionError.canceledLogin.rawValue { return }
+            throw error
+        }
+    }
+    private func finishLogin() async throws {
         guard let (id, verifier) = link else { try await refresh(); return }
         let result = try json(await request("/api/native/link/\(id)/exchange", ["verifier": verifier]))
-        guard let token = result["token"] as? String else { error = "Approve Connect device in your browser, then check again."; return }
+        guard let token = result["token"] as? String else { throw URLError(.userAuthenticationRequired) }
         StudioSecret.write(token, try validatedOrigin()); link = nil; try await refresh()
     }
     func signOut() async throws {
-        _ = try await request("/api/auth/logout", [:])
-        StudioSecret.write("", try validatedOrigin()); csrf = ""; signedIn = false; workspace = nil; current = nil; rows = []; selected = []; messages = []; refs = []; dirty = false; link = nil
+        let base = try validatedOrigin()
+        let pending = try JSONSerialization.data(withJSONObject: ["token": StudioSecret.read(base), "csrf": csrf])
+        StudioSecret.write(String(decoding: pending, as: UTF8.self), base + ":logout")
+        StudioSecret.write("", base); csrf = ""; signedIn = false; workspace = nil; current = nil; rows = []; selected = []; messages = []; refs = []; dirty = false; link = nil
+        await flushLogout(base)
+    }
+    private func flushLogout(_ base: String) async {
+        let pending = StudioSecret.read(base + ":logout")
+        guard let data = pending.data(using: .utf8), let value = try? json(data), let token = value["token"] as? String, !token.isEmpty else { return }
+        var req = URLRequest(url: URL(string: base + "/api/auth/logout")!)
+        req.httpMethod = "POST"; req.timeoutInterval = 12
+        req.setValue(base, forHTTPHeaderField: "Origin")
+        req.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+        req.setValue(value["csrf"] as? String ?? "", forHTTPHeaderField: "X-CSRF-Token")
+        if let (_, response) = try? await network.data(for: req), let http = response as? HTTPURLResponse,
+           (200..<300).contains(http.statusCode) || http.statusCode == 401 { StudioSecret.write("", base + ":logout") }
     }
     func open(_ p: StudioPack) async throws {
         current = p; rows = p.items; selected = Set(p.items.prefix(1).map(\.id)); dirty = false; quote = nil
@@ -149,8 +181,18 @@ private enum StudioSecret {
         dirty = false; try await refresh(); quote = nil
     }
     func chat(_ text: String) async throws {
-        guard let p = current else { return }
-        _ = try await request("/api/packs/\(p.id)/chat", ["text": text, "attempt": UUID().uuidString])
+        if current == nil {
+            let result = try json(await request("/api/packs", ["title": String(text.prefix(60)), "language": "en", "theme": "daily"]))
+            try await refresh()
+            if let p = workspace?.packs.first(where: { $0.id == result["id"] as? String }) { try await open(p) }
+        }
+        guard let p = current else { throw URLError(.badServerResponse) }
+        let attempt = UUID().uuidString
+        messages.append(StudioMessage(id: attempt, text: text, state: "working"))
+        sending = true
+        defer { sending = false }
+        do { _ = try await request("/api/packs/\(p.id)/chat", ["text": text, "attempt": attempt]) }
+        catch { try? await loadMessages(p.id); throw error }
         try await loadMessages(p.id)
     }
     func getQuote(_ kind: String) async throws {
@@ -194,6 +236,10 @@ private enum StudioSecret {
         if id.isEmpty { let result = try json(await request("/api/characters", ["name": name, "style": "figurine", "refs": refs])); id = result["id"] as? String ?? "" }
         pendingCharacter = id
         _ = try await request("/api/characters/\(id)/lock", ["approved": true])
+        if let p = current, p.character_id == nil {
+            _ = try await request("/api/packs/\(p.id)/character", ["character": id, "revision": p.revision])
+            pendingCharacter = ""; try await refresh(); return
+        }
         let result = try json(await request("/api/packs", ["character": id, "title": title, "language": language, "theme": "daily"]))
         try await refresh()
         if let p = workspace?.packs.first(where: { $0.id == result["id"] as? String }) { try await open(p) }
@@ -233,10 +279,11 @@ struct CloudStudioView: View {
     @State private var history: [StudioRow] = []
     @State private var termsAccepted = false
     @State private var showServiceSettings = false
+    @State private var pane = 0
 
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ScrollViewReader { proxy in ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
                     if !store.signedIn { signInView }
@@ -251,19 +298,27 @@ struct CloudStudioView: View {
                         Text("\(w.limits.plan.capitalized) · \(w.limits.credits) credits · \(w.limits.pack_size) per creation").font(.caption).foregroundStyle(.secondary)
                         if section == 2 { libraryView(w) }
                         else if section == 3 { charactersView(w) }
-                        else if creating || store.current == nil { creationForm(w) }
+                        else if store.current == nil { chatWelcome }
                         else if let p = store.current { editor(p, w) }
                     }
                     if store.busy { ProgressView() }
+                    Color.clear.frame(height: 1).id("chat-bottom")
                 }.padding().frame(maxWidth: 850, alignment: .leading).frame(maxWidth: .infinity)
+            }.onChange(of: store.messages.count) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
             }.navigationTitle(section == 2 ? "Library" : section == 3 ? "Characters" : "Create")
+            .safeAreaInset(edge: .bottom) {
+                if store.signedIn && !store.needsConsent && section == 1 && pane == 0 { composer.padding().background(.regularMaterial) }
+            }
             .toolbar { ToolbarItemGroup {
                 Button { store.perform { try await store.refresh() } } label: { Image(systemName: "arrow.clockwise") }
                 if store.signedIn {
-                    Button { creating = true; onCreate() } label: { Image(systemName: "plus") }
+                    Button { store.current = nil; store.messages = []; store.rows = []; store.dirty = false; pane = 0; onCreate() } label: { Image(systemName: "plus") }.disabled(store.dirty)
                     Button("Sign out") { store.perform { try await store.signOut() } }
                 }
-            } }.disabled(store.busy)
+            } }
+            .sheet(isPresented: $creating) { NavigationStack { ScrollView { VStack(alignment: .leading, spacing: 16) {
+                if let w = store.workspace { creationForm(w) }
+            }.padding() }.navigationTitle("Character references").toolbar { Button("Done") { creating = false } } }.frame(minWidth: 280, minHeight: 400) }
             .sheet(isPresented: $showLocal) { NavigationStack {
                 CreatorView(store: local, openAgent: { showLocal = false })
                     .toolbar { Button("Close local draft") { showLocal = false } }
@@ -286,14 +341,36 @@ struct CloudStudioView: View {
         }
     }
     private var signInView: some View { Group {
-        Text("Your own little cast").font(.title2.bold())
-        DisclosureGroup("Service settings", isExpanded: $showServiceSettings) {
-            TextField("HTTPS creator service", text: $store.origin).textFieldStyle(.roundedBorder).autocorrectionDisabled()
-        }
-        Button("Sign in with browser") { store.perform { openURL(try await store.startLogin()) } }
-        Button("I connected my account") { store.perform { try await store.finishLogin() } }
-        Button("Open saved local photo draft") { showLocal = true }
+        VStack(alignment: .leading, spacing: 20) {
+            if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) { NativeImage(data: data).frame(width: 112, height: 112).clipShape(RoundedRectangle(cornerRadius: 24)) }
+            Text("Your own little cast").font(.title.bold())
+            Text("Welcome to WeSticker").foregroundStyle(.secondary)
+            Button { store.perform { try await store.signIn() } } label: { Label(store.busy ? "Connecting…" : "Continue with LazyingArt", systemImage: "person.crop.circle").frame(maxWidth: .infinity).padding(.vertical, 8) }.buttonStyle(.borderedProminent).disabled(store.busy)
+            Button("Open saved local photo draft") { showLocal = true }
+            HStack(spacing: 20) {
+                Link("Terms", destination: URL(string: store.origin + "/terms.html")!)
+                Link("Privacy", destination: URL(string: store.origin + "/privacy.html")!)
+                Button { showServiceSettings.toggle() } label: { Image(systemName: "gearshape") }.accessibilityLabel("Service settings")
+            }.font(.caption)
+            if showServiceSettings { TextField("HTTPS creator service", text: $store.origin).textFieldStyle(.roundedBorder).autocorrectionDisabled() }
+        }.frame(maxWidth: 390).padding(.vertical, 32).frame(maxWidth: .infinity)
     } }
+    private var chatWelcome: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) { NativeImage(data: data).frame(width: 80, height: 80) }
+            Text("What shall we make?").font(.title2.bold())
+            ForEach(["A cheerful hello sticker", "Help me choose my character", "Something funny for a busy day"], id: \.self) { suggestion in
+                Button(suggestion) { text = suggestion }.buttonStyle(.bordered)
+            }
+        }
+    }
+    private var composer: some View {
+        HStack(alignment: .bottom) {
+            Button { creating = true } label: { Image(systemName: "photo.badge.plus").font(.title3) }.accessibilityLabel("Character references").disabled(store.busy)
+            TextField("Message your sticker assistant", text: $text, axis: .vertical).lineLimit(1...5).textFieldStyle(.roundedBorder)
+            Button { let message = text; text = ""; store.perform { try await store.chat(message) } } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }.accessibilityLabel("Send message").disabled(store.busy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.dirty || store.blocked)
+        }.frame(maxWidth: 850)
+    }
     @ViewBuilder private func libraryView(_ w: StudioWorkspace) -> some View {
         ForEach(w.packs) { p in
             Button { store.perform { try await store.open(p); creating = false; onCreate() } } label: {
@@ -326,6 +403,8 @@ struct CloudStudioView: View {
     }
     @ViewBuilder private func editor(_ p: StudioPack, _ w: StudioWorkspace) -> some View {
         Text(p.title).font(.title2.bold())
+        Picker("Creation view", selection: $pane) { Text("Chat").tag(0); Text("Sticker plan").tag(1) }.pickerStyle(.segmented)
+        if pane == 0 {
         ForEach(store.messages) { m in
             Text(m.text).padding(10).frame(maxWidth: .infinity, alignment: .trailing).background(Color.cyan.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
             if let result = m.result {
@@ -335,11 +414,11 @@ struct CloudStudioView: View {
                     Button("Apply table") { store.perform { try await store.save(proposed, revision: result.revision) } }.disabled(store.dirty || store.blocked || result.revision != p.revision)
                 }
             }
+            if m.state == "working" { Label("Aya is thinking…", systemImage: "ellipsis.bubble").font(.caption).foregroundStyle(.secondary) }
+            if m.state == "failed" { Text("Reply interrupted. Your draft is saved.").font(.caption).foregroundStyle(.secondary) }
         }
-        HStack(alignment: .bottom) {
-            TextField("Message your sticker assistant", text: $text, axis: .vertical).lineLimit(2...5).textFieldStyle(.roundedBorder)
-            Button { let message = text; store.perform { try await store.chat(message); text = "" } } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }.accessibilityLabel("Send message").disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.dirty || store.blocked)
-        }
+        } else {
+        if p.character_id == nil { Button("Choose character references") { creating = true } }
         Divider(); Text("Sticker plan").font(.headline)
         ForEach(store.rows.indices, id: \.self) { index in rowEditor(index) }
         HStack {
@@ -373,6 +452,7 @@ struct CloudStudioView: View {
             history = try (result["versions"] as? [[String: Any]] ?? []).flatMap { version in try JSONDecoder().decode([StudioRow].self, from: JSONSerialization.data(withJSONObject: version["items"] ?? [])) }
             showHistory = true
         } }
+        }
     }
     @ViewBuilder private func rowEditor(_ index: Int) -> some View {
         HStack(alignment: .top, spacing: 10) {

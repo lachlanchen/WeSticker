@@ -12,22 +12,22 @@ distribution status is in [release readiness](release-readiness.md).
 
 ## Central LazyingArt account owner
 
-Disabled onboarding files for client/audience `westicker` are staged using the
-maintained private onboarding tool, with proposed callback
-`https://westicker.lazying.art/auth/lazyingart/callback`. The domain is not yet
-provisioned, and the client is not registered on the live issuer. Coordinate
-registration and the client type with the identity owner; do not create another
-client from a stale handoff. The web callback is `<origin>/auth/lazyingart/callback`.
+Client/audience `westicker` is registered on the live issuer and its exact callback
+`https://westicker.lazying.art/auth/lazyingart/callback` is qualified and enabled.
+The separate domain is deployed. The actual password signup/consent/callback,
+native S256 return, cancellation, replay, logout and account deletion were tested
+with one exact disposable account. See the [current release](login-chat-release-20261011.md).
+Preserve this registration; do not create another client from an older handoff.
 General signup must not require an EchoMind invitation; application entitlements
 remain local to WeSticker. Preserve central ownership and other client records.
 
-The existing central service is a custom PKCE protocol, not assumed OIDC:
-`/.well-known/lazyingart-account`, `/account/authorize`, `/account/token`,
-POST `/account/profile`. This adapter validates exact issuer/endpoints, S256,
-state, one-use callback and verified subject. Its local session is capped to the
-600-second token lifetime; it does not retain a refresh token. Confirm token
-revocation/deletion contract and any confidential-client requirement before
-enabling. Native system-browser callbacks and universal links remain to build.
+The central service is a custom PKCE protocol, not assumed OIDC. The app uses its
+pinned maintained SDK for discovery, S256, browser-bound one-use state, subject
+validation, encrypted token storage, serialized refresh and revocation. Native
+system-browser login uses an independent one-use verifier and fixed callback;
+no token is carried in the URL. Account deletion revokes every app-bound session
+for that subject before SDK erasure and local deletion. Native purchases remain
+independent of identity.
 
 Latest inspected central account receipt reported password login active and
 Google/Apple/GitHub not yet activated there. Do not infer that WeSticker social

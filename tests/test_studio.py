@@ -283,6 +283,44 @@ def test_native_pkce_requires_approval_and_single_exchange(setup):
     assert browser.get("/api/workspace").status_code == 200
 
 
+def test_chat_before_references_and_explicit_character_binding(setup):
+    app, _ = setup
+    c = app.test_client()
+    signup(c)
+    made = call(c, "/api/packs", {"title": "Let's chat", "language": "en"})
+    assert made.status_code == 201
+    id = made.json["id"]
+    p = c.get("/api/workspace").json["packs"][0]
+    assert p["character_id"] is None
+    proposal = call(c, f"/api/packs/{id}/chat", {"text": "change 1 to Hi", "attempt": "chat-before-reference-1"})
+    assert proposal.status_code == 200
+    quote = call(c, f"/api/packs/{id}/quote", {"kind": "photo", "items": [p["items"][0]["id"]]})
+    assert quote.json["can_generate"] is False
+    assert call(c, f"/api/packs/{id}/generate", {"kind": "photo", "consent": True, "attempt": "reference-missing-123"}).status_code == 409
+    other, _ = draft(c)
+    character = next(x for x in c.get("/api/workspace").json["packs"] if x["id"] == other)["character_id"]
+    assert call(c, f"/api/packs/{id}/character", {"character": character, "revision": p["revision"]}).status_code == 200
+    assert call(c, f"/api/packs/{id}/character", {"character": character, "revision": p["revision"]}).status_code == 409
+
+
+def test_assistant_can_converse_without_modifying_table(setup, monkeypatch):
+    app, _ = setup
+    app.config["WESTICKER"]["chat_api_key"] = "test-only"
+    c = app.test_client()
+    signup(c)
+    id, _ = draft(c)
+    before = c.get("/api/workspace").json["packs"][0]
+    class Response:
+        def raise_for_status(self): pass
+        def json(self):
+            return {"choices": [{"message": {"content": json.dumps({"reply": "Who is your sticker for?", "items": None})}}]}
+    monkeypatch.setattr("server.studio.requests.post", lambda *a, **k: Response())
+    result = call(c, f"/api/packs/{id}/chat", {"text": "Can we brainstorm?", "attempt": "conversation-only-123"})
+    assert result.status_code == 200 and result.json["result"]["items"] is None
+    after = c.get("/api/workspace").json
+    assert after["packs"][0]["items"] == before["items"] and not after["jobs"]
+
+
 def test_private_thumbnail_keeps_original_and_ownership(setup):
     app, _ = setup
     c = app.test_client()

@@ -20,6 +20,11 @@ Agent tab. Chat proposes a revisioned caption/action table, and the user applies
 it explicitly. All renders require a quote and stable attempt ID. Keep tier
 limits in the backend contract, preserve older drafts after expiry, and keep
 the saved on-device photo workflow accessible without uploading its references.
+The assistant is conversation-first: users can chat before choosing references;
+questions need not produce a sticker table. Attach an approved character to the
+same draft later. Native login uses a system browser and automatic, one-use PKCE
+return, never a manual "I connected" button. Shared-account deletion revokes the
+app-bound SDK sessions before erasure and must allow interrupted cleanup retries.
 Use `scripts/test_studio_isolated.py` for repeat browser QA; do not relax signup
 limits or borrow paid-provider credentials to make tests pass.
 

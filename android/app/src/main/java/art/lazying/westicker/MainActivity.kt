@@ -3,6 +3,8 @@ package art.lazying.westicker
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.net.Uri
+import androidx.browser.auth.AuthTabIntent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -48,8 +50,26 @@ data class Pack(val id: String, val english: String, val name: String, val banne
     val stickers: Map<String, List<Sticker>>)
 
 class MainActivity : ComponentActivity() {
+    var authResult by mutableStateOf<Uri?>(null)
+        private set
+    var authCancelled by mutableStateOf(false)
+        private set
+    private val authLauncher = AuthTabIntent.registerActivityResultLauncher(this) { result ->
+        if (result.resultCode == AuthTabIntent.RESULT_OK) authResult = result.resultUri
+        else authCancelled = true
+    }
+    fun beginAuthentication(url: String) {
+        authResult = null; authCancelled = false
+        AuthTabIntent.Builder().build().launch(authLauncher, Uri.parse(url), "art.lazying.westicker")
+    }
+    fun clearAuthenticationResult() { authResult = null; authCancelled = false }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        intent.data?.takeIf { it.scheme == "art.lazying.westicker" && it.host == "auth" && it.path == "/complete" }?.let { authResult = it }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        intent.data?.takeIf { it.scheme == "art.lazying.westicker" && it.host == "auth" && it.path == "/complete" }?.let { authResult = it }
         enableEdgeToEdge()
         val catalog = JSONObject(assets.open("catalog.json").bufferedReader().use { it.readText() }).getJSONArray("packs")
         val packs = (0 until catalog.length()).map { index ->

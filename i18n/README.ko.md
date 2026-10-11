@@ -6,7 +6,7 @@
 
 *나만의 캐릭터로 전하는 일상의 마음.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드는 독립 스튜디오입니다. 기본 작품은 로그인 없이 볼 수 있으며 개인 자료는 비공개 작업 공간에서 처리합니다. 기존 AYA 상점은 변경하지 않았습니다.
 
@@ -26,9 +26,9 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Create와 Agent를 통합하고 문구·동작 편집표, 라이브러리와 캐릭터 관리를 추가했습니다. iOS 1.0 (6), macOS 1.0 (5), Android 1.0 (5)는 내부 테스터에게 배포되었습니다. 독립 웹 앱은 https://westicker.lazying.art 입니다. 공유 계정 등록, 이미지·애니메이션 생성과 결제는 아직 연결·검증 중이며 완전한 제작 서비스 출시는 아닙니다.
+**2026-10-11** · https://westicker.lazying.art 에서 LazyingArt 비밀번호 로그인과 채팅 중심의 제작을 이용할 수 있습니다. 대화부터 시작하고 나중에 참고 이미지를 추가하여 스티커 계획을 편집하세요. 내부 테스트 버전은 iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7)입니다. 소셜 로그인, AI 이미지·애니메이션 생성, 결제는 아직 활성화되지 않았습니다.
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android는 Kotlin/Jetpack Compose, iOS/macOS는 SwiftUI 네이티브 앱입니�
 
 ## 검증
 
-백엔드 72개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.
+백엔드 77개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 출시 상태
 
-Create와 Agent를 통합하고 문구·동작 편집표, 라이브러리와 캐릭터 관리를 추가했습니다. iOS 1.0 (6), macOS 1.0 (5), Android 1.0 (5)는 내부 테스터에게 배포되었습니다. 독립 웹 앱은 https://westicker.lazying.art 입니다. 공유 계정 등록, 이미지·애니메이션 생성과 결제는 아직 연결·검증 중이며 완전한 제작 서비스 출시는 아닙니다.
+https://westicker.lazying.art 에서 LazyingArt 비밀번호 로그인과 채팅 중심의 제작을 이용할 수 있습니다. 대화부터 시작하고 나중에 참고 이미지를 추가하여 스티커 계획을 편집하세요. 내부 테스트 버전은 iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7)입니다. 소셜 로그인, AI 이미지·애니메이션 생성, 결제는 아직 활성화되지 않았습니다.
 
 ## 인용
 

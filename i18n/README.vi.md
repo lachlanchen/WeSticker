@@ -6,7 +6,7 @@
 
 *Nhân vật của bạn. Cảm xúc mỗi ngày.*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)](../docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân vật do người dùng tạo. Xem bộ mặc định không cần đăng nhập; ảnh cá nhân được xử lý trong không gian riêng. Cửa hàng AYA hiện tại không thay đổi.
 
@@ -26,9 +26,9 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Create và Agent đã hợp nhất, có bảng chữ và hành động chỉnh sửa được, thư viện và nhân vật. iOS 1.0 (6), macOS 1.0 (5) và Android 1.0 (5) đã có cho người thử nghiệm nội bộ. Ứng dụng web độc lập ở https://westicker.lazying.art. Đăng ký tài khoản chung, tạo ảnh và hoạt ảnh, thanh toán vẫn chờ kết nối và xác minh; đây chưa phải bản ra mắt dịch vụ sáng tạo hoàn chỉnh.
+**2026-10-11** · Đăng nhập bằng mật khẩu LazyingArt và sáng tạo qua trò chuyện đã có tại https://westicker.lazying.art. Bắt đầu trò chuyện, thêm ảnh tham khảo sau và chỉnh sửa kế hoạch nhãn dán. Bản thử nghiệm nội bộ: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Đăng nhập mạng xã hội, tạo ảnh và hoạt ảnh AI, thanh toán chưa được bật.
 
-[2026-10-11 · Internal builds / HTTPS](../docs/chat-beta-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds](../docs/login-chat-release-20261011.md) · [API / QA](../docs/chat-studio-20261011.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
@@ -68,7 +68,7 @@ Android thuần Kotlin/Jetpack Compose, iOS/macOS dùng SwiftUI và PWA React/Vi
 
 ## Kiểm thử
 
-Đã qua 72 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.
+Đã qua 77 kiểm thử backend và hai kiểm thử an toàn agent. Trình duyệt thật đã kiểm tra tải xuống, tải ảnh, duyệt nhân vật, tạo ảnh nhãn dán, sửa chữ, ZIP và xóa tài khoản ở khổ máy tính lẫn di động. Đây không phải kiểm thử thanh toán hay nhà cung cấp AI thật.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Trạng thái phát hành
 
-Create và Agent đã hợp nhất, có bảng chữ và hành động chỉnh sửa được, thư viện và nhân vật. iOS 1.0 (6), macOS 1.0 (5) và Android 1.0 (5) đã có cho người thử nghiệm nội bộ. Ứng dụng web độc lập ở https://westicker.lazying.art. Đăng ký tài khoản chung, tạo ảnh và hoạt ảnh, thanh toán vẫn chờ kết nối và xác minh; đây chưa phải bản ra mắt dịch vụ sáng tạo hoàn chỉnh.
+Đăng nhập bằng mật khẩu LazyingArt và sáng tạo qua trò chuyện đã có tại https://westicker.lazying.art. Bắt đầu trò chuyện, thêm ảnh tham khảo sau và chỉnh sửa kế hoạch nhãn dán. Bản thử nghiệm nội bộ: iOS 1.0 (7), macOS 1.0 (6), Android 1.0 (7). Đăng nhập mạng xã hội, tạo ảnh và hoạt ảnh AI, thanh toán chưa được bật.
 
 ## Trích dẫn
 

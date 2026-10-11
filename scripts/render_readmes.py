@@ -54,7 +54,7 @@ for code, t in translations.items():
 
 *{t["tag"]}*
 
-[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Catalog_beta-ED477A)]({prefix}docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://aya.lazying.art/westicker/) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
+[![LazyingArt](https://img.shields.io/badge/LazyingArt-Project-0EA5E9)](https://lazying.art) [![Status](https://img.shields.io/badge/Status-Creator_beta-ED477A)]({prefix}docs/release-readiness.md) [![PWA](https://img.shields.io/badge/Open-Web_app-0EA5E9)](https://westicker.lazying.art) [![Sponsor](https://img.shields.io/badge/GitHub-Sponsors-F06595)](https://github.com/sponsors/lachlanchen)
 
 {t["intro"]}
 
@@ -74,7 +74,7 @@ for code, t in translations.items():
 
 **2026-10-11** · {t["creator_update"]}
 
-[2026-10-11 · Internal builds / HTTPS]({prefix}docs/chat-beta-release-20261011.md) · [API / QA]({prefix}docs/chat-studio-20261011.md)
+[2026-10-11 · Login / chat / test builds]({prefix}docs/login-chat-release-20261011.md) · [API / QA]({prefix}docs/chat-studio-20261011.md)
 
 ![Chat studio]({prefix}docs/screenshots/chat-studio-web.png)
 
