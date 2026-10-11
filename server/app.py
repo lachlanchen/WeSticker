@@ -6,7 +6,7 @@ import secrets
 import shutil
 import time
 
-from flask import Flask, abort, g, jsonify, request, send_file, send_from_directory
+from flask import Flask, abort, g, jsonify, request, send_file, send_from_directory, render_template_string
 from PIL import Image, ImageOps, UnidentifiedImageError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -199,6 +199,19 @@ def create_app(override=None):
 
     @app.errorhandler(HTTPException)
     def error(exc):
+        if (request.path.startswith("/auth/") and
+                request.accept_mimetypes.best_match(["text/html", "application/json"]) == "text/html"):
+            # Keep the original error status, but give browser sign-in a safe way back.
+            return render_template_string("""<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in to WeSticker</title>
+<style>
+body{margin:0;background:#f9fafc;color:#253139;font:16px system-ui,sans-serif;line-height:1.6}
+main{max-width:420px;margin:12vh auto;padding:24px}img{width:76px;height:76px;border-radius:18px}
+h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
+.retry{display:inline-block;padding:10px 18px;border-radius:6px;background:#077982;color:white;text-decoration:none;margin:12px 16px 12px 0}
+</style><main><img src="/icon-192.png" alt="Aya and Lala"><h1>Let's reconnect</h1>
+<p>{{ message }}</p><a class="retry" href="/?login=retry">Back to sign in</a><a href="/">Browse stickers</a></main></html>""", message=exc.description), exc.code
         return jsonify(error=exc.description), exc.code
 
     @app.get("/api/health")
@@ -207,8 +220,16 @@ def create_app(override=None):
 
     @app.get("/api/bootstrap")
     def bootstrap():
-        user = current(False)
-        return jsonify(
+        expired = False
+        try:
+            user = current(False)
+        except HTTPException as exc:
+            if exc.code != 401:
+                raise
+            # Public sign-in discovery must remain reachable after revocation.
+            user = None
+            expired = True
+        response = jsonify(
             user=user_info(user),
             csrf=user["csrf"] if user else None,
             plans=PLANS,
@@ -236,6 +257,10 @@ def create_app(override=None):
             },
             limits=limits(user) if user else None,
         )
+        if expired:
+            response.delete_cookie("westicker_session", httponly=True,
+                                   secure=cfg["origin"].startswith("https:"), samesite="Lax")
+        return response
 
     @app.get("/api/catalog")
     def catalog():

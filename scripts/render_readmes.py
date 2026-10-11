@@ -74,7 +74,7 @@ for code, t in translations.items():
 
 **2026-10-11** · {t["creator_update"]}
 
-[2026-10-11 · Login / chat / test builds]({prefix}docs/login-chat-release-20261011.md) · [API / QA]({prefix}docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create]({prefix}docs/protected-create-release-20261011.md) · [Native test builds]({prefix}docs/native-protected-create-20261011.md) · [Login qualification]({prefix}docs/social-auth-qualification-20261011.md) · [AgInTi qualification]({prefix}docs/aginti-images.md)
 
 ![Chat studio]({prefix}docs/screenshots/chat-studio-web.png)
 

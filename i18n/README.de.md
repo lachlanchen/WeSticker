@@ -26,16 +26,16 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Der Gastchat ist unter https://westicker.lazying.art ohne Anmeldung verfügbar. Characters befindet sich in Library und ist kein eigener Hauptbereich. Die Bilderzeugung über AgInTi (`nano-banana-2`) wurde mit dem echten Anbieter erfolgreich qualifiziert und ist aktiviert; sie erfordert weiterhin ein Konto, Einwilligung und die ausdrückliche Bestätigung des Kostenvoranschlags.
+**2026-10-11** · Sticker lassen sich ohne Anmeldung ansehen. Create öffnet eine separate Anmeldung und anschließend einen aufgeräumten Chat. Figuren und Referenzen liegen in Library; Account ist der letzte Tab.
 
-[2026-10-11 · Gastchat / Navigation](../docs/clean-chat-release-20261011.md) · [AgInTi-Bildqualifikation](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
 ## Das Studio
 
 - 10 Pakete, 156 eigenständige Animationen, chinesische, englische und japanische Beschriftungen mit sofortiger Vorschau.
-- Private Fotos, wiederverwendbare bestätigte Figur, acht Ausdrücke, bearbeitbare Texte, Einzelprüfung und ZIP-Export.
+- Private Fotos, wiederverwendbare bestätigte Figuren, tarifabhängige Entwürfe, bearbeitbare Texte, Einzelprüfung und ZIP-Export.
 - Optionale Bilderzeugung, lokale Animation, Verkaufsprüfung und isolierter WeChat-Entwurfsupload. Der Assistent speichert nur Entwürfe und reicht nichts zur Prüfung ein.
 
 ## Tarife
@@ -68,7 +68,7 @@ Native Android-App mit Kotlin/Jetpack Compose, iOS/macOS mit SwiftUI und separat
 
 ## Prüfung
 
-77 Backend- und zwei Agent-Sicherheitstests bestanden. Ein echter Browser prüfte Download, Upload, Figurenfreigabe, Fotogenerierung, Textprüfung, ZIP und Kontolöschung in Desktop- und Mobilbreiten. Keine Live-Zahlungs- oder KI-Anbietertests.
+Tests prüfen öffentliches Stöbern, geschützten Chat, Anmelderückkehr, abgelaufene Sitzungen, Referenzen, Freigabe und Export. Native Nachweise werden separat dokumentiert.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Veröffentlichungsstand
 
-Interne Testversionen: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Ein lokaler Animationstest war erfolgreich; die öffentliche Animationserzeugung bleibt jedoch bis zur Qualifikation des Dienstlebenszyklus offline. Anmeldung über soziale Anbieter, native In-App-Käufe und Webzahlungen bleiben bis zur erfolgreichen Ende-zu-Ende-Prüfung deaktiviert.
+Interne Test-Beta, keine vollständige kommerzielle Veröffentlichung. Passwort- und Google-Anmeldung über LazyingArt sowie AgInTi-Bilderzeugung sind geprüft. Weitere Anmeldewege stehen im Anbieterbericht. Öffentliche Animation und Zahlungen bleiben deaktiviert.
 
 ## Zitieren
 

@@ -30,9 +30,6 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
@@ -46,7 +43,6 @@ import java.nio.ByteBuffer
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.util.UUID
-import java.util.Locale
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -55,12 +51,13 @@ import javax.crypto.spec.GCMParameterSpec
 private fun JSONArray.objects() = (0 until length()).map { getJSONObject(it) }
 private fun newStudioID() = UUID.randomUUID().toString().replace("-", "")
 
+enum class StudioProvider(val id: String, val label: String) {
+    GOOGLE("google", "Google"), APPLE("apple", "Apple"), GITHUB("github", "GitHub"), LAZYINGART("lazyingart", "LazyingArt")
+}
+
 class CloudStudioStore(val context: Context) {
     private val prefs = context.getSharedPreferences("cloud-studio", Context.MODE_PRIVATE)
-    private var originValue by mutableStateOf(prefs.getString("origin", "https://westicker.lazying.art") ?: "https://westicker.lazying.art")
-    var origin: String
-        get() = originValue
-        set(value) { if (value != originValue) { originValue = value; clearGuestChat() } }
+    var origin by mutableStateOf(prefs.getString("origin", "https://westicker.lazying.art") ?: "https://westicker.lazying.art")
     var workspace by mutableStateOf<JSONObject?>(null)
     var current by mutableStateOf<JSONObject?>(null)
     var rows by mutableStateOf<List<JSONObject>>(emptyList())
@@ -68,14 +65,9 @@ class CloudStudioStore(val context: Context) {
     var selected by mutableStateOf<Set<String>>(emptySet())
     var refs by mutableStateOf<List<String>>(emptyList())
     var quote by mutableStateOf<JSONObject?>(null)
-    private var signedInValue by mutableStateOf(false)
-    var signedIn: Boolean
-        get() = signedInValue
-        set(value) { if (value != signedInValue) { signedInValue = value; clearGuestChat() } }
-    private var needsConsentValue by mutableStateOf(false)
-    var needsConsent: Boolean
-        get() = needsConsentValue
-        set(value) { if (value != needsConsentValue) { needsConsentValue = value; clearGuestChat() } }
+    var signedIn by mutableStateOf(false)
+    var needsConsent by mutableStateOf(false)
+    var providers by mutableStateOf<List<StudioProvider>>(emptyList())
     var capabilities by mutableStateOf(JSONObject())
     var busy by mutableStateOf(false)
     var dirty by mutableStateOf(false)
@@ -83,47 +75,9 @@ class CloudStudioStore(val context: Context) {
     var creating by mutableStateOf(false)
     var sending by mutableStateOf(false)
     var character by mutableStateOf("")
-    var guestMessages by mutableStateOf<List<GuestChatExchange>>(emptyList())
-    var guestDraft by mutableStateOf("")
-    var guestSending by mutableStateOf(false)
-    var guestError by mutableStateOf<String?>(null)
-    private var guestGeneration = 0
-    private var guestJob: Job? = null
     private var csrf = ""
     private var linkedOrigin = ""
     private var link: Pair<String, String>? = null
-    val usesGuestChat get() = !signedIn || needsConsent
-    fun clearGuestChat() {
-        guestGeneration += 1
-        guestJob?.cancel(); guestJob = null
-        guestMessages = emptyList(); guestDraft = ""; guestSending = false; guestError = null
-    }
-    fun sendGuestChat(scope: CoroutineScope) {
-        if (!usesGuestChat || guestSending) return
-        try {
-            val origin = base()
-            val text = guestDraft.trim()
-            val request = GuestChatClient.request(origin, text, guestMessages, Locale.getDefault().language)
-            val generation = guestGeneration
-            val id = UUID.randomUUID().toString()
-            guestMessages = guestMessages + GuestChatExchange(id, text)
-            guestDraft = ""; guestError = null; guestSending = true
-            guestJob = scope.launch {
-                fun current() = generation == guestGeneration && usesGuestChat && runCatching { base() == origin }.getOrDefault(false)
-                try {
-                    val reply = GuestChatClient.send(request)
-                    if (current()) guestMessages = guestMessages.map { if (it.id == id) it.copy(reply = reply) else it }
-                } catch (e: Exception) {
-                    if (current()) guestMessages = guestMessages.map {
-                        if (it.id == id) it.copy(failure = if (e is CancellationException) "Reply cancelled." else e.message ?: "Chat is unavailable.") else it
-                    }
-                    if (e is CancellationException) throw e
-                } finally {
-                    if (generation == guestGeneration) { guestSending = false; guestJob = null }
-                }
-            }
-        } catch (e: Exception) { guestError = e.message ?: "Check the service address." }
-    }
     fun billingSession(): BillingSession? {
         if (!signedIn) return null
         return runCatching {
@@ -196,14 +150,20 @@ class CloudStudioStore(val context: Context) {
         try { block() } catch (e: Exception) { error = e.message ?: "Request failed" } finally { busy = false }
     }
     suspend fun refresh() {
+        providers = emptyList()
         flushLogout()
         if (linkedOrigin != base()) { workspace = null; current = null; rows = emptyList(); selected = emptySet(); quote = null; character = ""; messages = emptyList(); refs = emptyList(); dirty = false; csrf = ""; linkedOrigin = base() }
         val boot = api("/api/bootstrap"); csrf = boot.optString("csrf").takeUnless { it == "null" } ?: ""
         capabilities = boot.optJSONObject("capabilities") ?: JSONObject()
+        val configured = boot.optJSONArray("providers") ?: JSONArray()
+        providers = StudioProvider.entries.filter { provider -> (0 until configured.length()).any { configured.optString(it) == provider.id } }
         val user = boot.optJSONObject("user")
         signedIn = user != null
         needsConsent = signedIn && user?.optBoolean("consented") != true && user?.optInt("consented") != 1
-        if (!signedIn) { workspace = null; current = null; rows = emptyList(); selected = emptySet(); quote = null; character = ""; messages = emptyList(); refs = emptyList(); dirty = false; return }
+        if (!signedIn) {
+            saveToken("")
+            workspace = null; current = null; rows = emptyList(); selected = emptySet(); quote = null; character = ""; messages = emptyList(); refs = emptyList(); dirty = false; return
+        }
         if (needsConsent) { workspace = null; return }
         val next = api("/api/workspace"); workspace = next
         if (!dirty) next.getJSONArray("packs").objects().find { it.getString("id") == current?.optString("id") }?.let { current = it; rows = it.getJSONArray("items").objects() }
@@ -212,11 +172,12 @@ class CloudStudioStore(val context: Context) {
     suspend fun acceptTerms() {
         api("/api/account/consent", JSONObject().put("adult", true).put("terms", true)); refresh()
     }
-    suspend fun startLogin(): String {
+    suspend fun startLogin(provider: StudioProvider): String {
         refresh()
+        check(provider in providers) { "This sign-in provider is unavailable. Please try again later." }
         val verifier = newStudioID() + newStudioID()
         val challenge = Base64.encodeToString(MessageDigest.getInstance("SHA-256").digest(verifier.toByteArray()), Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
-        val result = api("/api/native/link", JSONObject().put("challenge", challenge).put("app_return", true))
+        val result = api("/api/native/link", JSONObject().put("challenge", challenge).put("app_return", true).put("provider", provider.id))
         link = result.getString("id") to verifier
         saveSecret("pending:", JSONObject().put("id",link!!.first).put("verifier",verifier).put("expires",System.currentTimeMillis()+600000).toString())
         return result.getString("url")
@@ -334,7 +295,64 @@ class CloudStudioStore(val context: Context) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable fun CloudStudioScreen(store: CloudStudioStore, local: CreatorStore, loader: ImageLoader, section: Int, onSignIn: () -> Unit, onCreate: () -> Unit) {
+@Composable fun StudioLoginScreen(store: CloudStudioStore, loader: ImageLoader, signIn: (StudioProvider) -> Unit,
+    dismiss: () -> Unit, openLocalDraft: (() -> Unit)? = null) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var settings by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { store.run { store.refresh() } }
+    Scaffold(topBar={TopAppBar(title={Text("Sign in")},navigationIcon={
+        IconButton(enabled=!store.busy,onClick=dismiss){Icon(Icons.Outlined.Close,"Browse stickers")}
+    },actions={
+        IconButton(enabled=!store.busy,onClick={settings=true}){Icon(Icons.Outlined.Settings,"Service settings")}
+    })}) { padding ->
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(24.dp),
+            horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.spacedBy(24.dp)) {
+            AsyncImage("file:///android_asset/app-icon.png",null,imageLoader=loader,modifier=Modifier.size(96.dp))
+            Text("Sign in to WeSticker",style=MaterialTheme.typography.headlineSmall)
+            Column(Modifier.widthIn(max=460.dp).fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+                store.providers.forEach { provider ->
+                    Button(enabled=!store.busy,onClick={signIn(provider)},modifier=Modifier.fillMaxWidth()) {
+                        Icon(Icons.Outlined.AccountCircle,null);Spacer(Modifier.width(8.dp));Text("Continue with ${provider.label}")
+                    }
+                }
+            }
+            if(store.providers.isEmpty()&&!store.busy) {
+                Text("Sign-in is unavailable.",color=MaterialTheme.colorScheme.onSurfaceVariant)
+                TextButton(onClick={scope.launch { store.run { store.refresh() } }}){Icon(Icons.Outlined.Refresh,null);Text("Retry")}
+            }
+            if(store.busy) CircularProgressIndicator(Modifier.size(24.dp))
+            store.error?.let { Text(it,color=MaterialTheme.colorScheme.error) }
+            openLocalDraft?.let { open ->
+                TextButton(enabled=!store.busy,onClick=open){Icon(Icons.Outlined.Photo,null);Spacer(Modifier.width(8.dp));Text("Open saved local photo draft")}
+            }
+            runCatching { store.base() }.getOrNull()?.let { base ->
+                Row { listOf("Terms" to "/terms.html","Privacy" to "/privacy.html").forEach { (label,path) ->
+                    TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(base+path)))}){Text(label)}
+                } }
+            }
+        }
+    }
+    if(settings) StudioServiceSettings(store){settings=false}
+}
+
+@Composable private fun StudioServiceSettings(store: CloudStudioStore, close: () -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    AlertDialog(onDismissRequest=close,title={Text("Service settings")},text={
+        Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
+            OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
+            runCatching { store.base() }.getOrNull()?.let { base ->
+                Row { listOf("Terms" to "/terms.html","Privacy" to "/privacy.html").forEach { (label,path) ->
+                    TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(base+path)))}){Text(label)}
+                } }
+            }
+        }
+    },confirmButton={TextButton(onClick={close();scope.launch { store.run { store.refresh() } }}){Text("Done")}})
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable fun CloudStudioScreen(store: CloudStudioStore, local: CreatorStore, loader: ImageLoader, section: Int, onCreate: () -> Unit) {
     val context = LocalContext.current; val scope = rememberCoroutineScope()
     fun run(block: suspend () -> Unit) { scope.launch { store.run(block) } }
     var text by remember { mutableStateOf("") }; var name by remember { mutableStateOf("My character") }; var title by remember { mutableStateOf("Everyday moments") }
@@ -345,28 +363,25 @@ class CloudStudioStore(val context: Context) {
     var pane by remember { mutableStateOf(0) }
     var libraryPane by remember { mutableStateOf(0) }
     val scroll=rememberScrollState()
-    LaunchedEffect(store.messages.size, store.sending, store.guestMessages.size, store.guestSending) { if(pane==0 || store.usesGuestChat) scroll.animateScrollTo(scroll.maxValue) }
+    LaunchedEffect(store.messages.size, store.sending) { if(pane==0) scroll.animateScrollTo(scroll.maxValue) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) run { store.upload(uri) } }
     LaunchedEffect(Unit) { if (store.origin.isNotBlank()) store.run { store.refresh() }; while (true) { delay(4000); if (!store.busy && store.workspace?.optJSONArray("jobs")?.objects()?.any { it.optString("state") in listOf("queued", "running") } == true) store.run { store.refresh() } } }
     if (showLocal) { CreatorScreen(local, loader) { showLocal = false }; return }
     Scaffold(topBar = { TopAppBar(title = { Text(if(section==2) "Library" else "Create") }, actions = {
         if(section==2) IconButton(enabled=!store.busy,onClick={run{store.refresh()}}){Icon(Icons.Outlined.Refresh,"Refresh library")}
-        else IconButton(enabled=store.usesGuestChat||!store.busy&&!store.dirty,onClick={
-            if(store.usesGuestChat) store.clearGuestChat()
-            else {store.current=null;store.messages=emptyList();store.rows=emptyList();store.creating=false;pane=0}
+        else IconButton(enabled=!store.busy&&!store.dirty&&!store.needsConsent,onClick={
+            store.current=null;store.messages=emptyList();store.rows=emptyList();store.creating=false;pane=0
         }){Icon(Icons.Outlined.Edit,"New chat")}
         IconButton(onClick={serviceSettings=true}){Icon(Icons.Outlined.Settings,"Service settings")}
     }) }, bottomBar={
-        if(section==1&&(store.usesGuestChat||!store.creating&&pane==0)) Surface {
+        if(section==1&&store.signedIn&&!store.needsConsent&&store.workspace!=null&&!store.creating&&pane==0) Surface {
             Row(Modifier.fillMaxWidth().imePadding().padding(12.dp),verticalAlignment=Alignment.Bottom,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                IconButton(enabled=store.usesGuestChat||!store.busy,onClick={if(store.usesGuestChat) showLocal=true else store.creating=true}){
-                    Icon(Icons.Outlined.AddPhotoAlternate,if(store.usesGuestChat) "Open saved local photo draft" else "Character references")
+                IconButton(enabled=!store.busy,onClick={store.creating=true}){
+                    Icon(Icons.Outlined.AddPhotoAlternate,"Character references")
                 }
-                OutlinedTextField(if(store.usesGuestChat) store.guestDraft else text,{
-                    if(store.usesGuestChat) store.guestDraft=it.take(GuestChatHistory.MESSAGE_LIMIT) else text=it.take(2000)
-                },placeholder={Text("Message Aya…")},modifier=Modifier.weight(1f),minLines=1,maxLines=5)
-                IconButton(enabled=if(store.usesGuestChat) store.guestDraft.isNotBlank()&&!store.guestSending else text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked,onClick={
-                    if(store.usesGuestChat) store.sendGuestChat(scope) else {val input=text;text="";run{store.chat(input)}}
+                OutlinedTextField(text,{text=it.take(2000)},placeholder={Text("Message Aya…")},modifier=Modifier.weight(1f),minLines=1,maxLines=5)
+                IconButton(enabled=text.isNotBlank()&&!store.busy&&!store.dirty&&!store.blocked,onClick={
+                    val input=text;text="";run{store.chat(input)}
                 }){Icon(Icons.Outlined.Send,"Send message")}
             }
         }
@@ -380,28 +395,9 @@ class CloudStudioStore(val context: Context) {
                 }
                 if(libraryPane==0) { TextButton(onClick={showLocal=true}){Text("Open saved local photo draft")}; HorizontalDivider() }
             }
-            if(!(section==1&&store.usesGuestChat)) {
-                store.error?.let { Text(it, color=MaterialTheme.colorScheme.error) }
-                if(store.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
-            }
-            if(section==1&&store.usesGuestChat) {
-                if(store.guestMessages.isEmpty()) {
-                    AsyncImage("file:///android_asset/app-icon.png","Aya and Lala",imageLoader=loader,modifier=Modifier.size(80.dp))
-                    Text("What shall we make?",style=MaterialTheme.typography.headlineSmall)
-                }
-                store.guestMessages.forEach { message ->
-                    Text(message.text,fontWeight=FontWeight.Bold,modifier=Modifier.align(Alignment.End))
-                    if(message.reply!=null) Text(message.reply)
-                    else if(message.failure!=null) {
-                        Text(message.failure,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
-                        TextButton(enabled=!store.guestSending,onClick={store.guestDraft=message.text}){Icon(Icons.Outlined.Edit,null);Text("Edit message")}
-                    } else Text("Aya is thinking…",style=MaterialTheme.typography.bodySmall)
-                }
-                store.guestError?.let { Text(it,color=MaterialTheme.colorScheme.error) }
-            } else if(!store.signedIn){
-                Text(if(libraryPane==0) "Cloud creations" else "Cloud characters",style=MaterialTheme.typography.titleMedium)
-                TextButton(enabled=!store.busy,onClick=onSignIn){Icon(Icons.Outlined.AccountCircle,null);Spacer(Modifier.width(8.dp));Text("Sign in to cloud library")}
-            } else if(store.needsConsent) {
+            store.error?.let { Text(it, color=MaterialTheme.colorScheme.error) }
+            if(store.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+            if(store.needsConsent) {
                 Text("Before your first creation",style=MaterialTheme.typography.titleLarge)
                 TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+"/terms.html")))}){Text("Creator terms")}
                 TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(store.base()+"/privacy.html")))}){Text("Privacy policy")}
@@ -482,15 +478,6 @@ class CloudStudioStore(val context: Context) {
             }
         }
     }
-    if(serviceSettings) AlertDialog(onDismissRequest={serviceSettings=false},title={Text("Service settings")},text={
-        Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
-            OutlinedTextField(store.origin,{store.origin=it},label={Text("HTTPS creator service")},modifier=Modifier.fillMaxWidth())
-            runCatching { store.base() }.getOrNull()?.let { base ->
-                Row { listOf("Terms" to "/terms.html","Privacy" to "/privacy.html").forEach { (label,path) ->
-                    TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(base+path)))}){Text(label)}
-                } }
-            }
-        }
-    },confirmButton={TextButton(onClick={serviceSettings=false;run{store.refresh()}}){Text("Done")}})
+    if(serviceSettings) StudioServiceSettings(store){serviceSettings=false}
     history?.let{items->AlertDialog(onDismissRequest={history=null},title={Text("Preserved versions")},text={Column(Modifier.verticalScroll(rememberScrollState())){items.forEach{r->if(!r.isNull("asset")){StudioImage(store,r.getString("asset"),loader,140);Text(r.getString("label"))}}}},confirmButton={TextButton(onClick={history=null}){Text("Close")}})}
 }

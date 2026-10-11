@@ -26,16 +26,16 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 [GIF playback, new icon and test-build evidence](docs/native-playback-20261010.md)
 
-**2026-10-11** · Guest chat is live at https://westicker.lazying.art without signing in. Characters is inside Library, not a separate main destination. AgInTi image generation (`nano-banana-2`) passed real-provider qualification and is enabled; generation still requires an account, consent and explicit quote confirmation.
+**2026-10-11** · Browse stickers without signing in. Create opens a separate sign-in screen, then a clean chat. Characters and references live in Library; Account is the last tab.
 
-[2026-10-11 · Guest chat / navigation](docs/clean-chat-release-20261011.md) · [AgInTi image qualification](docs/aginti-images.md) · [API / QA](docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](docs/protected-create-release-20261011.md) · [Native test builds](docs/native-protected-create-20261011.md) · [Login qualification](docs/social-auth-qualification-20261011.md) · [AgInTi qualification](docs/aginti-images.md)
 
 ![Chat studio](docs/screenshots/chat-studio-web.png)
 
 ## The Studio
 
 - 10 default packs, 156 animations, Chinese/English/Japanese sticker versions and instant previews.
-- Private photo uploads, a reusable locked character, eight-expression drafts, editable captions, individual approval and ZIP export.
+- Private photo uploads, reusable approved characters, plan-limited drafts, editable captions, individual approval and ZIP export.
 - Optional image generation, local animation, creator sales review and isolated WeChat draft uploads. The assistant saves drafts; it never submits review.
 
 ## Plans
@@ -68,7 +68,7 @@ Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a
 
 ## Verification
 
-Backend and browser-agent safety tests pass. A real browser exercised guest download, upload, character approval, photo generation, caption review, ZIP export and deletion at desktop/mobile widths. These workflow checks are distinct from the real-provider evidence for [guest chat](docs/clean-chat-release-20261011.md) and [AgInTi images](docs/aginti-images.md); they do not qualify live payments or public animation.
+Backend and browser tests cover public browsing, protected chat, login return, expired sessions, references, review and export. Native build evidence is recorded separately.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Release Status
 
-Internal test builds: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](docs/native-guest-chat-20261011.md). One local animation canary passed, but public animation remains offline pending service lifecycle qualification. Social-provider sign-in, native in-app purchases and web payments remain disabled pending end-to-end qualification.
+Internal-test beta, not a completed commercial release. Password and Google sign-in through LazyingArt, plus AgInTi image generation, are qualified. See the provider report for other login paths. Public animation and payments remain gated.
 
 ## Citation
 

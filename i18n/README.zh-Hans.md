@@ -26,16 +26,16 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · https://westicker.lazying.art 已开放免登录访客聊天。Characters（角色）位于 Library（作品库）内，不再是独立的主导航入口。AgInTi 图像生成（`nano-banana-2`）已通过真实服务商验证并启用；生成仍需账号、授权同意和明确确认报价。
+**2026-10-11** · 表情浏览无需登录。Create 先进入独立登录界面，再返回简洁的聊天。角色和参考素材放在 Library，Account 是最后一个标签。
 
-[2026-10-11 · 访客聊天 / 导航](../docs/clean-chat-release-20261011.md) · [AgInTi 图像验证](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
 ## 创作工坊
 
 - 10 套默认作品、156 个独立动画，中英日三种文字版本，打开即可预览。
-- 私有照片上传、可复用的锁定角色、8 张表情草稿、逐张改字与确认，最后导出 ZIP。
+- 私有照片上传、可复用的已确认角色、按方案限额的表情草稿、逐张改字与确认，最后导出 ZIP。
 - 可选图像生成、本地动画、创作者销售审核和隔离的微信草稿上传。助手只保存草稿，不提交审核。
 
 ## 订阅方案
@@ -68,7 +68,7 @@ Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 独
 
 ## 验证结果
 
-77 项后端测试及 2 项浏览器代理安全测试通过。真实浏览器完成访客下载、照片上传、角色确认、照片表情生成、文字审核、ZIP 导出和账号删除，并检查桌面与移动宽度。这不代表真实支付或模型服务已经验证。
+后端和浏览器测试覆盖公开浏览、受保护的聊天、登录返回、会话过期、参考素材、审核及导出。原生版本证据单独记录。
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 发布状态
 
-内部测试版本: [iOS 1.0 (10)、macOS 1.0 (8)、Android 1.0 (9)](../docs/native-guest-chat-20261011.md). 一次本地动画试运行已通过，但面向公众的动画生成仍保持离线，等待服务生命周期验证。第三方社交登录、原生应用内购买和网页支付仍禁用，等待端到端验证通过。
+当前为内部测试版，并非完整商业发布。通过 LazyingArt 的密码和 Google 登录以及 AgInTi 图像生成已验证；其他登录方式见提供商报告。公开动画服务和支付尚未开放。
 
 ## 引用
 

@@ -26,16 +26,16 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · https://westicker.lazying.art でログイン不要のゲストチャットを利用できます。Characters は独立したメイン項目ではなく、Library 内にあります。AgInTi の画像生成（`nano-banana-2`）は実プロバイダーでの検証に合格し、有効になっています。生成には引き続きアカウント、同意、見積もりの明示的な確認が必要です。
+**2026-10-11** · スタンプの閲覧はログイン不要です。Create は専用のログイン画面を経て、すっきりしたチャットに進みます。キャラクターと参考素材は Library、Account は最後のタブです。
 
-[2026-10-11 · ゲストチャット / ナビゲーション](../docs/clean-chat-release-20261011.md) · [AgInTi 画像生成の検証](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
 ## スタジオ
 
 - 標準10パック、156種類のアニメーション、中国語・英語・日本語の文字版をすぐにプレビュー。
-- 非公開の写真アップロード、再利用できる固定キャラクター、8種類の表情、文字編集、個別確認と ZIP 出力。
+- 非公開の写真アップロード、再利用できる承認済みキャラクター、プラン上限内の下書き、文字編集、個別確認と ZIP 出力。
 - 画像生成、ローカル動画化、販売審査、隔離ブラウザーでの WeChat 下書きアップロードは任意機能です。助手は下書き保存のみで、審査には提出しません。
 
 ## プラン
@@ -68,7 +68,7 @@ Android は Kotlin/Jetpack Compose、iOS/macOS は SwiftUI のネイティブ実
 
 ## 検証
 
-バックエンド77件とブラウザーエージェント安全テスト2件に合格。実ブラウザーで閲覧・ダウンロード、写真アップロード、キャラクター確認、写真スタンプ生成、文字確認、ZIP 出力、アカウント削除をデスクトップとモバイル幅で検証しました。実決済や AI サービスの検証ではありません。
+バックエンドとブラウザーで公開閲覧、認証付きチャット、ログイン後の復帰、セッション期限切れ、参考素材、確認、書き出しを検証します。ネイティブ版の証拠は別途記録します。
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## リリース状況
 
-内部テスト版: [iOS 1.0 (10)、macOS 1.0 (8)、Android 1.0 (9)](../docs/native-guest-chat-20261011.md). ローカルのアニメーション試験は1件成功しましたが、サービスのライフサイクル検証が完了するまで一般向けアニメーション生成は停止したままです。ソーシャルログイン、ネイティブアプリ内課金、Web 決済は、エンドツーエンドの検証に合格するまで無効のままです。
+内部テスト版であり、商用リリースの完成版ではありません。LazyingArt 経由のパスワード・Google ログインと AgInTi の画像生成は検証済みです。他のログイン方式は提供元別の報告を参照してください。公開の動画生成と決済は未開放です。
 
 ## 引用
 

@@ -26,16 +26,16 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · El chat de invitados está disponible en https://westicker.lazying.art sin iniciar sesión. Characters está dentro de Library, no como sección principal independiente. La generación de imágenes mediante AgInTi (`nano-banana-2`) superó la validación con el proveedor real y está habilitada; sigue requiriendo una cuenta, consentimiento y confirmación explícita del presupuesto.
+**2026-10-11** · Explora stickers sin iniciar sesión. Create abre un acceso independiente y después un chat limpio. Los personajes y referencias están en Library; Account es la última pestaña.
 
-[2026-10-11 · Chat de invitados / navegación](../docs/clean-chat-release-20261011.md) · [Validación de imágenes AgInTi](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
 ## El estudio
 
 - 10 paquetes, 156 animaciones distintas y versiones en chino, inglés y japonés con vista previa inmediata.
-- Fotos privadas, personaje confirmado reutilizable, ocho expresiones, textos editables, aprobación individual y exportación ZIP.
+- Fotos privadas, personajes aprobados reutilizables, borradores limitados por plan, textos editables, aprobación individual y exportación ZIP.
 - Generación de imágenes, animación local, revisión de ventas y carga aislada de borradores WeChat opcionales. El asistente guarda borradores; nunca los envía a revisión.
 
 ## Planes
@@ -68,7 +68,7 @@ Android nativo con Kotlin/Jetpack Compose, iOS/macOS con SwiftUI y PWA separada 
 
 ## Verificación
 
-Pasan 77 pruebas backend y dos de seguridad del agente. Un navegador real verificó descarga, fotos, aprobación de personaje, generación fotográfica, textos, ZIP y eliminación de cuenta en tamaños móvil y escritorio. No son pruebas reales de pago ni del proveedor IA.
+Las pruebas cubren exploración pública, chat protegido, regreso tras el acceso, sesiones caducadas, referencias, revisión y exportación. La evidencia nativa se documenta por separado.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## Estado de publicación
 
-Versiones de prueba internas: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Una prueba piloto local de animación fue satisfactoria, pero la animación pública sigue fuera de servicio hasta validar el ciclo de vida del servicio. El inicio de sesión con proveedores sociales, las compras integradas en las aplicaciones nativas y los pagos web siguen deshabilitados hasta superar la validación de extremo a extremo.
+Beta interna, no un lanzamiento comercial completo. El acceso por contraseña y Google mediante LazyingArt y la generación AgInTi están verificados. Consulta el informe de proveedores para otras vías de acceso. La animación pública y los pagos siguen desactivados.
 
 ## Cita
 

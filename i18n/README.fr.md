@@ -26,16 +26,16 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · Le chat invité est disponible sur https://westicker.lazying.art sans connexion. Characters se trouve dans Library, et non dans une rubrique principale distincte. La génération d’images via AgInTi (`nano-banana-2`) a été validée avec le fournisseur réel et est activée ; elle nécessite toujours un compte, le consentement et la confirmation explicite du devis.
+**2026-10-11** · Consultez les stickers sans connexion. Create ouvre une connexion distincte, puis un chat épuré. Personnages et références sont dans Library ; Account est le dernier onglet.
 
-[2026-10-11 · Chat invité / navigation](../docs/clean-chat-release-20261011.md) · [Validation des images AgInTi](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
 ## Le studio
 
 - 10 collections, 156 animations distinctes, versions chinoise, anglaise et japonaise avec aperçu immédiat.
-- Photos privées, personnage validé réutilisable, brouillons de huit expressions, textes modifiables, validation individuelle et export ZIP.
+- Photos privées, personnages validés réutilisables, brouillons limités par formule, textes modifiables, validation individuelle et export ZIP.
 - Génération d’images, animation locale, examen des ventes et envoi de brouillons WeChat isolé en option. L’assistant enregistre seulement les brouillons, sans soumettre à examen.
 
 ## Formules
@@ -68,7 +68,7 @@ Android natif en Kotlin/Jetpack Compose, iOS/macOS en SwiftUI et PWA séparée e
 
 ## Vérification
 
-77 tests backend et deux tests de sécurité de l’agent passent. Un vrai navigateur a vérifié téléchargement, photos, validation du personnage, génération photo, révision, ZIP et suppression de compte aux tailles mobile et bureau. Ce ne sont pas des tests de paiement réel ou de fournisseur IA.
+Les tests couvrent consultation publique, chat protégé, retour de connexion, expiration, références, validation et export. Les preuves natives sont documentées séparément.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## État de publication
 
-Versions de test internes: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). Un essai local d’animation a réussi, mais l’animation publique reste hors ligne en attendant la validation du cycle de vie du service. La connexion via les réseaux sociaux, les achats intégrés aux applications natives et les paiements web restent désactivés jusqu’à leur validation de bout en bout.
+Bêta de test interne, pas une version commerciale complète. Connexions par mot de passe et Google via LazyingArt, ainsi que génération AgInTi, vérifiées. Les autres accès figurent dans le rapport des fournisseurs. Animation publique et paiements restent désactivés.
 
 ## Citation
 

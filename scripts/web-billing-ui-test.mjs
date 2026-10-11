@@ -44,8 +44,7 @@ try {
       const full = page.getByRole('button', {name: 'Plans & credits', exact: true});
       if (await full.count()) await full.click();
       else {
-        await page.getByRole('button', {name: 'Create', exact: true}).first().click();
-        await page.getByRole('button', {name: 'Your account', exact: true}).click();
+        await page.getByRole('button', {name: 'Account', exact: true}).first().click();
       }
       await page.locator('.web-plan-row').first().waitFor();
     }

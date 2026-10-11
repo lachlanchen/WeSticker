@@ -328,19 +328,28 @@ def register_studio(app, cfg):
     @app.post("/api/native/link")
     def link():
         ext["throttle"]("native-link:" + request.remote_addr, 15, 3600)
-        challenge = (request.get_json() or {}).get("challenge", "")
+        body = request.get_json() or {}
+        challenge = body.get("challenge", "")
         if not isinstance(challenge, str) or not re.fullmatch(
             r"[A-Za-z0-9_-]{43}", challenge
         ):
             abort(400)
+        provider = body.get("provider")
+        if provider is not None:
+            if not isinstance(provider, str) or provider not in {"google", "apple", "github", "lazyingart"}:
+                abort(400, description="Choose a supported sign-in method.")
+            if not cfg.get("providers", {}).get(provider, {}).get("enabled"):
+                abort(503, description="This sign-in method is currently unavailable.")
         id = uid()
         with database(cfg) as db:
             db.execute(
                 "INSERT INTO native_links VALUES(?,?,NULL,?,0)",
                 (id, challenge, time.time() + 600),
             )
-        suffix = "&native_return=1" if (request.get_json() or {}).get("app_return") is True else ""
-        return jsonify(id=id, url=cfg["origin"] + "/?native_link=" + id + suffix, expires_in=600)
+        suffix = "&native_return=1" if body.get("app_return") is True else ""
+        # A selected native method starts OAuth directly, not a second login UI.
+        entry = "/auth/" + provider + "/start?" if provider else "/?"
+        return jsonify(id=id, url=cfg["origin"] + entry + "native_link=" + id + suffix, expires_in=600)
 
     @app.post("/api/native/link/<id>/approve")
     def approve_link(id):

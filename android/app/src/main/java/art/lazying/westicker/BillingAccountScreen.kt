@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable fun BillingAccountScreen(cloud: CloudStudioStore, billing: NativeBillingStore, signIn: () -> Unit) {
+@Composable fun BillingAccountScreen(cloud: CloudStudioStore, billing: NativeBillingStore) {
     val activity = LocalContext.current as? Activity
     val scope = rememberCoroutineScope()
     Scaffold(topBar = { TopAppBar(title = { Text("Account") }) }) { padding ->
@@ -24,9 +24,7 @@ import kotlinx.coroutines.launch
             Text("WeSticker Account", style = MaterialTheme.typography.titleLarge)
             if (cloud.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
             cloud.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-            if (!cloud.signedIn) {
-                Button(onClick = signIn, enabled = !cloud.busy) { Icon(Icons.Outlined.AccountCircle, null); Text("Sign in", Modifier.padding(start = 8.dp)) }
-            } else {
+            if (cloud.signedIn) {
                 Text(billing.account.ifBlank { "Signed in" })
                 Text("${billing.plan.replaceFirstChar { it.uppercase() }} - ${billing.credits} credits")
                 TextButton(onClick = { scope.launch { cloud.run { cloud.signOut() } } }, enabled = !cloud.busy) { Icon(Icons.Outlined.Logout, null); Text("Sign out", Modifier.padding(start = 8.dp)) }

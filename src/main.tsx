@@ -30,6 +30,8 @@ import { WebPlans } from "./WebPlans";
 import { saveSticker } from "./native";
 import { PublicCatalog } from "./PublicCatalog";
 import { Studio } from "./Studio";
+import { SignInScreen, CreatorConsentScreen } from "./SignInScreen";
+import { NativeSignInReturn, nativeSignInIntent } from "./NativeSignInReturn";
 
 const native = Capacitor.isNativePlatform();
 type View =
@@ -41,12 +43,20 @@ type View =
   | "account"
   | "market";
 function App() {
+  const nativeIntent = nativeSignInIntent();
   const [boot, setBoot] = useState<Boot | null>(null),
     [packs, setPacks] = useState<Pack[]>([]),
     [view, setView] = useState<View>(
-      new URLSearchParams(location.search).has("native_link")
-        ? "studio"
-        : "discover",
+      new URLSearchParams(location.search).get("view") === "account"
+        ? "account"
+        : new URLSearchParams(location.search).get("view") === "library"
+          ? "library"
+          : new URLSearchParams(location.search).get("view") === "create" ||
+              ["native_link", "welcome", "login"].some((k) =>
+                new URLSearchParams(location.search).has(k),
+              )
+            ? "studio"
+            : "discover",
     ),
     [selected, setSelected] = useState<Pack | null>(null),
     [lang, setLang] = useState("zh"),
@@ -54,7 +64,6 @@ function App() {
       null,
     ),
     [auth, setAuth] = useState(false),
-    [authMode, setAuthMode] = useState("login"),
     [toast, setToast] = useState(""),
     [busy, setBusy] = useState(false),
     [mobile, setMobile] = useState(false),
@@ -67,7 +76,9 @@ function App() {
       return [];
     }
   });
+  const [loginError, setLoginError] = useState("");
   async function refresh() {
+    setLoginError("");
     const b = await api<Boot>("/api/bootstrap");
     setBoot(b);
     setCSRF(b.csrf);
@@ -75,17 +86,7 @@ function App() {
   }
   useEffect(() => {
     Promise.all([
-      refresh().catch(() =>
-        setBoot({
-          user: null,
-          csrf: "",
-          providers: [],
-          local_accounts: false,
-          capabilities: {},
-          plans: [],
-          themes: {},
-        }),
-      ),
+      refresh().catch((e) => setLoginError(e.message)),
       api("/api/catalog")
         .catch(() => fetch("/catalog.json").then((r) => r.json()))
         .then((c) => setPacks(c.packs)),
@@ -151,6 +152,51 @@ function App() {
     ["market", Package, "Creator market"],
   ];
 
+  if (
+    !user &&
+    (auth || ["studio", "library", "characters", "account"].includes(view))
+  )
+    return (
+      <SignInScreen
+        boot={boot}
+        destination={
+          view === "account"
+            ? "account"
+            : view === "library" || view === "characters"
+              ? "library"
+              : "create"
+        }
+        onLogin={async () => {
+          await refresh();
+          setAuth(false);
+        }}
+        onBack={() => {
+          if (nativeIntent) location.assign("/");
+          else {
+            setAuth(false);
+            navigate("discover");
+          }
+        }}
+        loadError={loginError}
+        onRetry={() => refresh().catch((e) => setLoginError(e.message))}
+      />
+    );
+
+  if (
+    user &&
+    !user.consented &&
+    (auth || ["studio", "library", "characters", "account"].includes(view))
+  )
+    return (
+      <CreatorConsentScreen
+        onDone={refresh}
+        onBack={() =>
+          nativeIntent ? location.assign("/") : navigate("discover")
+        }
+      />
+    );
+  if (nativeIntent && boot?.user)
+    return <NativeSignInReturn boot={boot} intent={nativeIntent} />;
   return (
     <div className="app">
       <aside className={"sidebar " + (mobile ? "open" : "")}>
@@ -187,10 +233,7 @@ function App() {
         <button className="side-link" onClick={() => navigate("plans")}>
           {icon(Sparkles)} Plans & credits
         </button>
-        <button
-          className="side-link"
-          onClick={() => needAccount(() => navigate("account"))}
-        >
+        <button className="side-link" onClick={() => navigate("account")}>
           {icon(Settings)} Account
         </button>
         <div className="side-bottom">
@@ -230,17 +273,24 @@ function App() {
                       : "Sticker collections"}
           </div>
           <div className="top-actions">
-            <span className="guest-note">
-              {user
-                ? `${user.credits} AI credits`
-                : "A little joy, no login needed"}
-            </span>
-            <button
-              className={user ? "avatar-button" : "button outline small"}
-              onClick={() => (user ? navigate("account") : setAuth(true))}
-            >
-              {user ? user.name.slice(0, 1).toUpperCase() : "Sign in"}
-            </button>
+            {view !== "studio" && (
+              <span className="guest-note">
+                {user
+                  ? `${user.credits} AI credits`
+                  : "A little joy, no login needed"}
+              </span>
+            )}
+            {(user ||
+              !["studio", "library", "characters", "account"].includes(
+                view,
+              )) && (
+              <button
+                className={user ? "avatar-button" : "button outline small"}
+                onClick={() => (user ? navigate("account") : setAuth(true))}
+              >
+                {user ? user.name.slice(0, 1).toUpperCase() : "Sign in"}
+              </button>
+            )}
           </div>
         </header>
         <main>
@@ -312,7 +362,13 @@ function App() {
                   onRefresh={refresh}
                 />
               ) : (
-                boot && <WebPlans key={boot.user?.id || "guest"} boot={boot} onUpdated={setBoot}/>
+                boot && (
+                  <WebPlans
+                    key={boot.user?.id || "guest"}
+                    boot={boot}
+                    onUpdated={setBoot}
+                  />
+                )
               )}
               <div className="row">
                 <button
@@ -330,7 +386,7 @@ function App() {
               </div>
             </>
           )}
-          {view === "account" && (
+          {view === "account" && user && (
             <>
               <div className="page-heading">
                 <div>
@@ -405,73 +461,6 @@ function App() {
           </footer>
         </main>
       </div>
-      {user && !user.consented && (
-        <div className="modal-backdrop">
-          <section
-            className="auth-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Creator agreement"
-          >
-            <h2>Welcome, {user.name}.</h2>
-            <p>
-              Your original photos and characters stay private until you choose
-              to share.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                action(async () => {
-                  await api("/api/account/consent", {
-                    adult: true,
-                    terms: true,
-                  });
-                  await refresh();
-                });
-              }}
-            >
-              <label className="checkline">
-                <input type="checkbox" required />I am 18 or older.
-              </label>
-              <label className="checkline">
-                <input type="checkbox" required />I agree to the creator terms
-                and privacy policy.
-              </label>
-              <div className="row">
-                <button
-                  type="button"
-                  className="text-button"
-                  onClick={() => setLegal("terms")}
-                >
-                  Read terms
-                </button>
-                <button
-                  type="button"
-                  className="text-button"
-                  onClick={() => setLegal("privacy")}
-                >
-                  Read privacy
-                </button>
-              </div>
-              <button className="button primary full" disabled={busy}>
-                Continue
-              </button>
-              <button
-                type="button"
-                className="text-button full"
-                onClick={() =>
-                  action(async () => {
-                    await api("/api/auth/logout", {});
-                    await refresh();
-                  })
-                }
-              >
-                Sign out
-              </button>
-            </form>
-          </section>
-        </div>
-      )}
       {preview && (
         <div className="modal-backdrop" onClick={() => setPreview(null)}>
           <section
@@ -520,131 +509,6 @@ function App() {
             >
               Report this sticker
             </button>
-          </section>
-        </div>
-      )}
-      {auth && (
-        <div className="modal-backdrop">
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-label="Sign in"
-            className="auth-modal"
-          >
-            <button
-              className="icon-button close"
-              aria-label="Close sign in"
-              onClick={() => setAuth(false)}
-            >
-              <X />
-            </button>
-            <img className="auth-mascot" src="/icon-192.png" alt="Aya" />
-            <h2>Your little creative world.</h2>
-            <p>Keep your characters, drafts and downloads together.</p>
-            {boot?.providers.map((p) => (
-              <a
-                className="button outline full provider"
-                key={p}
-                href={API + `/auth/${p}/start`}
-              >
-                Continue with{" "}
-                {p === "lazyingart"
-                  ? "LazyingArt"
-                  : p.charAt(0).toUpperCase() + p.slice(1)}
-              </a>
-            ))}
-            {boot?.local_accounts ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const form = new FormData(e.currentTarget);
-                  action(async () => {
-                    await api(
-                      "/api/auth/" +
-                        (authMode === "login" ? "login" : "register"),
-                      {
-                        email: form.get("email"),
-                        password: form.get("password"),
-                        name: form.get("name"),
-                        adult: form.get("adult") === "on",
-                        terms: form.get("terms") === "on",
-                      },
-                    );
-                    await refresh();
-                    setAuth(false);
-                  });
-                }}
-              >
-                {authMode === "register" && (
-                  <label>
-                    Name
-                    <input
-                      name="name"
-                      required
-                      maxLength={60}
-                      autoComplete="name"
-                    />
-                  </label>
-                )}
-                <label>
-                  Email
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                  />
-                </label>
-                <label>
-                  Password
-                  <input
-                    name="password"
-                    type="password"
-                    minLength={12}
-                    required
-                    autoComplete={
-                      authMode === "register"
-                        ? "new-password"
-                        : "current-password"
-                    }
-                  />
-                </label>
-                {authMode === "register" && (
-                  <>
-                    <label className="checkline">
-                      <input name="adult" type="checkbox" required />I am 18 or
-                      older.
-                    </label>
-                    <label className="checkline">
-                      <input name="terms" type="checkbox" required />I agree to
-                      the terms and privacy policy.
-                    </label>
-                  </>
-                )}
-                <button className="button primary full" disabled={busy}>
-                  {authMode === "login" ? "Sign in" : "Create account"}
-                </button>
-                <button
-                  type="button"
-                  className="text-button full"
-                  onClick={() =>
-                    setAuthMode(authMode === "login" ? "register" : "login")
-                  }
-                >
-                  {authMode === "login"
-                    ? "New here? Create an account"
-                    : "Already here? Sign in"}
-                </button>
-              </form>
-            ) : (
-              !boot?.providers.length && (
-                <p className="notice">
-                  Account connections are being prepared. You can browse and
-                  save all default previews without signing in.
-                </p>
-              )
-            )}
-            <small>Your private photos stay yours.</small>
           </section>
         </div>
       )}

@@ -99,7 +99,7 @@ try {
     .first()
     .evaluate((image) => image.decode());
   await page.locator(".sticker-preview").first().click();
-  await page.getByRole("dialog", { name: "Sticker preview" }).waitFor();
+  await page.locator('.preview-modal[role="dialog"]').waitFor();
   const download = page.waitForEvent("download", { timeout: 120_000 });
   await page.getByRole("link", { name: "Save GIF", exact: true }).click();
   const gif = await download;
@@ -139,20 +139,21 @@ try {
   );
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page
-    .getByRole("button", { name: "New here? Create an account" })
+    .getByRole("button", { name: "Create", exact: true })
+    .first()
     .click();
-  const modal = page.getByRole("dialog", { name: "Sign in" });
-  await modal.getByLabel("Name", { exact: true }).fill("Browser QA");
+  await page
+    .getByRole("button", { name: "Create an account", exact: true })
+    .click();
+  const modal = page.getByRole("region", { name: "Sign in to WeSticker" });
   await modal
     .getByLabel("Email", { exact: true })
     .fill(`qa-${Date.now()}@example.test`);
   await modal
     .getByLabel("Password", { exact: true })
     .fill("temporary-browser-test-password");
-  await modal.getByLabel("I am 18 or older.").check();
-  await modal.getByLabel("I agree to the terms and privacy policy.").check();
+  await modal.getByRole("checkbox", { name: /I am 18/ }).check();
   await modal
     .getByRole("button", { name: "Create account", exact: true })
     .click();
@@ -160,6 +161,9 @@ try {
   await page
     .getByRole("button", { name: "Create", exact: true })
     .first()
+    .click();
+  await page
+    .getByRole("button", { name: "Character references", exact: true })
     .click();
   await page.getByLabel("Name", { exact: true }).fill("Demo friend");
   await page
@@ -172,6 +176,7 @@ try {
   await page
     .getByRole("button", { name: "Approve references & start" })
     .click();
+  await page.getByRole("tab", { name: "Sticker plan", exact: true }).click();
   await page.getByLabel("Caption 1", { exact: true }).fill("Hello there");
   await page.getByRole("button", { name: "Save table", exact: true }).click();
   await page
@@ -202,10 +207,19 @@ try {
   });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole("button", { name: "Account", exact: true }).click();
-  await page.getByRole("button", { name: "Delete my account" }).click();
+  await page
+    .getByRole("heading", { name: /^(Account|Hello,)/, level: 1 })
+    .waitFor();
+  const publicAccount = page.getByText("Delete my WeSticker account", {
+    exact: true,
+  });
+  if (await publicAccount.count()) await publicAccount.click();
+  else await page.getByRole("button", { name: "Delete my account" }).click();
   await page.getByLabel("Type DELETE").fill("DELETE");
   await page
-    .getByRole("button", { name: "Delete account and creations" })
+    .getByRole("button", {
+      name: /^(Delete account and creations|Delete WeSticker account)$/,
+    })
     .click();
   await page.getByRole("button", { name: "Sign in", exact: true }).waitFor();
   assert.deepEqual(errors, []);

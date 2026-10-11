@@ -26,16 +26,16 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · https://westicker.lazying.art 에서 로그인 없이 게스트 채팅을 이용할 수 있습니다. Characters는 별도의 주요 메뉴가 아니라 Library 안에 있습니다. AgInTi 이미지 생성(`nano-banana-2`)은 실제 제공업체 검증을 통과해 활성화되었습니다. 생성에는 여전히 계정, 동의 및 견적에 대한 명시적 확인이 필요합니다.
+**2026-10-11** · 스티커는 로그인 없이 볼 수 있습니다. Create는 별도 로그인 화면을 거쳐 깔끔한 채팅으로 돌아옵니다. 캐릭터와 참고 자료는 Library에, Account는 마지막 탭에 있습니다.
 
-[2026-10-11 · 게스트 채팅 / 탐색](../docs/clean-chat-release-20261011.md) · [AgInTi 이미지 검증](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
 ## 스튜디오
 
 - 기본 10팩, 서로 다른 애니메이션 156개, 중국어·영어·일본어 문구 버전과 즉시 미리보기.
-- 비공개 사진 업로드, 재사용 가능한 고정 캐릭터, 8가지 표현 초안, 문구 편집, 개별 승인과 ZIP 내보내기.
+- 비공개 사진 업로드, 재사용 가능한 승인된 캐릭터, 요금제 한도 내 초안, 문구 편집, 개별 승인과 ZIP 내보내기.
 - 선택형 이미지 생성, 로컬 애니메이션, 판매 검토, 격리된 WeChat 초안 업로드. 도우미는 초안만 저장하고 심사에 제출하지 않습니다.
 
 ## 요금제
@@ -68,7 +68,7 @@ Android는 Kotlin/Jetpack Compose, iOS/macOS는 SwiftUI 네이티브 앱입니�
 
 ## 검증
 
-백엔드 77개와 브라우저 에이전트 안전 테스트 2개를 통과했습니다. 실제 브라우저에서 다운로드, 업로드, 캐릭터 확인, 사진 스티커 생성, 문구 승인, ZIP 내보내기와 계정 삭제를 데스크톱·모바일 폭으로 확인했습니다. 실제 결제나 AI 제공업체 검증은 아닙니다.
+백엔드와 브라우저 테스트는 공개 탐색, 인증된 채팅, 로그인 복귀, 세션 만료, 참고 자료, 검토와 내보내기를 다룹니다. 네이티브 빌드 증거는 별도로 기록합니다.
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 출시 상태
 
-내부 테스트 버전: [iOS 1.0 (10), macOS 1.0 (8), Android 1.0 (9)](../docs/native-guest-chat-20261011.md). 로컬 애니메이션 시험 1건은 성공했지만, 서비스 수명 주기 검증이 완료될 때까지 공개 애니메이션 생성은 오프라인 상태를 유지합니다. 소셜 로그인, 네이티브 앱 내 구매 및 웹 결제는 종단 간 검증을 통과할 때까지 비활성화 상태로 유지됩니다.
+내부 테스트 베타이며 완성된 상용 출시가 아닙니다. LazyingArt를 통한 비밀번호 및 Google 로그인과 AgInTi 이미지 생성은 검증되었습니다. 다른 로그인 경로는 제공업체 보고서를 참조하세요. 공개 애니메이션과 결제는 아직 비활성화되어 있습니다.
 
 ## 인용
 

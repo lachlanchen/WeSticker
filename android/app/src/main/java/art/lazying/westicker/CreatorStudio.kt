@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.FileProvider
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -133,12 +135,23 @@ class CreatorStore(private val context: Context) {
     val cloud=remember { CloudStudioStore(context) }
     val billing=remember { NativeBillingStore(cloud) }
     val scope=rememberCoroutineScope()
+    var tab by rememberSaveable { mutableStateOf(0) }
+    var authDestination by rememberSaveable { mutableStateOf<Int?>(null) }
+    var showLocalDraft by rememberSaveable { mutableStateOf(false) }
+    fun navigate(destination: Int) {
+        if(destination!=0&&!cloud.signedIn) { authDestination=destination;tab=0 }
+        else tab=destination
+    }
     val activity=context as? MainActivity
-    val signIn: () -> Unit = { scope.launch { cloud.run { requireNotNull(activity).beginAuthentication(cloud.startLogin()) } } }
+    val signIn: (StudioProvider) -> Unit = { provider -> scope.launch { cloud.run { requireNotNull(activity).beginAuthentication(cloud.startLogin(provider)) } } }
     LaunchedEffect(activity?.authResult, activity?.authCancelled) {
         while(cloud.busy) kotlinx.coroutines.delay(50)
         if(activity?.authResult!=null){val uri=activity.authResult!!;activity.clearAuthenticationResult();cloud.run{cloud.finishLogin(uri)}}
-        else if(activity?.authCancelled==true){activity.clearAuthenticationResult();cloud.cancelLogin()}
+        else if(activity?.authCancelled==true){activity.clearAuthenticationResult();cloud.cancelLogin();authDestination=null;tab=0}
+    }
+    LaunchedEffect(cloud.signedIn) {
+        if(cloud.signedIn) { authDestination?.let { tab=it;authDestination=null } }
+        else if(tab!=0) { authDestination=tab;tab=0 }
     }
     val lifecycleOwner=androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(billing,lifecycleOwner) {
@@ -151,24 +164,38 @@ class CreatorStore(private val context: Context) {
     LaunchedEffect(Unit) { cloud.run { cloud.refresh() } }
     val billingSession=cloud.billingSession()
     LaunchedEffect(billingSession?.origin,billingSession?.token) { billing.attach() }
-    var tab by rememberSaveable { mutableStateOf(1) }
     val labels=listOf("Stickers","Create","Library","Account")
     val icons=listOf(Icons.Outlined.SentimentSatisfiedAlt,Icons.Outlined.Forum,Icons.Outlined.CollectionsBookmark,Icons.Outlined.AccountCircle)
     Scaffold(contentWindowInsets=WindowInsets(0,0,0,0),bottomBar={ NavigationBar {
-        labels.forEachIndexed { index,label -> NavigationBarItem(selected=tab==index,onClick={tab=index},icon={Icon(icons[index],label)},label={Text(label)}) }
+        labels.forEachIndexed { index,label -> NavigationBarItem(selected=tab==index,onClick={navigate(index)},icon={Icon(icons[index],label)},label={Text(label)}) }
     } }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
-            when(tab) {
+            when(if(cloud.signedIn) tab else 0) {
                 0 -> Catalog(packs,loader,save)
-                3 -> BillingAccountScreen(cloud,billing,signIn)
-                else -> CloudStudioScreen(cloud,store,loader,tab,onSignIn=signIn,onCreate={tab=1})
+                3 -> BillingAccountScreen(cloud,billing)
+                else -> CloudStudioScreen(cloud,store,loader,tab,onCreate={navigate(1)})
             }
+        }
+    }
+    if(authDestination!=null) Dialog(
+        onDismissRequest={if(!cloud.busy){cloud.cancelLogin();authDestination=null}},
+        properties=DialogProperties(usePlatformDefaultWidth=false,dismissOnBackPress=!cloud.busy,dismissOnClickOutside=false)
+    ) {
+        Surface(Modifier.fillMaxSize()) {
+            StudioLoginScreen(cloud,loader,signIn,
+                dismiss={cloud.cancelLogin();authDestination=null},
+                openLocalDraft=if(authDestination==2) {{authDestination=null;showLocalDraft=true}} else null)
+        }
+    }
+    if(showLocalDraft) Dialog(onDismissRequest={showLocalDraft=false},properties=DialogProperties(usePlatformDefaultWidth=false)) {
+        Surface(Modifier.fillMaxSize()) {
+            CreatorScreen(store,loader,onClose={showLocalDraft=false},openAgent={showLocalDraft=false;navigate(1)})
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable fun CreatorScreen(store: CreatorStore, loader: ImageLoader, openAgent: ()->Unit) {
+@Composable fun CreatorScreen(store: CreatorStore, loader: ImageLoader, onClose: (() -> Unit)? = null, openAgent: ()->Unit) {
     val scope=rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(0) }
@@ -176,7 +203,9 @@ class CreatorStore(private val context: Context) {
         if(uri!=null) { busy=true;scope.launch { try { store.importPhoto(uri) } catch(_:Exception){store.error="Choose a supported photo smaller than 20 MB."}finally{busy=false} } }
     }
     val draft=store.draft
-    Scaffold(topBar={TopAppBar(title={Text("Create")},actions={IconButton(onClick=openAgent){Icon(Icons.Outlined.Forum,"Ask Agent")}})}){padding->
+    Scaffold(topBar={TopAppBar(title={Text("Create")},navigationIcon={
+        onClose?.let { close -> IconButton(onClick=close){Icon(Icons.Outlined.Close,"Close local draft")} }
+    },actions={IconButton(onClick=openAgent){Icon(Icons.Outlined.Forum,"Ask Agent")}})}){padding->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
             Text(if(draft.locked)"Character locked · On this device" else "Private draft · On this device",style=MaterialTheme.typography.labelLarge)
             Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(14.dp)) {

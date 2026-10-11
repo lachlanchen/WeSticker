@@ -1,5 +1,8 @@
 export const API = import.meta.env.VITE_API_ORIGIN || "";
 let csrf = "";
+export class APIError extends Error {
+  constructor(message: string, readonly status: number) { super(message); }
+}
 export function setCSRF(value: string) {
   csrf = value || "";
 }
@@ -22,7 +25,7 @@ export async function api<T = any>(
   });
   const value = await result.json();
   if (!result.ok)
-    throw Error(value.error || "Something went wrong. Please try again.");
+    throw new APIError(value.error || "Something went wrong. Please try again.", result.status);
   return value;
 }
 export type Sticker = {

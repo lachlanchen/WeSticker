@@ -6,6 +6,19 @@ import ImageIO
 import UniformTypeIdentifiers
 import AuthenticationServices
 
+enum StudioProvider: String, CaseIterable, Identifiable {
+    case google, apple, github, lazyingart
+    var id: String { rawValue }
+    var name: String {
+        switch self {
+        case .google: return "Google"
+        case .apple: return "Apple"
+        case .github: return "GitHub"
+        case .lazyingart: return "LazyingArt"
+        }
+    }
+}
+
 struct StudioRow: Codable, Identifiable {
     var id: String; var label: String; var action: String?; var asset: String?; var approved: Bool
 }
@@ -48,9 +61,7 @@ private enum StudioSecret {
 }
 
 @MainActor final class CloudStudioStore: ObservableObject {
-    @Published var origin = UserDefaults.standard.string(forKey: "studio-origin") ?? "https://westicker.lazying.art" {
-        didSet { if origin != oldValue { clearGuestChat() } }
-    }
+    @Published var origin = UserDefaults.standard.string(forKey: "studio-origin") ?? "https://westicker.lazying.art"
     @Published var workspace: StudioWorkspace?
     @Published var current: StudioPack?
     @Published var rows: [StudioRow] = [] { didSet { quote = nil } }
@@ -60,57 +71,18 @@ private enum StudioSecret {
     @Published var error: String?
     @Published var busy = false
     @Published var dirty = false
-    @Published var signedIn = false { didSet { if signedIn != oldValue { clearGuestChat() } } }
-    @Published var needsConsent = false { didSet { if needsConsent != oldValue { clearGuestChat() } } }
+    @Published var signedIn = false
+    @Published var needsConsent = false
+    @Published var providers: [StudioProvider] = []
     @Published var capabilities: [String: Bool] = [:]
     @Published var sending = false
     @Published var refs: [String] = [] { didSet { pendingCharacter = "" } }
     @Published var pendingCharacter = ""
-    @Published var guestMessages: [GuestChatExchange] = []
-    @Published var guestDraft = ""
-    @Published var guestSending = false
-    @Published var guestError: String?
-    private var guestGeneration = 0
-    private var guestTask: Task<Void, Never>?
     private var csrf = ""
     private var linkedOrigin = ""
     private var link: (String, String)?
     private let network = URLSession(configuration: .ephemeral)
     private let authentication = StudioAuthentication()
-
-    var usesGuestChat: Bool { !signedIn || needsConsent }
-
-    func clearGuestChat() {
-        guestGeneration += 1
-        guestTask?.cancel(); guestTask = nil
-        guestMessages = []; guestDraft = ""; guestSending = false; guestError = nil
-    }
-
-    func sendGuestChat() {
-        guard usesGuestChat, !guestSending else { return }
-        do {
-            let base = try validatedOrigin()
-            let text = guestDraft.trimmingCharacters(in: .whitespacesAndNewlines)
-            let request = try GuestChatProtocol.request(origin: base, message: text, exchanges: guestMessages,
-                                                        locale: Locale.current.languageCode ?? "en")
-            let generation = guestGeneration, id = UUID()
-            guestMessages.append(GuestChatExchange(id: id, text: text))
-            guestDraft = ""; guestError = nil; guestSending = true
-            guestTask = Task {
-                defer { if generation == guestGeneration { guestSending = false; guestTask = nil } }
-                do {
-                    let reply = try await GuestChatClient.send(request)
-                    guard !Task.isCancelled, generation == guestGeneration, usesGuestChat,
-                          base == (try? validatedOrigin()), let index = guestMessages.firstIndex(where: { $0.id == id }) else { return }
-                    guestMessages[index].reply = reply
-                } catch {
-                    guard generation == guestGeneration, base == (try? validatedOrigin()),
-                          let index = guestMessages.firstIndex(where: { $0.id == id }) else { return }
-                    guestMessages[index].failure = error.localizedDescription
-                }
-            }
-        } catch { guestError = error.localizedDescription }
-    }
 
     var billingSession: NativeBillingSession? {
         guard signedIn, let base = try? validatedOrigin() else { return nil }
@@ -156,14 +128,20 @@ private enum StudioSecret {
     }
     func refresh() async throws {
         let base = try validatedOrigin()
+        providers = []
         await flushLogout(base)
         if linkedOrigin != base { workspace = nil; current = nil; rows = []; messages = []; refs = []; dirty = false; csrf = ""; linkedOrigin = base }
         let boot = try json(await request("/api/bootstrap")); csrf = boot["csrf"] as? String ?? ""
         capabilities = boot["capabilities"] as? [String: Bool] ?? [:]
+        let configured = boot["providers"] as? [String] ?? []
+        providers = StudioProvider.allCases.filter { configured.contains($0.rawValue) }
         let user = boot["user"] as? [String: Any]
         signedIn = user != nil
         needsConsent = signedIn && (user?["consented"] as? NSNumber)?.boolValue != true
-        guard signedIn else { workspace = nil; current = nil; rows = []; selected = []; messages = []; refs = []; dirty = false; return }
+        guard signedIn else {
+            StudioSecret.write("", base)
+            workspace = nil; current = nil; rows = []; selected = []; messages = []; refs = []; dirty = false; return
+        }
         guard !needsConsent else { workspace = nil; return }
         let next = try JSONDecoder().decode(StudioWorkspace.self, from: await request("/api/workspace"))
         workspace = next
@@ -174,25 +152,27 @@ private enum StudioSecret {
         _ = try await request("/api/account/consent", ["adult": true, "terms": true])
         try await refresh()
     }
-    func startLogin() async throws -> URL {
+    func startLogin(provider: StudioProvider) async throws -> URL {
         _ = try validatedOrigin(); try await refresh()
+        guard providers.contains(provider) else { throw NSError(domain: "Studio", code: 503, userInfo: [NSLocalizedDescriptionKey: "This sign-in provider is unavailable. Please try again later."]) }
         let verifier = UUID().uuidString.replacingOccurrences(of: "-", with: "") + UUID().uuidString.replacingOccurrences(of: "-", with: "")
         let digest = Data(SHA256.hash(data: Data(verifier.utf8))).base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
-        let result = try json(await request("/api/native/link", ["challenge": digest, "app_return": true]))
+        let result = try json(await request("/api/native/link", ["challenge": digest, "app_return": true, "provider": provider.rawValue]))
         guard let id = result["id"] as? String, let address = result["url"] as? String, let url = URL(string: address) else { throw URLError(.badServerResponse) }
         link = (id, verifier); return url
     }
-    func signIn() async throws {
+    func signIn(provider: StudioProvider) async throws -> Bool {
         do {
-            let url = try await startLogin()
+            let url = try await startLogin(provider: provider)
             let result = try await authentication.open(url)
             let query = URLComponents(url: result, resolvingAgainstBaseURL: false)?.queryItems
             guard result.scheme == "art.lazying.westicker", result.host == "auth", result.path == "/complete",
                   query?.first(where: { $0.name == "link" })?.value == link?.0 else { throw URLError(.badServerResponse) }
             try await finishLogin()
+            return true
         } catch {
             link = nil
-            if (error as NSError).domain == ASWebAuthenticationSessionError.errorDomain && (error as NSError).code == ASWebAuthenticationSessionError.canceledLogin.rawValue { return }
+            if (error as NSError).domain == ASWebAuthenticationSessionError.errorDomain && (error as NSError).code == ASWebAuthenticationSessionError.canceledLogin.rawValue { return false }
             throw error
         }
     }
@@ -312,6 +292,83 @@ struct StudioAsset: View {
     }
 }
 
+struct StudioLoginView: View {
+    @ObservedObject var store: CloudStudioStore
+    var signIn: (StudioProvider) -> Void
+    var dismiss: () -> Void
+    var openLocalDraft: (() -> Void)?
+    @State private var showServiceSettings = false
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 24) {
+                    if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) {
+                        NativeImage(data: data).frame(width: 96, height: 96)
+                    }
+                    Text("Sign in to WeSticker").font(.title2.bold())
+                    VStack(spacing: 12) {
+                        ForEach(store.providers) { provider in
+                            Button { signIn(provider) } label: {
+                                Label("Continue with \(provider.name)", systemImage: provider == .apple ? "apple.logo" : "person.crop.circle")
+                                    .frame(maxWidth: .infinity)
+                            }.buttonStyle(.borderedProminent).controlSize(.large).disabled(store.busy)
+                        }
+                    }
+                    if store.providers.isEmpty && !store.busy {
+                        Text("Sign-in is unavailable.").foregroundStyle(.secondary)
+                        Button { store.perform { try await store.refresh() } } label: { Label("Retry", systemImage: "arrow.clockwise") }
+                    }
+                    if store.busy { ProgressView().accessibilityLabel("Connecting") }
+                    if let error = store.error { Text(error).foregroundStyle(.red) }
+                    if let openLocalDraft {
+                        Button(action: openLocalDraft) { Label("Open saved local photo draft", systemImage: "photo") }.disabled(store.busy)
+                    }
+                    if let base = try? store.validatedOrigin() {
+                        HStack(spacing: 24) {
+                            Link("Terms", destination: URL(string: base + "/terms.html")!)
+                            Link("Privacy", destination: URL(string: base + "/privacy.html")!)
+                        }.font(.footnote)
+                    }
+                }.padding(24).frame(maxWidth: 460).frame(maxWidth: .infinity)
+            }.navigationTitle("Sign in")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(action: dismiss) { Image(systemName: "xmark") }.accessibilityLabel("Browse stickers").disabled(store.busy)
+                    }
+                    ToolbarItem(placement: .primaryAction) {
+                        Button { showServiceSettings = true } label: { Image(systemName: "gearshape") }
+                            .accessibilityLabel("Service settings").disabled(store.busy)
+                    }
+                }
+                .sheet(isPresented: $showServiceSettings) { StudioServiceSettings(store: store) }
+                .task { store.perform { try await store.refresh() } }
+        }
+        #if os(macOS)
+        .frame(minWidth: 320, minHeight: 460)
+        #endif
+        .accessibilityIdentifier("native-login-screen")
+    }
+}
+
+struct StudioServiceSettings: View {
+    @ObservedObject var store: CloudStudioStore
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField("HTTPS creator service", text: $store.origin).autocorrectionDisabled()
+                if let base = try? store.validatedOrigin() {
+                    Link("Terms", destination: URL(string: base + "/terms.html")!)
+                    Link("Privacy", destination: URL(string: base + "/privacy.html")!)
+                }
+            }.navigationTitle("Service settings").toolbar {
+                Button("Done") { dismiss(); store.perform { try await store.refresh() } }
+            }
+        }.frame(minWidth: 280, minHeight: 240)
+    }
+}
+
 struct CloudStudioView: View {
     @ObservedObject var store: CloudStudioStore
     @ObservedObject var local: CreatorStore
@@ -346,13 +403,12 @@ struct CloudStudioView: View {
                         }.pickerStyle(.segmented)
                         if libraryPane == 0 { Button("Open saved local photo draft") { showLocal = true }; Divider() }
                         if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
-                        if !store.signedIn { cloudAccessView }
-                        else if store.needsConsent { consentView }
+                        if store.needsConsent { consentView }
                         else if let w = store.workspace {
                             if libraryPane == 0 { libraryView(w) } else { charactersView(w) }
                         }
-                    } else if store.usesGuestChat {
-                        guestConversation
+                    } else if store.needsConsent {
+                        consentView
                     } else {
                         if let error = store.error { Text(error).foregroundStyle(.red).accessibilityIdentifier("studio-error") }
                         if let w = store.workspace {
@@ -360,14 +416,12 @@ struct CloudStudioView: View {
                             else if let p = store.current { editor(p, w) }
                         }
                     }
-                    if store.busy && !store.usesGuestChat { ProgressView() }
+                    if store.busy { ProgressView() }
                     Color.clear.frame(height: 1).id("chat-bottom")
                 }.padding().frame(maxWidth: 850, alignment: .leading).frame(maxWidth: .infinity)
             }.onChange(of: store.messages.count) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
-                .onChange(of: store.guestMessages.count) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
-                .onChange(of: store.guestSending) { _ in withAnimation { proxy.scrollTo("chat-bottom", anchor: .bottom) } }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
-                if section == 1 && (store.usesGuestChat || pane == 0) {
+                if section == 1 && store.signedIn && !store.needsConsent && store.workspace != nil && pane == 0 {
                     composer.padding().frame(maxWidth: .infinity).background(.regularMaterial)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -377,21 +431,12 @@ struct CloudStudioView: View {
                     Button { store.perform { try await store.refresh() } } label: { Image(systemName: "arrow.clockwise") }.accessibilityLabel("Refresh library").disabled(store.busy)
                 } else {
                     Button {
-                        if store.usesGuestChat { store.clearGuestChat() }
-                        else { store.current = nil; store.messages = []; store.rows = []; store.dirty = false; pane = 0 }
-                    } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New chat").disabled(!store.usesGuestChat && (store.busy || store.dirty))
+                        store.current = nil; store.messages = []; store.rows = []; store.dirty = false; pane = 0
+                    } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New chat").disabled(store.busy || store.dirty || store.needsConsent)
                 }
                 Button { showServiceSettings = true } label: { Image(systemName: "gearshape") }.accessibilityLabel("Service settings")
             } }
-            .sheet(isPresented: $showServiceSettings) { NavigationStack {
-                Form {
-                    TextField("HTTPS creator service", text: $store.origin).autocorrectionDisabled()
-                    if let base = try? store.validatedOrigin() {
-                        Link("Terms", destination: URL(string: base + "/terms.html")!)
-                        Link("Privacy", destination: URL(string: base + "/privacy.html")!)
-                    }
-                }.navigationTitle("Service settings").toolbar { Button("Done") { showServiceSettings = false; store.perform { try await store.refresh() } } }
-            }.frame(minWidth: 280, minHeight: 240) }
+            .sheet(isPresented: $showServiceSettings) { StudioServiceSettings(store: store) }
             .sheet(isPresented: $creating) { NavigationStack { ScrollView { VStack(alignment: .leading, spacing: 16) {
                 if let w = store.workspace { creationForm(w) }
             }.padding() }.navigationTitle("Character references").toolbar { Button("Done") { creating = false } } }.frame(minWidth: 280, minHeight: 400) }
@@ -416,12 +461,6 @@ struct CloudStudioView: View {
             }
         }
     }
-    private var cloudAccessView: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(libraryPane == 0 ? "Cloud creations" : "Cloud characters").font(.headline)
-            Button { store.perform { try await store.signIn() } } label: { Label("Sign in to cloud library", systemImage: "person.crop.circle") }.disabled(store.busy)
-        }
-    }
     private var consentView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Before your first cloud creation").font(.headline)
@@ -433,19 +472,6 @@ struct CloudStudioView: View {
             Button("Continue") { store.perform { try await store.acceptTerms() } }.disabled(!termsAccepted || store.busy)
         }
     }
-    @ViewBuilder private var guestConversation: some View {
-        if store.guestMessages.isEmpty { chatWelcome }
-        ForEach(store.guestMessages) { message in
-            Text(message.text).padding(10).frame(maxWidth: .infinity, alignment: .trailing)
-                .background(Color.cyan.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-            if let reply = message.reply { Text(reply).textSelection(.enabled) }
-            else if let failure = message.failure {
-                Text(failure).font(.caption).foregroundStyle(.secondary)
-                Button { store.guestDraft = message.text } label: { Label("Edit message", systemImage: "pencil") }.disabled(store.guestSending)
-            } else { Label("Aya is thinking…", systemImage: "ellipsis.bubble").font(.caption).foregroundStyle(.secondary) }
-        }
-        if let error = store.guestError { Text(error).foregroundStyle(.red) }
-    }
     private var chatWelcome: some View {
         VStack(alignment: .leading, spacing: 20) {
             if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) { NativeImage(data: data).frame(width: 80, height: 80) }
@@ -454,17 +480,14 @@ struct CloudStudioView: View {
     }
     private var composer: some View {
         HStack(alignment: .bottom) {
-            Button { if store.usesGuestChat { showLocal = true } else { creating = true } } label: { Image(systemName: "photo.badge.plus").font(.title3) }
-                .accessibilityLabel(store.usesGuestChat ? "Open saved local photo draft" : "Character references").disabled(!store.usesGuestChat && store.busy)
-            TextField("Message your sticker assistant", text: Binding(get: { store.usesGuestChat ? store.guestDraft : text }, set: {
-                if store.usesGuestChat { store.guestDraft = String($0.prefix(GuestChatProtocol.messageLimit)) } else { text = String($0.prefix(2000)) }
-            }), axis: .vertical).lineLimit(1...5).textFieldStyle(.roundedBorder)
+            Button { creating = true } label: { Image(systemName: "photo.badge.plus").font(.title3) }
+                .accessibilityLabel("Character references").disabled(store.busy)
+            TextField("Message your sticker assistant", text: Binding(get: { text }, set: { text = String($0.prefix(2000)) }), axis: .vertical).lineLimit(1...5).textFieldStyle(.roundedBorder)
                 .accessibilityIdentifier("chat-message-input")
             Button {
-                if store.usesGuestChat { store.sendGuestChat() }
-                else { let message = text; text = ""; store.perform { try await store.chat(message) } }
+                let message = text; text = ""; store.perform { try await store.chat(message) }
             } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }.accessibilityLabel("Send message")
-                .disabled(store.usesGuestChat ? store.guestSending || store.guestDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty : store.busy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.dirty || store.blocked)
+                .disabled(store.busy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.dirty || store.blocked)
         }.frame(maxWidth: 850)
     }
     @ViewBuilder private func libraryView(_ w: StudioWorkspace) -> some View {

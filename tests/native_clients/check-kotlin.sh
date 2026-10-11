@@ -26,13 +26,6 @@ compile=(java -Xmx512m -cp "$compiler" org.jetbrains.kotlin.cli.jvm.K2JVMCompile
 "${compile[@]}" -classpath "$stdlib" -d "$temp/recovery.jar" "$sources/BillingRecovery.kt" "$root/tests/native_clients/BillingRecoveryTest.kt"
 java -cp "$temp/recovery.jar:$stdlib" art.lazying.westicker.BillingRecoveryTestKt
 
-guestcp="$stdlib:$coroutines:$annotations"
-guestcp+=":$(artifact com.squareup.okhttp3 okhttp 4.12.0 jar)"
-guestcp+=":$(artifact com.squareup.okio okio-jvm 3.6.0 jar)"
-guestcp+=":$(artifact org.json json 20240303 jar)"
-"${compile[@]}" -classpath "$guestcp" -d "$temp/guest.jar" "$sources/GuestChat.kt" "$root/tests/native_clients/GuestChatTest.kt"
-java -cp "$temp/guest.jar:$guestcp" art.lazying.westicker.GuestChatTestKt
-
 cp="$stdlib:$coroutines:$annotations:$sdk/platforms/android-36/android.jar"
 aar() {
     local file

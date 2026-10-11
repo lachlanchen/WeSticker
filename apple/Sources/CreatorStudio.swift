@@ -104,15 +104,20 @@ struct StudioRootView: View {
     @StateObject private var cloud = CloudStudioStore()
     @StateObject private var billing = NativeBillingStore()
     @Environment(\.scenePhase) private var scenePhase
-    @State private var selected = 1
+    @State private var selected = 0
+    @State private var authDestination = 1
+    @State private var showAuthentication = false
+    @State private var showLocalDraft = false
+    @State private var openLocalAfterAuthentication = false
+    @State private var authenticateAfterLocal = false
     private let labels = ["Stickers", "Create", "Library", "Account"]
     private let symbols = ["face.smiling", "bubble.left.and.bubble.right", "square.stack", "person.crop.circle"]
     var body: some View {
         VStack(spacing: 0) {
             Group {
-            switch selected {
-            case 3: NativeBillingAccountView(cloud: cloud, billing: billing, signIn: { cloud.perform { try await cloud.signIn() } })
-            case 1, 2: CloudStudioView(store: cloud, local: store, section: selected, onCreate: { selected = 1 })
+            switch cloud.signedIn ? selected : 0 {
+            case 3: NativeBillingAccountView(cloud: cloud, billing: billing)
+            case 1, 2: CloudStudioView(store: cloud, local: store, section: selected, onCreate: { navigate(1) })
             default: CatalogView()
             }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -120,7 +125,7 @@ struct StudioRootView: View {
                 Divider()
                 HStack(spacing: 4) {
                     ForEach(0..<labels.count, id: \.self) { index in
-                        Button { selected = index } label: {
+                        Button { navigate(index) } label: {
                             VStack(spacing: 4) {
                                 Image(systemName: symbols[index]).font(.system(size: 21))
                                 Text(labels[index]).font(.caption)
@@ -135,6 +140,36 @@ struct StudioRootView: View {
         }.task { billing.attach(cloud); cloud.perform { try await cloud.refresh() } }
         .task(id: cloud.billingSessionID) { billing.attach(cloud) }
         .onChange(of: scenePhase) { phase in if phase == .active { billing.attach(cloud); billing.restore() } }
+        .onChange(of: cloud.signedIn) { signedIn in
+            if signedIn && showAuthentication {
+                selected = authDestination; showAuthentication = false
+            } else if !signedIn && selected != 0 {
+                authDestination = selected; selected = 0; showAuthentication = true
+            }
+        }
+        .sheet(isPresented: $showAuthentication, onDismiss: {
+            if openLocalAfterAuthentication { openLocalAfterAuthentication = false; showLocalDraft = true }
+        }) {
+            StudioLoginView(store: cloud, signIn: { provider in cloud.perform {
+                let completed = try await cloud.signIn(provider: provider)
+                if !completed { selected = 0; showAuthentication = false }
+            } },
+                dismiss: { showAuthentication = false }, openLocalDraft: authDestination == 2 ? {
+                    openLocalAfterAuthentication = true; showAuthentication = false
+                } : nil)
+                .interactiveDismissDisabled(cloud.busy)
+        }
+        .sheet(isPresented: $showLocalDraft, onDismiss: {
+            if authenticateAfterLocal { authenticateAfterLocal = false; navigate(1) }
+        }) {
+            CreatorView(store: store, openAgent: { authenticateAfterLocal = true; showLocalDraft = false },
+                close: { showLocalDraft = false })
+        }
+    }
+    private func navigate(_ destination: Int) {
+        if destination != 0 && !cloud.signedIn {
+            authDestination = destination; selected = 0; showAuthentication = true
+        } else { selected = destination }
     }
 }
 
@@ -155,6 +190,7 @@ struct PhotoSticker: View {
 struct CreatorView: View {
     @ObservedObject var store: CreatorStore
     let openAgent: () -> Void
+    var close: (() -> Void)? = nil
     @State private var picked: PhotosPickerItem?
     @State private var loading = false
     @State private var selectedLabel = 0
@@ -202,6 +238,13 @@ struct CreatorView: View {
                     if let error = store.error { Text(error).foregroundStyle(.red) }
                 }.padding(16).frame(maxWidth: 680)
             }.navigationTitle("Create")
+                .toolbar {
+                    if let close {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button(action: close) { Image(systemName: "xmark") }.accessibilityLabel("Close local draft")
+                        }
+                    }
+                }
         }
         .onChange(of: picked) { value in
             guard let value else { return }

@@ -9,6 +9,7 @@ from urllib.parse import urlencode
 
 from authlib.integrations.flask_client import OAuth
 from flask import abort, redirect, request, session
+from werkzeug.exceptions import HTTPException
 import requests
 
 from .store import database, uid
@@ -71,6 +72,24 @@ def register_auth(app, cfg):
                 ),
             )
 
+    def return_to_app(response=None):
+        intent = session.pop("native_intent", None)
+        query = {"welcome": "1"}
+        destination = session.pop("web_destination", None)
+        if destination:
+            query["view"] = destination
+        if intent and intent["expires"] > time.time():
+            query.pop("view", None)
+            query["native_link"] = intent["id"]
+            if intent["return"]:
+                query["native_return"] = "1"
+        target = cfg["origin"] + "/?" + urlencode(query)
+        if response is None:
+            return redirect(target)
+        response.status_code = 302
+        response.headers["Location"] = target
+        return response
+
     def activate(issuer, subject, name, ttl=86400 * 14, grant=None):
         if not subject or len(subject) > 256:
             abort(400)
@@ -93,18 +112,15 @@ def register_auth(app, cfg):
         if grant:
             shared.associate(id, *grant)
         response = app.extensions["westicker"]["login_user"](id, ttl=ttl)
-        response.status_code = 302
-        intent = session.pop("native_intent", None)
-        query = {"welcome": "1"}
-        if intent and intent["expires"] > time.time():
-            query["native_link"] = intent["id"]
-            if intent["return"]:
-                query["native_return"] = "1"
-        response.headers["Location"] = cfg["origin"] + "/?" + urlencode(query)
-        return response
+        return return_to_app(response)
 
     @app.get("/auth/<provider>/start")
     def start(provider):
+        # Only app-owned tabs may be restored; this is not an open redirect.
+        session.pop("web_destination", None)
+        destination = request.args.get("view")
+        if destination in {"create", "library", "account"}:
+            session["web_destination"] = destination
         session.pop("native_intent", None)
         link = request.args.get("native_link", "")
         if link:
@@ -124,6 +140,19 @@ def register_auth(app, cfg):
         callback = cfg["origin"] + "/auth/" + provider + "/callback"
         if provider == "lazyingart":
             if shared:
+                try:
+                    user = app.extensions["westicker"]["current"](False)
+                except HTTPException as exc:
+                    if exc.code != 401:
+                        raise
+                    user = None
+                # Validate issuer authority, then reuse this exact app session.
+                # Choosing a different social provider must not take this path.
+                if user:
+                    with database(cfg) as db:
+                        linked = db.execute("SELECT 1 FROM shared_grants WHERE user_id=?", (user["id"],)).fetchone()
+                    if linked:
+                        return return_to_app()
                 return shared.start()
             issuer = options["issuer"].rstrip("/")
             if not issuer.startswith("https://"):
@@ -180,7 +209,11 @@ def register_auth(app, cfg):
                 identity, identifier = shared.complete()
                 if identity is None:
                     session.pop("native_intent", None)
-                    return redirect(cfg["origin"] + "/?login=cancelled")
+                    query = {"login": "cancelled"}
+                    destination = session.pop("web_destination", None)
+                    if destination:
+                        query["view"] = destination
+                    return redirect(cfg["origin"] + "/?" + urlencode(query))
                 return activate(identity.issuer, identity.subject, identity.display_name,
                                 grant=(identity, identifier))
             flow = session.pop("lazyingart", None)

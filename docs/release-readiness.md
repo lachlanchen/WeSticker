@@ -1,20 +1,31 @@
 # Release Readiness
 
-Current web release: [clean guest chat and Library, 2026-10-11](clean-chat-release-20261011.md).
-The [native internal test builds](native-guest-chat-20261011.md) track native
-builds separately. The independent HTTPS creator origin has real password
-sign-in and conversational chat without login. AgInTi image generation passed
+Current web release: [public Stickers and protected Create](protected-create-release-20261011.md).
+The [native internal test builds](native-protected-create-20261011.md) track native
+builds separately. The independent HTTPS creator origin has qualified password
+and Google-through-LazyingArt sign-in, with login outside the conversation. AgInTi image generation passed
 one real-provider qualification and is enabled. A local animation canary passed,
 but public animation remains disabled until its runtime lifecycle is available.
-Social providers and payments remain gated; a real Stripe sandbox Checkout and
+Social-provider app qualification is recorded [separately](social-auth-qualification-20261011.md).
+Payments remain gated; a real Stripe sandbox Checkout and
 Portal test passed, but public webhook delivery has not. The tables below preserve
 the earlier October 10 release record, not the current build numbers or gates.
 
 **Status: public catalog and login/chat beta, not ready for customer payments.**
 
+## Current Entry Flow
+
+Public Stickers opens first. Create requires sign-in on its own screen and then
+opens the conversation. Characters are nested in Library; Account is the last
+tab. Web, SwiftUI and Compose follow this organization. The old anonymous chat
+endpoint is retired. Current provider evidence and internal delivery receipts
+are in the linked qualification notes above.
+
+## Historical October 10 Baseline
+
 The owner previously installed iOS build 3. Creation and the assistant were intentionally
-not claimed as available in that binary. They are the next milestone in the
-[native creator plan](native-creator-plan.md), not a completed delivery.
+not claimed as available in that binary. The table records that baseline only;
+it is not the feature list or build number of the new protected-Create release.
 
 | Area | Evidence | Remaining gate |
 | --- | --- | --- |
@@ -49,10 +60,11 @@ Screenshots/results go into ignored `.runtime/browser-qa/`; selected clean
 screenshots are copied into `docs/screenshots/`. Layout tests cover 320 through 1440 widths,
 not native devices. Nothing invokes a paid image/video provider.
 
-## Current native artifacts
+## Native Artifacts
 
-See [native catalog beta](native-catalog-beta.md) for build, testing, capability
-limits and artifact provenance. Android is Compose; iOS/macOS are SwiftUI.
+See [protected Create builds](native-protected-create-20261011.md) for current
+delivery and qualification. The [native catalog beta](native-catalog-beta.md)
+preserves the earlier build history. Android is Compose; iOS/macOS are SwiftUI.
 WebView/Capacitor wrappers are not the current test releases. Public App Store
 or Play Production review has not been requested for these catalog candidates.
 

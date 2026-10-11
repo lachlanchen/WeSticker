@@ -265,7 +265,6 @@ private enum BillingVault {
 struct NativeBillingAccountView: View {
     @ObservedObject var cloud: CloudStudioStore
     @ObservedObject var billing: NativeBillingStore
-    let signIn: () -> Void
     var body: some View {
         NavigationStack {
             Form {
@@ -276,7 +275,7 @@ struct NativeBillingAccountView: View {
                         Text(billing.account.isEmpty ? "Signed in" : billing.account)
                         Text("\(billing.plan.capitalized) - \(billing.credits) credits")
                         Button(role: .destructive) { cloud.perform { try await cloud.signOut() } } label: { Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right") }
-                    } else { Button(action: signIn) { Label("Sign in", systemImage: "person.crop.circle") }.disabled(cloud.busy) }
+                    }
                 }
                 if cloud.signedIn {
                     Section("App Store Plans") {

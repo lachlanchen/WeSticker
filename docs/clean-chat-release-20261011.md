@@ -1,5 +1,9 @@
 # Clean Chat And Library
 
+Historical release evidence. The owner subsequently clarified that chat requires
+login through a separate screen. [Protected Create](protected-create-release-20261011.md)
+supersedes the guest entry and endpoint described below; the clean layout remains.
+
 This layout supersedes the separate Characters destination in the earlier
 [login/chat release](login-chat-release-20261011.md). The owner requested a simpler,
 conversation-first app after trying the previous build.

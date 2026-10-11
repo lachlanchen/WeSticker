@@ -25,10 +25,14 @@ questions need not produce a sticker table. Attach an approved character to the
 same draft later. Native login uses a system browser and automatic, one-use PKCE
 return, never a manual "I connected" button. Shared-account deletion revokes the
 app-bound SDK sessions before erasure and must allow interrupted cleanup retries.
-Chat is available without login. Keep it a clean conversation surface, with
-account and billing controls outside the transcript. Characters belong inside
-Library, not a separate global navigation tab. Cloud saving, reference uploads
-and generation keep their account, consent and quote requirements.
+Stickers is the public starting tab. Create requires sign-in: signed-out users
+see one app-level login screen outside the tabs, then return to their intended
+workspace after authentication. Do not duplicate login forms inside Create,
+Library or Account. Native provider selection opens its authorization directly,
+without another PWA login screen. Chat itself is a clean conversation surface, not a login or
+billing panel. There is no anonymous chat endpoint. Characters belong inside
+Library, not a separate global navigation tab; Account is the last tab. Private
+references and generation retain consent and quote requirements.
 Use `scripts/test_studio_isolated.py` for repeat browser QA; do not relax signup
 limits or borrow paid-provider credentials to make tests pass.
 

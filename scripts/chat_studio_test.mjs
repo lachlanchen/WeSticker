@@ -23,7 +23,7 @@ try {
     .getByRole("button", { name: /^(My library|Library)$/ })
     .first()
     .click();
-  await page.getByRole("button", { name: "New account", exact: true }).click();
+  await page.getByRole("button", { name: "Create an account", exact: true }).click();
   await page
     .getByLabel("Email", { exact: true })
     .fill(`studio-qa-${Date.now()}@example.invalid`);

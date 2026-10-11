@@ -5,19 +5,21 @@ import {
   X,
   ImagePlus,
   Library,
-  Users,
-  LogOut,
+  UserRound,
 } from "lucide-react";
 import { Studio } from "./Studio";
 import { StickerBrowser } from "./StickerBrowser";
-import { WebPlans } from "./WebPlans";
-import {api, setCSRF, type Boot, type Pack, type Sticker} from "./api";
+import { AccountScreen } from "./AccountScreen";
+import { SignInScreen, CreatorConsentScreen } from "./SignInScreen";
+import { NativeSignInReturn, nativeSignInIntent } from "./NativeSignInReturn";
+import { API, api, setCSRF, type Boot, type Pack, type Sticker } from "./api";
 
 const base = import.meta.env.BASE_URL;
 const asset = (path: string) =>
   path.startsWith("/") ? base + path.slice(1) : path;
 
 export function PublicCatalog() {
+  const nativeIntent = nativeSignInIntent();
   const [packs, setPacks] = useState<Pack[]>([]);
   const [selected, setSelected] = useState<Pack | null>(null);
   const [lang, setLang] = useState("zh");
@@ -29,26 +31,54 @@ export function PublicCatalog() {
     }
   });
   const [view, setView] = useState<
-    "stickers" | "create" | "library" | "characters" | "saved"
+    "stickers" | "create" | "library" | "characters" | "saved" | "account"
   >(
-    ["native_link", "welcome", "login"].some(k => new URLSearchParams(location.search).has(k))
-      ? "create"
-      : "stickers",
+    new URLSearchParams(location.search).get("view") === "account"
+      ? "account"
+      : new URLSearchParams(location.search).get("view") === "library"
+        ? "library"
+        : new URLSearchParams(location.search).get("view") === "create" ||
+            ["native_link", "welcome", "login"].some((k) =>
+              new URLSearchParams(location.search).has(k),
+            )
+          ? "create"
+          : "stickers",
   );
   const favorites = view === "saved";
   const tabs = [
     { id: "stickers", label: "Stickers", Icon: StickerIcon },
     { id: "create", label: "Create", Icon: ImagePlus },
     { id: "library", label: "Library", Icon: Library },
+    { id: "account", label: "Account", Icon: UserRound },
   ] as const;
-  const [preview, setPreview] = useState<Sticker | null>(null);
+  const [preview, setPreview] = useState<{
+    sticker: Sticker;
+    pack: Pack;
+  } | null>(null);
   const [error, setError] = useState("");
-  const [account, setAccount] = useState<Boot | null>(null);
-  const [accountOpen, setAccountOpen] = useState(false);
-  const [accountBusy, setAccountBusy] = useState(false);
-  const [accountError, setAccountError] = useState("");
   const [accountEpoch, setAccountEpoch] = useState(0);
-  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [session, setSession] = useState<Boot | null>(null);
+  const [loginError, setLoginError] = useState("");
+  const protectedView = ["create", "library", "characters", "account"].includes(
+    view,
+  );
+  function updateSession(next: Boot) {
+    setSession(next);
+    setCSRF(next.csrf);
+  }
+  async function refreshSession() {
+    setLoginError("");
+    try {
+      updateSession(await api<Boot>("/api/bootstrap"));
+    } catch (e) {
+      setLoginError((e as Error).message);
+      throw e;
+    }
+  }
+  useEffect(() => {
+    if (protectedView && !session && !loginError)
+      void refreshSession().catch(() => {});
+  }, [protectedView, session, loginError]);
   useEffect(() => {
     fetch(base + "catalog.json")
       .then((r) => {
@@ -89,7 +119,13 @@ export function PublicCatalog() {
     addEventListener("keydown", close);
     return () => removeEventListener("keydown", close);
   }, []);
-  function download(_: Pack, sticker: Sticker) {
+  function stickerDownload(pack: Pack, sticker: Sticker) {
+    return (
+      API +
+      `/api/default/${encodeURIComponent(pack.id)}/sticker/${encodeURIComponent(lang)}/${encodeURIComponent(sticker.id)}`
+    );
+  }
+  function download(pack: Pack, sticker: Sticker) {
     const url = new URL(sticker.gif);
     if (
       url.origin !== "https://aya.lazying.art" ||
@@ -97,10 +133,42 @@ export function PublicCatalog() {
     )
       return;
     const link = document.createElement("a");
-    link.href = url.href;
+    link.href = stickerDownload(pack, sticker);
     link.download = url.pathname.split("/").pop() || "sticker.gif";
     link.click();
   }
+  if (protectedView && !session?.user)
+    return (
+      <SignInScreen
+        boot={session}
+        destination={
+          view === "account"
+            ? "account"
+            : view === "create"
+              ? "create"
+              : "library"
+        }
+        onLogin={refreshSession}
+        onBack={() =>
+          nativeIntent ? location.assign(base) : setView("stickers")
+        }
+        loadError={loginError}
+        onRetry={() => {
+          void refreshSession().catch(() => {});
+        }}
+      />
+    );
+  if (protectedView && session?.user && !session.user.consented)
+    return (
+      <CreatorConsentScreen
+        onDone={refreshSession}
+        onBack={() =>
+          nativeIntent ? location.assign(base) : setView("stickers")
+        }
+      />
+    );
+  if (nativeIntent && session?.user)
+    return <NativeSignInReturn boot={session} intent={nativeIntent} />;
   return (
     <div className="app public-catalog">
       <aside className="sidebar">
@@ -134,7 +202,6 @@ export function PublicCatalog() {
       <div className="main-shell">
         <header className="topbar">
           <strong>WeSticker</strong>
-          {account?.user && <button className="icon-button" aria-label="Your account" onClick={() => setAccountOpen(true)}><Users size={20}/></button>}
           <button
             className="icon-button"
             aria-label="Saved collections"
@@ -145,7 +212,19 @@ export function PublicCatalog() {
         </header>
         <main>
           {view === "create" || view === "library" || view === "characters" ? (
-            <Studio key={accountEpoch} section={view} onSection={setView} onAccount={setAccount} />
+            <Studio
+              key={accountEpoch}
+              section={view}
+              onSection={setView}
+              onAccount={updateSession}
+            />
+          ) : view === "account" ? (
+            <AccountScreen
+              onAccount={(next) => {
+                updateSession(next);
+                setAccountEpoch((n) => n + 1);
+              }}
+            />
           ) : error ? (
             <p role="alert">{error}</p>
           ) : (
@@ -163,7 +242,7 @@ export function PublicCatalog() {
                   old.includes(id) ? old.filter((x) => x !== id) : [...old, id],
                 )
               }
-              onPreview={(sticker) => setPreview(sticker)}
+              onPreview={(sticker, pack) => setPreview({ sticker, pack })}
               onNativeSave={download}
               onDownload={(pack) => {
                 location.href =
@@ -177,8 +256,16 @@ export function PublicCatalog() {
         {tabs.map(({ id, label, Icon }) => (
           <button
             key={id}
-            className={view === id || (id === "library" && view === "characters") ? "active" : ""}
-            aria-current={view === id || (id === "library" && view === "characters") ? "page" : undefined}
+            className={
+              view === id || (id === "library" && view === "characters")
+                ? "active"
+                : ""
+            }
+            aria-current={
+              view === id || (id === "library" && view === "characters")
+                ? "page"
+                : undefined
+            }
             onClick={() => setView(id)}
           >
             <Icon size={22} />
@@ -186,36 +273,12 @@ export function PublicCatalog() {
           </button>
         ))}
       </nav>
-      {accountOpen && account?.user && <div className="modal-backdrop" onClick={() => setAccountOpen(false)}>
-        <section className="auth-modal" role="dialog" aria-modal="true" aria-label="Your account" onClick={e => e.stopPropagation()}>
-          <button className="icon-button close" aria-label="Close account" onClick={() => setAccountOpen(false)}><X/></button>
-          <h2>{account.user.name}</h2>
-          <p>LazyingArt account</p>
-          <WebPlans key={account.user.id} boot={account} onUpdated={setAccount}/>
-          {accountError && <p role="alert">{accountError}</p>}
-          <button className="button outline full" disabled={accountBusy} onClick={async()=>{
-            setAccountBusy(true);setAccountError("");
-            try {setCSRF(account.csrf);await api('/api/auth/logout',{});setAccount(null);setAccountOpen(false);setAccountEpoch(n=>n+1);}
-            catch(e){setAccountError((e as Error).message);}finally{setAccountBusy(false);}
-          }}><LogOut size={18}/> Sign out of WeSticker</button>
-          <details><summary>Delete my WeSticker account</summary>
-            <p>Your private WeSticker creations and uploads will be deleted. Your LazyingArt account and other apps stay unchanged.</p>
-            <p>Manage any App Store or Google Play subscription separately before deleting your account.</p>
-            <label>Type DELETE<input value={deleteConfirmation} onChange={e=>setDeleteConfirmation(e.target.value)}/></label>
-            <button className="button outline full" disabled={deleteConfirmation!=="DELETE"||accountBusy} onClick={async()=>{
-              setAccountBusy(true);setAccountError("");
-              try{setCSRF(account.csrf);await api('/api/account/delete',{confirmation:'DELETE'});setAccount(null);setAccountOpen(false);setAccountEpoch(n=>n+1);}
-              catch(e){setAccountError((e as Error).message);}finally{setAccountBusy(false);}
-            }}>Delete WeSticker account</button>
-          </details>
-        </section>
-      </div>}
       {preview && (
         <div className="modal-backdrop" onClick={() => setPreview(null)}>
           <section
             role="dialog"
             aria-modal="true"
-            aria-label={preview.label}
+            aria-label={preview.sticker.label}
             className="preview-modal"
             onClick={(e) => e.stopPropagation()}
           >
@@ -227,13 +290,17 @@ export function PublicCatalog() {
               <X />
             </button>
             <img
-              src={preview.gif}
-              alt={preview.label}
+              src={preview.sticker.gif}
+              alt={preview.sticker.label}
               width="240"
               height="240"
             />
-            <h2>{preview.label}</h2>
-            <a className="button primary" href={preview.gif} download>
+            <h2>{preview.sticker.label}</h2>
+            <a
+              className="button primary"
+              href={stickerDownload(preview.pack, preview.sticker)}
+              download
+            >
               Save GIF
             </a>
           </section>

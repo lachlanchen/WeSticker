@@ -1,5 +1,8 @@
 # Native Guest Chat And Navigation
 
+Historical build evidence. The owner's later clarification requires a separate
+login screen before Create; see [the replacement builds](native-protected-create-20261011.md).
+
 Delivered internal releases: iOS 1.0(10), macOS 1.0(8), Android 1.0(9).
 The preceding iOS/Android 8 UI is superseded. No formal review or purchases.
 

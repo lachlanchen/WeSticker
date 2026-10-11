@@ -26,16 +26,16 @@
 
 [GIF playback, new icon and test-build evidence](../docs/native-playback-20261010.md)
 
-**2026-10-11** · https://westicker.lazying.art 已開放免登入訪客聊天。Characters（角色）位於 Library（作品庫）內，不再是獨立的主導覽入口。AgInTi 圖像生成（`nano-banana-2`）已通過真實服務商驗證並啟用；生成仍需帳號、授權同意及明確確認報價。
+**2026-10-11** · 貼圖瀏覽無需登入。Create 先進入獨立登入畫面，再返回簡潔的聊天。角色和參考素材放在 Library，Account 是最後一個標籤。
 
-[2026-10-11 · 訪客聊天 / 導覽](../docs/clean-chat-release-20261011.md) · [AgInTi 圖像驗證](../docs/aginti-images.md) · [API / QA](../docs/chat-studio-20261011.md)
+[2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
 ![Chat studio](../docs/screenshots/chat-studio-web.png)
 
 ## 創作工坊
 
 - 10 套預設作品、156 個獨立動畫，中英日三種文字版本，可直接預覽。
-- 私有照片上傳、可重用的鎖定角色、8 張貼圖草稿、逐張改字與確認，最後匯出 ZIP。
+- 私有照片上傳、可重用的已確認角色、依方案限額的貼圖草稿、逐張改字與確認，最後匯出 ZIP。
 - 可選影像生成、本機動畫、創作者銷售審核及隔離的微信草稿上傳。助手只儲存草稿，不提交審核。
 
 ## 訂閱方案
@@ -68,7 +68,7 @@ Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 獨
 
 ## 驗證結果
 
-77 項後端測試與 2 項瀏覽器代理安全測試通過。真實瀏覽器完成訪客下載、照片上傳、角色確認、照片貼圖生成、文字審核、ZIP 匯出與帳號刪除，並檢查桌面及行動寬度。這不代表真實付款或模型服務已驗證。
+後端與瀏覽器測試涵蓋公開瀏覽、受保護的聊天、登入返回、工作階段過期、參考素材、審核及匯出。原生版本證據另行記錄。
 
 ```bash
 .venv/bin/pytest -q
@@ -80,7 +80,7 @@ npm run test:browser
 
 ## 發布狀態
 
-內部測試版本: [iOS 1.0 (10)、macOS 1.0 (8)、Android 1.0 (9)](../docs/native-guest-chat-20261011.md). 一次本機動畫試運行已通過，但面向公眾的動畫生成仍保持離線，等待服務生命週期驗證。第三方社群登入、原生 App 內購買及網頁付款仍停用，等待端到端驗證通過。
+目前為內部測試版，並非完整商業發布。透過 LazyingArt 的密碼和 Google 登入以及 AgInTi 圖像生成已驗證；其他登入方式見供應商報告。公開動畫服務和付款尚未開放。
 
 ## 引用
 
