@@ -83,7 +83,7 @@ def test_next_ui_run_asserts_real_toolbar_geometry_and_composer():
     assert "visible.count, 1" in catalog
     for title in ("Create", "Library", "Account", "Sign in"):
         assert 'assertCompactHeader("' + title + '"' in fixture
-    assert 'assert_toolbar(tree, "WeSticker", "About this beta")' in smoke
+    assert 'assert_toolbar(tree, "WeSticker", "About WeSticker")' in smoke
     assert 'assert_toolbar(tree, "Sign in", "Service settings")' in smoke
     assert "welcome.frame.maxY, input.frame.minY" in fixture
     assert 'input.tap(); input.typeText("A friendly sticker idea")' in fixture

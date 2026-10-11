@@ -113,14 +113,14 @@ final class NativeAccountReleaseTests: XCTestCase {
         for destination in ["Create", "Library", "Account"] {
             fixtureState("expired")
             app.launch()
-            XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 20))
+            XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 20))
             app.buttons[destination].tap()
             XCTAssertTrue(app.buttons["Continue with LazyingArt"].waitForExistence(timeout: 10))
             XCTAssertFalse(app.buttons[destination].isHittable)
             XCTAssertFalse(app.buttons["Sign in"].exists)
             XCTAssertFalse(app.buttons["Manage App Store subscriptions"].exists)
             app.buttons["Browse stickers"].tap()
-            XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 10))
+            XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 10))
             app.buttons[destination].tap()
             XCTAssertTrue(app.staticTexts["Sign in to WeSticker"].waitForExistence(timeout: 10))
             // Layout-only session transition, not a browser/PKCE authentication receipt.
@@ -164,8 +164,8 @@ final class NativeAccountReleaseTests: XCTestCase {
                 XCTAssertTrue(browserCancel.waitForExistence(timeout: 10))
                 browserCancel.tap()
             }
-            XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 10))
-            XCTAssertTrue(app.buttons["About this beta"].isHittable)
+            XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 10))
+            XCTAssertTrue(app.buttons["About WeSticker"].isHittable)
             XCTAssertFalse(app.staticTexts["Sign in to WeSticker"].exists)
             capture("System authentication cancelled to catalog fixture " + name)
             app.buttons["Create"].tap()
@@ -178,7 +178,7 @@ final class NativeAccountReleaseTests: XCTestCase {
         app.launchArguments += ["-studio-origin", publicOrigin]
         app.launch()
         defer { app.terminate() }
-        XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 20))
+        XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 20))
         capture("Public initial Stickers")
         app.buttons["Create"].tap()
         XCTAssertTrue(app.staticTexts["Sign in to WeSticker"].waitForExistence(timeout: 20))
@@ -199,7 +199,7 @@ final class NativeAccountReleaseTests: XCTestCase {
         XCTAssertFalse(app.buttons["Account"].isHittable)
         capture("Shared authentication live provider availability")
         app.buttons["Browse stickers"].tap()
-        XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 10))
         app.buttons["Account"].tap()
         XCTAssertTrue(app.staticTexts["Sign in to WeSticker"].waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["Sign in"].exists)

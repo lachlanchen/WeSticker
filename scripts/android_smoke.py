@@ -66,7 +66,7 @@ def main():
         assert x2 > x1 and y2 > y1 and x2 <= ax1, "Title must lead, not overlap actions"
         assert abs((y1+y2)/2 - (ay1+ay2)/2) <= (ay2-ay1)/2, "Title and actions must share a row"
     def assert_catalog(tree):
-        assert_toolbar(tree, "WeSticker", "About this beta")
+        assert_toolbar(tree, "WeSticker", "About WeSticker")
         assert any("Search collections" in n.get("text", "") for n in tree.iter("node"))
     with urlopen("https://westicker.lazying.art/api/bootstrap", timeout=20) as response:
         configured = json.load(response).get("providers", [])
@@ -117,6 +117,14 @@ def main():
                 tree = capture("01-start-cleared")
             tree = capture("01-catalog")
             texts = [n.get("text", "") or n.get("content-desc", "") for n in tree.iter("node")]
+            assert_catalog(tree)
+            tap(tree, "About WeSticker")
+            about = capture("about-current")
+            about_text = " ".join(n.get("text", "") for n in about.iter("node"))
+            assert "Cloud creations belong to your signed-in account." in about_text
+            assert "not connected in this beta" not in about_text
+            tap(about, "Done")
+            tree = capture("about-return")
             assert_catalog(tree)
             if "Sign in" in texts or "Plans & credits" in texts:
                 raise RuntimeError("Unqualified beta control is visible")

@@ -6,8 +6,9 @@ builds separately. The independent HTTPS creator origin has qualified password,
 Google and Apple-through-LazyingArt sign-in, with login outside the conversation.
 Apple linking and a separate Apple-only login preserve the original app account.
 AgInTi image generation passed
-one real-provider qualification and is enabled. A local animation canary passed,
-but public animation remains disabled until its runtime lifecycle is available.
+one real-provider qualification and is enabled. Two real local animation items
+passed the managed runtime lifecycle; animation is enabled with the normal
+quote, consent, locked-reference, resource and visual-review requirements.
 Social-provider app qualification is recorded [separately](social-auth-qualification-20261011.md).
 Web subscriptions are now enabled; actual Stripe sandbox Checkout, Portal and
 lifecycle tests passed, followed by genuine live nonfinancial signed webhook
@@ -16,10 +17,10 @@ own store qualification. The tables below preserve
 the earlier October 10 release record, not the current build numbers or gates.
 
 **Status: public catalog, protected creator beta and live web subscriptions.
-Native IAP, public animation and creator marketplace are not yet fully qualified.**
+Native IAP and creator marketplace commercial operation are not yet fully qualified.**
 
 The [completion ledger](request-completion-ledger.md) is the current cross-feature
-audit. Android 14, iOS 14 and macOS 11 are available to internal testers with
+audit. Android 15, iOS 14 and macOS 11 are available to internal testers with
 compact toolbars. Subscriber language-ZIP downloads now remain in
 WeSticker instead of redirecting to the independent AYA checkout. Native signed
 notification handling is deployed. A bounded owner-only Google license test
@@ -32,8 +33,15 @@ Android 14 additionally fixes the callback self-cancellation found in an actual
 system-browser login; native sign-in and persistence after restart are verified.
 The root login smoke also checks Create, Library and Account on the live website:
 one authentication screen outside the tabs, with the intended return destination.
-Updated native About wording is source-ready after these distributed builds;
-it is not claimed present in Android14/iOS14/macOS11.
+Updated native About wording is present in Android 15 and source-ready for the
+next Apple candidate; it is not claimed present in iOS14/macOS11. The release
+publisher now requires notes reviewed for the exact Apple build instead of an
+obsolete catalog-only default.
+
+Actual selected Google, Apple and LazyingArt app returns have passed without a
+second central provider chooser. GitHub's explicit account-link step is complete;
+its app return is being qualified separately. No email-based account merge is
+used. See the current social qualification note for the latest result.
 
 ## Current Entry Flow
 

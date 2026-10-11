@@ -53,8 +53,8 @@ final class CatalogTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-studio-origin", "https://westicker.lazying.art"]
         app.launch()
-        XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 20))
-        app.assertCompactHeader("WeSticker", action: "About this beta")
+        XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 20))
+        app.assertCompactHeader("WeSticker", action: "About WeSticker")
         XCTAssertEqual(app.webViews.count, 0, "The mobile/desktop catalog must be native")
         let preview = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Preview ")).firstMatch
         XCTAssertTrue(preview.waitForExistence(timeout: 20))
@@ -97,7 +97,7 @@ final class CatalogTests: XCTestCase {
         capture("Shared authentication from Create")
         XCTAssertTrue(app.buttons["Browse stickers"].isHittable)
         app.buttons["Browse stickers"].tap()
-        XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 10))
         app.buttons["Library"].tap()
         XCTAssertTrue(app.staticTexts["Sign in to WeSticker"].waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["Characters"].exists)
@@ -114,7 +114,7 @@ final class CatalogTests: XCTestCase {
         capture("Native preserved local draft")
         app.terminate()
         app.launch()
-        XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 20))
+        XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 20))
         app.buttons["Library"].tap()
         XCTAssertTrue(app.buttons["Open saved local photo draft"].waitForExistence(timeout: 10))
         app.buttons["Open saved local photo draft"].tap()
@@ -123,7 +123,7 @@ final class CatalogTests: XCTestCase {
         XCTAssertEqual(app.textFields["Caption 1"].value as? String, caption)
         capture("Native restored draft")
         app.buttons["Close local draft"].tap()
-        XCTAssertTrue(app.buttons["About this beta"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 10))
     }
 }
 

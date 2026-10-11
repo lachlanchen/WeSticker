@@ -3,6 +3,36 @@
 The compact toolbar source is `f1848be`. This is an internal test release, not a
 public store review or a claim that every payment/provider lane is active.
 
+## Android 1.0 (15)
+
+Build 15 is now **available to internal testers** on the existing track. It
+preserves the checked native chat, account, local drafts and callback fixes, and
+replaces stale catalog-beta About copy with accurate device/cloud storage text.
+No public store review was submitted. Play reports no supported-device losses;
+the same optional deobfuscation and native-symbol warnings remain.
+
+The exact signed APK passed cumulative catalog, root-login, intended-tab,
+local-draft restore, native sharing and GIF pixel checks (5 playing / 1 paused /
+5 resumed). The About sheet was opened and its current copy checked. The three
+qualified provider entries visible at capture were Google, Apple and LazyingArt;
+this screenshot test is distinct from real OAuth or store purchases.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| APK | `31aba525f8dd7066ced96991542a747b0378576a9b58d7038a0ae619599ccbc5` |
+| AAB | `c60e31b311a6550e29bb5fbf3b79afe85d6484e3fee2dff0155d621be165df8b` |
+
+Private evidence is `.runtime/releases/android-1.0-15/`: manifest, cumulative
+`qa/result.json`, screenshots, upload intent and Play availability receipt.
+APK/AAB/manifest were copied to the existing Nutstore release folder under
+`android-15/` and both package hashes verified. This confirms the local sync
+copy, not independent cloud acknowledgment. The owned QA emulator stopped.
+Earlier build 14 and its genuine sign-in/payment evidence remain preserved.
+
+The release tooling now requires an explicit reviewed notes file when attaching
+an Apple beta; it cannot reuse the obsolete catalog-only default. That tooling
+change does not rebuild or change the existing iOS 14/macOS 11 binaries.
+
 ## Android 1.0 (14) Successor
 
 Build 14 supersedes 13 in the same internal test track. Source `c1913d7` fixes

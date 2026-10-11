@@ -14,9 +14,15 @@ from urllib.parse import urlencode
 from apple_release import Apple, BUNDLE, private_write
 
 
-NOTES = ("Catalog beta: browse Aya and friends, switch English/Japanese/Chinese sticker lettering, "
-         "play/pause animations, save favourites and save/share individual GIFs. "
-         "AI creation, accounts and payments are not enabled in this test build.")
+def release_notes(action, path):
+    if path is None:
+        if action == "attach":
+            raise ValueError("Attaching a beta requires --notes-file reviewed for this exact build")
+        return None
+    notes = path.read_text().strip()
+    if not notes or len(notes) > 4000:
+        raise ValueError("Release notes must contain 1-4000 characters")
+    return notes
 
 
 def main():
@@ -26,9 +32,7 @@ def main():
     p.add_argument("--manifest", required=True, type=Path)
     p.add_argument("--notes-file", type=Path, help="Reviewed release notes for this exact build")
     a = p.parse_args()
-    notes = a.notes_file.read_text().strip() if a.notes_file else NOTES
-    if not notes or len(notes) > 4000:
-        raise ValueError("Release notes must contain 1-4000 characters")
+    notes = release_notes(a.action, a.notes_file)
     config = json.loads(a.config.expanduser().read_text())
     manifest = json.loads(a.manifest.expanduser().read_text())
     root = a.manifest.expanduser().parent

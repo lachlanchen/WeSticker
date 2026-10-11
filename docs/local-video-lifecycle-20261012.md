@@ -2,19 +2,92 @@
 
 ## Current Status
 
-Implementation and CPU fixtures only. **Public animation remains off; the new
-fenced lifecycle has not passed live GPU qualification.** No runtime startup,
-render, policy installation, driver change or peer cleanup was performed by this
-implementation task. The native billing worker currently owns the heavyweight
-lane with Play-enabled emulator 5592. GPU qualification must wait for an explicit
-handoff and fresh resource checks, not merely an apparently idle GPU.
+**The bounded two-item live lifecycle qualification passed on 2026-10-12;
+public animation was subsequently enabled by the app owner.** After James's explicit cleanup handoff and
+parent authorization, the canonical owner installed the durable private policy.
+The unchanged client from commit `100c07c` started one owned runtime, submitted
+exactly two serial items, received the matching worker unload acknowledgment
+between them, then drained, stopped and released both captured instances. No
+rerender, paid generation, public activation or global driver change occurred.
+
+The heavyweight lane is returned: captured engine/Studio processes are gone,
+ports 8188/8190/5592/5593 are closed, and no task-owned GUI stack remains.
+Postflight recorded about 63 GiB available RAM, 80/135 GiB swap, GPU0 24,036 MiB
+free and no GPU0 compute process. These are observations, not future capacity
+reservations. The canonical owner independently confirmed exact cleanup.
 
 This worker owns `server/local_video_lifecycle.py`, `server/local_video.py`,
 `tests/test_local_video_lifecycle.py`, `tests/test_local_video_recovery.py`,
 `tests/test_local_video_fence.py`, and this document. Parent owns worker/API
 integration, public activation, native documentation and commits. The existing
-LocalVideoGen owner is implementing the canonical changes in its own repository;
-this worker has not modified that shared service's source or running processes.
+LocalVideoGen owner implemented the canonical changes and installed its policy;
+this worker did not modify canonical source. This worker was the sole executor
+of the canary's start, submissions, drain and exact owned cleanup.
+
+## App Activation
+
+The parent activated backend `a0299f0024990686` after the exact Android 15 QA
+runtime had stopped and the login worker confirmed no active callback. Public
+bootstrap confirms animation is enabled. Existing image generation, web checkout,
+account mappings and native billing configuration were preserved. No additional
+render was submitted by activation. The ordinary user quote, explicit consent,
+locked reference, resource admission and visual review still apply.
+
+Private rollback configuration and deployment evidence are retained under
+`.runtime/creator-deploy/animation-20261012.json`. The canary's earlier off-state
+receipts below remain unchanged as historical evidence. Final checkout tests
+passed 458 cases; the web build and isolated chat/login browser tests passed.
+
+## Live Material Receipt
+
+Job: `public-aya-lifecycle-20261012`, 03:48:53 to 03:53:11 +08:00, runner exit 0.
+Both MP4s are 512x512, 24 fps, 124 frames, 5.166667 seconds, with AAC audio.
+Both MP4s and GIFs fully decode. Each GIF is 240x240, 62 frames / 5.160 seconds;
+all 61 adjacent-frame comparisons contain changed pixels.
+
+| Item / Seed | Actual Provider ID | MP4 SHA-256 |
+| --- | --- | --- |
+| `wave-once-01` / 127970636 | `dc7e3c0e-1a25-4e15-986a-d2b13e2e014a` | `eec75ebc321ccf68899f97e1b94a5cfcd35bcf627d539bdfc670e9ab11bc4a0b` |
+| `nod-thanks-02` / 31307560 | `d2fa76f3-8242-45e7-86ea-19890c86d7e2` | `47f7d136f62a6cbfc4563cfb12f2bdbb12ae9a7c8d774602faa391d020c42576` |
+
+Actual Studio access logs contain one claim, two reference uploads, **two render
+POSTs total**, one unload and one drain. Lease generation:
+`dfba58a3-4b60-414d-8202-23e15b5d48f4`. Worker acknowledgment
+`1c3b64a7-16c6-4c7a-932f-c30f5d2bbb42` completed before item two. No threshold
+was lowered; the second item followed the original client and canonical cold
+resource checks. Final client state is `offline`, `owned:{}`; canonical state
+is `released`. Model execution logs report 106.43 and 101.35 seconds respectively;
+this is not a general pack latency guarantee.
+
+Visual inspection used the approved reference, both five-frame contact sheets
+and 26 chronological samples per clip at 5 fps. Both retain one recognizable
+Aya, sailor outfit, palette and bag, with distinct waving and nodding actions.
+The wave returns near its starting pose. **The nod clip loses its pedestal and
+shrinks its framing after the opening; the bag moves to the front rather than a
+clear hand-to-chest gesture.** Neither seamless looping nor publication-ready
+pack quality is claimed. This qualifies the lifecycle/media path, not every
+prompt's exact action or a 16/24-item pack; all variants are preserved, no retry.
+
+Evidence root: `.runtime/local-video-lifecycle-20261012/`.
+The `canary-public-aya-two-item/` subdirectory contains `execution.json`,
+`technical-qa.json`, `visual-qa.json`, `final-admission-sanitized.json`,
+`postflight.json`, both runtime logs and original per-item artifacts. Each item
+has `contact-sheet.png` and `sampled-5fps.png`. The initial execution receipt
+retains its truthful visual-QA-pending checkpoint; the separate visual/final
+receipts record the later inspection rather than rewriting history.
+`final-material-receipt.json` SHA-256:
+`6b286dd1b2a32452c8b92eceb8e2f33345d4ac1ba03de3ee21c7e153d9c1cad7`.
+All 45 evidence files were copied and hash-verified in the private local sync
+folder `OneTimeSync/WeSticker/LocalVideo-lifecycle-20261012`; cloud upload is
+not independently confirmed. Live configs and lease credentials were excluded.
+
+Policy installed by the canonical owner: mode 0600, SHA-256
+`3468c78d758537d728022d5998b97ef2f4278350be635e71c3f1d98958561001`.
+The canary used a private copy of the current app config, with only canonical
+runtime root/origin added and animation kept false. Live config was untouched;
+deployment/activation remains parent-owned. The matching retained 595.84 loader
+environment was process-local only. Default system NVML still has the known
+595.99/595.84 mismatch; the installed policy revalidates its fallback each time.
 
 ## Durable Policy, Bounded Job
 
@@ -81,7 +154,7 @@ silently serving the original receipt.
 ## Canonical Fence And Unload
 
 The caller's flock alone does not exclude raw Studio/engine writers. The
-canonical owner is implementing actual mutation enforcement in Studio and
+canonical owner implemented actual mutation enforcement in Studio and
 ComfyUI, with a separate shared/exclusive mutation lock. Canonical HTTP handlers
 must never wait on the caller-held job flock.
 
@@ -133,8 +206,8 @@ The client protocol is:
 
 This is explicit unload between items, not an invented lower warm-resource
 threshold. Processes remain running through the serial job, but model reload
-cost still applies after unloading. Live timing, correctness and resource
-behavior remain unqualified until the authorized two-item test.
+cost still applies after unloading. The bounded two-item live receipt above
+qualifies this sequence; arbitrary pack sizes and capacity are not inferred.
 
 ## Gates And Cleanup
 
@@ -169,12 +242,15 @@ public bootstrap host probes were added. This worker did not edit `worker.py`,
 
 ## Test Evidence
 
-Current focused fixtures: 135 passed in 6.60 seconds across lifecycle,
+Frozen-source focused fixtures: 135 passed in 6.60 seconds across lifecycle,
 exact-instance recovery, canonical client fence, serial batch ownership and API
 admission. Receipt: `.runtime/local-video-lifecycle-20261012/focused-fenced.xml`.
-Final full checkout suite: 451 passed in 29.31 seconds. Receipt:
+Frozen-source full checkout suite: 451 passed in 29.31 seconds. Receipt:
 `.runtime/local-video-lifecycle-20261012/full-fenced.xml`.
 These tests make no real provider calls and start no models or services.
+Parent subsequently reports 452 full tests passed in 30.27 seconds after the
+official shared SDK installation and About regression; that is parent evidence,
+not a replacement of the preserved 451-test receipt.
 
 The two-item adapter fixture asserts one start, one claim, one unload between
 items, exactly two render POSTs and one final drain/release. Its failure variant
@@ -184,7 +260,7 @@ admission closure versus stop revocation, malformed bindings, lost claim/unload
 responses, non-completion, failed acknowledgment persistence, release receipt
 validation and private stdin credentials.
 
-## Canonical Coordination And Live Hold
+## Canonical Coordination
 
 Implementation was dispatched through the supported queue to the existing
 live canonical owner session, not a duplicate agent. The owner implemented
@@ -193,7 +269,8 @@ completion. Its initial handoff passed 27 focused/315 webapp tests, followed by
 28/316 for permission/observation regressions. Its final actual claiming-fix and
 CLI receipt confirms **32 focused and 320 total webapp tests passed**. The owner
 also independently ran the actual-source client fixture successfully. Canonical
-source remains owned by that session, with no deployment or live runtime change.
+source remains owned by that session. The owner later installed the private
+policy and independently verified the completed canary cleanup, read-only.
 
 The CPU conformance fixture imports both the actual client and canonical module.
 Its first run reproduced `parent_ownership_unverified`; the canonical owner then
@@ -219,9 +296,10 @@ GET-recovery edits before retesting. The manifest is now refreshed after the
 
 Private source/test coordination and dispatch receipts are in
 `OneTimeSync/WeSticker/LOCALVIDEO-IMPLEMENTATION-20261012.md` and
-`LOCALVIDEO-CANONICAL-CONTRACT-20261012.md`. They are not live test receipts.
+`LOCALVIDEO-CANONICAL-CONTRACT-20261012.md`. The latter now includes the actual
+policy-installation and independent cleanup receipts above its historical holds.
 
-Parent authorizes one bounded two-item public-Aya qualification after source,
+Parent authorized one bounded two-item public-Aya qualification after source,
 contract, fixture and real readiness checks, when the billing worker hands back
 the heavyweight lane. The canonical owner's final coordination receipt approves
 the single WeSticker managed adapter job as sole startup, submission and cleanup
@@ -231,16 +309,18 @@ adoption of a separately started runtime. Use one POST/item, fixed recorded
 seeds, GPU0/aux0, 512-square five-second `quality_int8_offload` outputs; preserve
 all artifacts and failures. No paid services, third attempt, automatic rerender
 or broader public activation is authorized. Fresh 48 GiB/resource/identity
-checks remain mandatory after the lane handoff.
+checks were verified after the lane handoff. That one authorization has now been
+consumed; no third render or public activation was performed.
 
-## Staged Canary, Not Launched
+## Runner And Historical Staging
 
 Private runner:
 `.runtime/local-video-lifecycle-20261012/stage_two_item_canary.py`.
 Its default invocation only prints a plan, without importing the lifecycle,
 probing resources, changing configuration, creating attempt state or making
 provider calls. Staging/guard tests: **4 passed in 0.02 seconds**; receipt
-`staged-canary-tests.xml`. The planned canary output folder does not yet exist.
+`staged-canary-tests.xml`. The existing output folder now contains the sole
+execution and must never be deleted to bypass the runner's single-use guard.
 
 The fixed job is `public-aya-lifecycle-20261012`; items are `wave-once-01` and
 `nod-thanks-02`, with seeds 127970636 and 31307560. It pins the approved original
@@ -254,19 +334,18 @@ private config, and a fresh private parent/James lane-release receipt. The
 receipt is per-canary scheduling evidence, not a recurring installation grant.
 The runner also refuses active 5592/5593 listeners and requires stopped/available
 read-only lifecycle status before the actual job obtains its lease and rechecks
-all live gates. Reference/source changes require reviewed restaging. No release
-receipt, configuration or lifecycle policy has been fabricated or installed.
+all live gates. Reference/source changes require reviewed restaging. The actual
+mode-0600 release receipt records `released_by:parent-confirmed-James` and epoch
+1791748024, after the explicit handoff. The private configuration copy and
+canonical owner-installed policy were separately verified before the sole run.
 
-After future execution, preserve both original MP4s/GIFs, exact provider receipts,
-requests, probes, contact sheets, maintenance snapshots and verified cleanup.
-Rendered/decoded outputs remain marked as awaiting actual visual QA; no fixture
-or successful HTTP response counts as identity/motion acceptance. Parent's
-separate auth-only candidate `b5c8cdd2055b6752` uses committed source and keeps
-these uncommitted lifecycle changes out of the live adapter until qualification.
-That deliberate deployment boundary is not a rollback. Source/test hashes and
-canonical conformance were rechecked for the final review/commit handoff; no
-implementation changes followed the 135/451 passes. James's explicit AVD cleanup
-handoff is still required before execution.
+Both original MP4s/GIFs, provider receipts, requests, probes, contact sheets,
+maintenance snapshots and cleanup evidence are preserved. No fixture or HTTP
+success alone counts as visual acceptance. Parent's separate auth-only candidate
+`b5c8cdd2055b6752` deliberately excluded the then-unqualified lifecycle; this task
+did not change that live deployment. Parent committed the frozen six-file source
+as `100c07c` before the canary; all five implementation/test manifest hashes were
+reverified before and after execution. Only evidence/docs changed afterward.
 
 Historical one-item canaries and earlier 93/340-test receipts do not qualify this
 new fenced batch protocol. Earlier review-only/no-owner-response notes and the
