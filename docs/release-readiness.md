@@ -38,10 +38,11 @@ next Apple candidate; it is not claimed present in iOS14/macOS11. The release
 publisher now requires notes reviewed for the exact Apple build instead of an
 obsolete catalog-only default.
 
-Actual selected Google, Apple and LazyingArt app returns have passed without a
-second central provider chooser. GitHub's explicit account-link step is complete;
-its app return is being qualified separately. No email-based account merge is
-used. See the current social qualification note for the latest result.
+Actual selected Google, Apple, GitHub and LazyingArt web app returns have passed
+without a second central provider chooser. GitHub's explicit dual-proof link and
+fresh external-provider journey preserve the original immutable mapping. No
+email-based account merge is used. Native provider-specific returns remain a
+separate qualification. See the current social qualification note for evidence.
 
 ## Current Entry Flow
 
