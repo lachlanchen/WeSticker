@@ -36,6 +36,8 @@ def native(tmp_path, monkeypatch):
     client = app.test_client()
     signup(client)
     owner = client.get("/api/bootstrap").get_json()["user"]["id"]
+    for provider in ("apple", "google"):
+        cfg["native_billing"][provider]["sandbox_user_ids"] = [owner]
     receipt = billing.Purchase("apple", "Sandbox", "123456789012345678", "987654321098765432",
                                billing.binding(owner, "apple"), "westicker.pocket", "pocket", "active", time.time() + 3600)
     receipts, reads = {receipt.reference: receipt}, []
@@ -301,6 +303,7 @@ def test_replacement_owner_conflict_and_unknown_predecessor_tombstone(native):
     other = native.app.test_client()
     signup(other, "another@example.com")
     owner = other.get("/api/bootstrap").get_json()["user"]["id"]
+    native.cfg["native_billing"]["google"]["sandbox_user_ids"].append(owner)
     stolen = replace(new, reference=recovery.digest("other-purchase-token"), binding=billing.binding(owner, "google"))
     with pytest.raises(ValueError, match="another account"):
         billing.apply_purchase(native.cfg, owner, stolen, lookup="other-purchase-token")

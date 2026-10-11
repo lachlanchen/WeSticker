@@ -28,6 +28,7 @@ def native(tmp_path):
     client = app.test_client()
     signup(client)
     owner = client.get("/api/bootstrap").get_json()["user"]["id"]
+    cfg["native_billing"]["apple"].update(accept_sandbox=True, sandbox_user_ids=[owner])
     receipt = Purchase("apple", "Sandbox", "123", "456", binding(owner, "apple"),
                        "art.lazying.westicker.pocket.monthly", "pocket", "active", time.time()+3600)
     return cfg, client, owner, receipt
@@ -44,6 +45,57 @@ def test_verified_receipt_grants_once(native):
     assert client.get("/api/bootstrap").get_json()["user"]["credits"] == 1
     apply_purchase(cfg, owner, replace(receipt, transaction="457", expires=time.time()+7200))
     assert client.get("/api/bootstrap").get_json()["user"]["credits"] == 3
+
+
+@pytest.mark.parametrize("audience", [None, [], "any", ["different-account"]])
+def test_sandbox_delivery_requires_explicit_account(native, audience):
+    cfg, client, owner, receipt = native
+    cfg["native_billing"]["apple"]["sandbox_user_ids"] = audience
+    with pytest.raises(ValueError, match="Sandbox delivery"):
+        apply_purchase(cfg, owner, receipt)
+    with database(cfg) as db:
+        assert db.execute("SELECT count(*) FROM native_subscriptions").fetchone()[0] == 0
+        assert db.execute("SELECT count(*) FROM native_grants").fetchone()[0] == 0
+    assert client.get("/api/bootstrap").get_json()["user"]["credits"] == 0
+
+
+def test_catalog_visible_when_sales_closed(native):
+    cfg, client, _, receipt = native
+    cfg["native_billing"]["apple"]["purchase_enabled"] = False
+    result = client.get("/api/billing/native/catalog").get_json()["providers"]
+    assert result["apple"]["products"] == {receipt.product: "pocket"}
+    assert not result["apple"]["purchase_enabled"]
+    assert result["apple"]["purchase_disabled_reason"] == "sales_closed"
+    assert result["google"]["purchase_disabled_reason"] == "catalog_unconfigured"
+    assert call(client, "/api/billing/native/prepare", {
+        "provider": "apple", "product": receipt.product, "attempt": str(uuid.uuid4())}).status_code == 503
+
+
+@pytest.mark.parametrize("audience", [None, [], "any", ["different-account"]])
+def test_purchase_pilot_blocks_other_accounts_before_billing_side_effects(native, audience, monkeypatch):
+    cfg, client, _, receipt = native
+    cfg["native_billing"]["apple"]["purchase_user_ids"] = audience
+    monkeypatch.setitem(client.application.extensions["westicker"], "close_stripe_checkouts",
+                        lambda _: pytest.fail("Ineligible native attempt touched web billing"))
+    result = client.get("/api/billing/native/catalog").get_json()["providers"]["apple"]
+    assert result["products"] == {receipt.product: "pocket"}
+    assert not result["purchase_enabled"]
+    assert result["purchase_disabled_reason"] == "account_not_enabled"
+    assert call(client, "/api/billing/native/prepare", {
+        "provider": "apple", "product": receipt.product, "attempt": str(uuid.uuid4())}).status_code == 503
+    with database(cfg) as db:
+        assert db.execute("SELECT count(*) FROM native_intents").fetchone()[0] == 0
+
+
+def test_purchase_pilot_allows_only_named_account_and_preserves_restore(native):
+    cfg, client, owner, receipt = native
+    options = cfg["native_billing"]["apple"]
+    options["purchase_user_ids"] = [owner]
+    assert client.get("/api/billing/native/catalog").get_json()["providers"]["apple"]["purchase_enabled"]
+    assert call(client, "/api/billing/native/prepare", {
+        "provider": "apple", "product": receipt.product, "attempt": str(uuid.uuid4())}).status_code == 200
+    options["purchase_user_ids"] = []
+    assert apply_purchase(cfg, owner, receipt)["active"]
 
 
 def test_binding_and_catalog_checked(native):
@@ -196,7 +248,8 @@ def test_google_requires_paid_order_and_account(google_fixture):
 
 def test_google_acknowledgement_retry_does_not_double_grant(native, monkeypatch):
     cfg, client, owner, receipt = native
-    cfg["native_billing"]["google"] = {"products": {"westicker_pocket_monthly": "pocket"}}
+    cfg["native_billing"]["google"] = {"products": {"westicker_pocket_monthly": "pocket"},
+                                       "accept_sandbox": True, "sandbox_user_ids": [owner]}
     receipt = replace(receipt, provider="google", binding=binding(owner, "google"),
                       reference=hashlib.sha256(b"test-purchase-token").hexdigest(),
                       product="westicker_pocket_monthly")

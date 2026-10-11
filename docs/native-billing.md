@@ -1,8 +1,9 @@
 # Native subscriptions
 
-Status: implemented recovery adapters and synthetic tests, **not enabled sales or
-actual store qualification**. No provider products, credentials, paid transactions
-or native purchase capability are provisioned by these modules.
+Status: recovery adapters are implemented; **native consumer sales remain off**.
+Actual app-owned catalog/authorization/notification setup is in progress. See the
+[dated qualification record](native-billing-qualification-20261012.md) for real
+provider results and remaining gates. Unit fixtures are not store transactions.
 
 ## Delivery and recovery
 
@@ -41,14 +42,31 @@ Closing new sales never disables Restore, Manage, notifications or reconciliatio
 ## Private configuration
 
 The app identity is `art.lazying.westicker`. Keep both `purchase_enabled` flags
-false until independently qualified. Product IDs, app records, merchant keys and
-test audiences must belong to WeSticker; never copy sibling-app credentials.
+false until independently qualified. Product IDs, app records and test audiences
+must belong to WeSticker. Google uses a dedicated app-scoped service account;
+an authorized Apple team IAP key still requires exact WeSticker Server API proof.
+Never borrow a sibling purchase token or treat an ASC upload key as IAP proof.
 
 | Scope | Fields |
 | --- | --- |
 | `native_billing` | `key_file`: private lookup-encryption key; optional `reconcile_interval`: seconds, default 900, clamped to 60-3600 |
-| `.apple` | `bundle_id`, numeric `app_id`, signing `key_file`, `key_id`, `issuer_id`, trusted DER `root_files`, `products` map to tier IDs, `accept_sandbox`, `purchase_enabled`, `notifications_enabled` |
-| `.google` | `package`, service-account `key_file`, `base_plan` (monthly), `products`, `accept_sandbox`, `purchase_enabled`, `notifications_enabled`, `notifications` below |
+| `.apple` | `bundle_id`, numeric `app_id`, signing `key_file`, `key_id`, `issuer_id`, trusted DER `root_files`, `products` map to tier IDs, `accept_sandbox`, `sandbox_user_ids`, `purchase_enabled`, optional `purchase_user_ids`, `notifications_enabled` |
+| `.google` | `package`, service-account `key_file`, `base_plan` (monthly), `products`, `accept_sandbox`, `sandbox_user_ids`, `purchase_enabled`, optional `purchase_user_ids`, `notifications_enabled`, `notifications` below |
+
+Catalog product IDs remain visible when purchases are disabled. The response
+includes Google's `base_plan` and a `purchase_disabled_reason` such as
+`sales_closed`, `account_not_enabled`, or `recovery_unavailable`. Clients continue
+using the existing per-provider `purchase_enabled` boolean.
+
+When `purchase_user_ids` is present, only those exact immutable app accounts may
+prepare a purchase, even if `purchase_enabled` is true. Empty or malformed lists
+fail closed before intents or web-checkout side effects. Absence preserves the
+explicit global sales flag's behavior; do not remove the list to run a pilot.
+Restore and notification recovery do not consult this purchase allowlist.
+Sandbox delivery independently requires `accept_sandbox` and membership in
+`sandbox_user_ids`; it cannot grant ordinary accounts production credits. Keep
+both lists empty in initial staging. Do not remove a sandbox delivery audience
+while its test lineage still needs lifecycle reconciliation.
 
 `native_billing.key_file` is distinct from both provider signing key files. The
 operator provisions a URL-safe base64-encoded 32-byte random key in a regular,
@@ -148,7 +166,7 @@ WESTICKER_CONFIG=/private/westicker/config.json \
   .venv/bin/python -m server.native_reconcile --limit 25 --budget-seconds 60
 ```
 
-Run approximately every minute and monitor `failed`, `busy`, `missing_lookups` and
+Run on an explicit timer and monitor `failed`, `busy`, `missing_lookups` and
 worker exit status. Failed attempts back off from 60 seconds to six hours. A fresh
 notification wakes the reference sooner. Successful references poll at the
 configured interval, including inactive ones, to recover missed changes.
@@ -166,7 +184,7 @@ ordering/lease design before reuse.
 ## Verification and rollout
 
 ```bash
-.venv/bin/pytest -q tests/test_native_billing.py tests/test_native_reconcile.py
+.venv/bin/pytest -q tests/test_native_billing.py tests/test_native_reconcile.py tests/test_native_catalog_provisioning.py
 ```
 
 Recovery tests cover encrypted persistence/restart, key failure/tampering/scope,

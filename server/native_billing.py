@@ -65,6 +65,30 @@ def product_plan(cfg, provider, product):
     return plan
 
 
+def validate_delivery_environment(cfg, owner, purchase):
+    """Sandbox proof is not permission to grant ordinary production credits."""
+    options = cfg.get("native_billing", {}).get(purchase.provider, {})
+    if purchase.environment == "Sandbox":
+        allowed = options.get("sandbox_user_ids", [])
+        if (not options.get("accept_sandbox") or not isinstance(allowed, list)
+                or owner not in allowed):
+            raise ValueError("Sandbox delivery is not enabled for this account")
+
+
+def purchase_disabled_reason(options, owner, recovery_ready=True):
+    if not options.get("products"):
+        return "catalog_unconfigured"
+    if not options.get("purchase_enabled"):
+        return "sales_closed"
+    if "purchase_user_ids" in options:
+        allowed = options["purchase_user_ids"]
+        if not isinstance(allowed, list) or owner not in allowed:
+            return "account_not_enabled"
+    if not recovery_ready:
+        return "recovery_unavailable"
+    return None
+
+
 def value(enum):
     return getattr(enum, "value", enum)
 
@@ -214,6 +238,7 @@ def apply_purchase(cfg, owner, purchase, *, lookup=None):
 
     if purchase.binding != binding(owner, purchase.provider):
         raise ValueError("This store purchase belongs to a different WeSticker account")
+    validate_delivery_environment(cfg, owner, purchase)
     plan = product_plan(cfg, purchase.provider, purchase.product)
     active = purchase.state in {"active", "grace"} and purchase.expires > time.time()
     if (purchase.environment not in {"Production", "Sandbox"}
@@ -302,9 +327,12 @@ CREATE TABLE IF NOT EXISTS native_intents(id TEXT PRIMARY KEY,user_id TEXT NOT N
         providers = {}
         for provider in ("apple", "google"):
             options = cfg.get("native_billing", {}).get(provider, {})
+            disabled_reason = purchase_disabled_reason(options, user["id"], recovery_ready)
             providers[provider] = {"binding": binding(user["id"], provider),
                                    "products": options.get("products", {}),
-                                   "purchase_enabled": bool(options.get("purchase_enabled")) and recovery_ready}
+                                   "base_plan": options.get("base_plan", "monthly") if provider == "google" else None,
+                                   "purchase_enabled": disabled_reason is None,
+                                   "purchase_disabled_reason": disabled_reason}
         return jsonify(providers=providers)
 
     @app.post("/api/billing/native/prepare")
@@ -316,7 +344,7 @@ CREATE TABLE IF NOT EXISTS native_intents(id TEXT PRIMARY KEY,user_id TEXT NOT N
         if provider not in {"apple", "google"} or not isinstance(attempt, str) or not re.fullmatch(r"[a-f0-9-]{32,36}", attempt):
             abort(400)
         options = cfg.get("native_billing", {}).get(provider, {})
-        if not options.get("purchase_enabled"):
+        if purchase_disabled_reason(options, user["id"]):
             abort(503, description="New native purchases are not enabled yet. Restore remains available.")
         try:
             lookup_cipher(cfg)
