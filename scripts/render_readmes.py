@@ -76,7 +76,9 @@ for code, t in translations.items():
 
 [2026-10-11 · Public stickers / protected Create]({prefix}docs/protected-create-release-20261011.md) · [Native test builds]({prefix}docs/native-protected-create-20261011.md) · [Login qualification]({prefix}docs/social-auth-qualification-20261011.md) · [AgInTi qualification]({prefix}docs/aginti-images.md)
 
-![Chat studio]({prefix}docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger]({prefix}docs/request-completion-ledger.md) · [Compact native builds]({prefix}docs/compact-native-release-20261012.md) · [Web subscription evidence]({prefix}docs/stripe-qualification.md)
+
+![Chat studio]({prefix}docs/screenshots/compact-create-desktop.png)
 
 ## {h[0]}
 

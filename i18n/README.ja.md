@@ -30,7 +30,9 @@
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## スタジオ
 
@@ -40,7 +42,7 @@
 
 ## プラン
 
-月額案は Pocket $0.99 / 画像3クレジット、Creator $9.99 / 40、Studio $24.99 / 120 と任意のアップロード支援。写真モードは無料、アニメーションは3クレジット。決済の接続・検証までは販売しません。
+Web月額プランは利用可能です：Pocket $0.99 / 3クレジット、Creator $9.99 / 40、Studio $24.99 / 120。写真モードは無料です。各プランに標準コレクションの中国語・英語・日本語版ZIPを含みます。ネイティブアプリ内課金と任意の動画化・アップロード機能は個別に検証します。
 
 ## ローカル実行
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## リリース状況
 
-内部テスト版であり、商用リリースの完成版ではありません。LazyingArt 経由のパスワード・Google ログインと AgInTi の画像生成は検証済みです。他のログイン方式は提供元別の報告を参照してください。公開の動画生成と決済は未開放です。
+制作機能の内部テスト版で、Web定期購入は稼働中です。商用リリース全体の完成を意味しません。LazyingArt経由のパスワード・Google・AppleログインとAgInTi画像生成は検証済みです。GitHubと直接のプロバイダー選択、アプリ内課金、公開動画化、クリエイター販売、利用者別に隔離したWeChatアップロードは完了リストで追跡しています。
 
 ## 引用
 

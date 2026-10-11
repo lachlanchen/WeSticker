@@ -30,7 +30,9 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## Das Studio
 
@@ -40,7 +42,7 @@ Ein unabhängiges Sticker-Studio für Aya und Freunde, eigene Figuren und Creato
 
 ## Tarife
 
-Monatliche Preisvorschläge: Pocket 0,99 USD / 3 Bild-Credits; Creator 9,99 USD / 40; Studio 24,99 USD / 120 und optionaler Upload-Assistent. Fotomodus kostenlos, Animation 3 Credits. Abrechnung bleibt bis zur Anbindung und Prüfung deaktiviert.
+Web-Monatsabos sind verfügbar: Pocket 0,99 USD / 3 Credits, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Der Fotomodus ist kostenlos. Alle Tarife enthalten die ZIPs der Standardsammlungen in drei Beschriftungssprachen. Native Käufe und optionale Animations- und Uploaddienste werden getrennt qualifiziert.
 
 ## Lokal starten
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## Veröffentlichungsstand
 
-Interne Test-Beta, keine vollständige kommerzielle Veröffentlichung. Passwort- und Google-Anmeldung über LazyingArt sowie AgInTi-Bilderzeugung sind geprüft. Weitere Anmeldewege stehen im Anbieterbericht. Öffentliche Animation und Zahlungen bleiben deaktiviert.
+Interne Creator-Beta mit aktiven Web-Abos, kein vollständig abgeschlossener kommerzieller Release. Passwort-, Google- und Apple-Anmeldung über LazyingArt sowie AgInTi-Bilderzeugung sind geprüft. GitHub, direkte Anbieterauswahl, native Käufe, öffentliche Animation, Creator-Verkäufe und nutzerisolierte WeChat-Uploads werden weiterhin im Aufgabenregister verfolgt.
 
 ## Zitieren
 

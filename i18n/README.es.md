@@ -30,7 +30,9 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## El estudio
 
@@ -40,7 +42,7 @@ Un estudio independiente para Aya y sus amigos, personajes personales y coleccio
 
 ## Planes
 
-Suscripciones mensuales propuestas: Pocket 0,99 USD / 3 créditos de imagen; Creator 9,99 USD / 40; Studio 24,99 USD / 120 y asistencia opcional. El modo foto es gratuito; una animación cuesta 3 créditos. Cobros desactivados hasta conectar y validar.
+Las suscripciones web mensuales están activas: Pocket 0,99 USD / 3 créditos, Creator 9,99 USD / 40, Studio 24,99 USD / 120. El modo foto es gratuito. Los planes incluyen los ZIP de las colecciones predeterminadas en los tres idiomas. Las compras nativas y los servicios opcionales de animación y carga se validan por separado.
 
 ## Ejecución local
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## Estado de publicación
 
-Beta interna, no un lanzamiento comercial completo. El acceso por contraseña y Google mediante LazyingArt y la generación AgInTi están verificados. Consulta el informe de proveedores para otras vías de acceso. La animación pública y los pagos siguen desactivados.
+Beta interna de creación con suscripciones web activas, no un lanzamiento comercial completo. Se verificaron el acceso por contraseña, Google y Apple mediante LazyingArt y la generación AgInTi. GitHub, la selección directa del proveedor, las compras nativas, la animación pública, las ventas de creadores y las cargas WeChat aisladas por usuario siguen en el registro de tareas.
 
 ## Cita
 

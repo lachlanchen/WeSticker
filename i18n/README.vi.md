@@ -30,7 +30,9 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## Xưởng sáng tạo
 
@@ -40,7 +42,7 @@ Xưởng nhãn dán độc lập dành cho Aya cùng bạn bè và các nhân v�
 
 ## Gói dịch vụ
 
-Giá tháng đề xuất: Pocket 0,99 USD / 3 tín dụng ảnh; Creator 9,99 USD / 40; Studio 24,99 USD / 120 và hỗ trợ tải lên tùy chọn. Chế độ ảnh miễn phí; hoạt ảnh tốn 3 tín dụng. Thanh toán chưa bật trước khi kết nối và kiểm chứng.
+Đã mở đăng ký web theo tháng: Pocket 0,99 USD / 3 tín dụng, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Chế độ ảnh miễn phí. Các gói bao gồm ZIP bộ mặc định với chữ Trung, Anh và Nhật. Mua hàng trong ứng dụng và dịch vụ hoạt ảnh, tải lên tùy chọn được kiểm chứng riêng.
 
 ## Chạy cục bộ
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## Trạng thái phát hành
 
-Bản beta thử nghiệm nội bộ, chưa phải bản thương mại hoàn chỉnh. Đăng nhập bằng mật khẩu và Google qua LazyingArt cùng tạo ảnh AgInTi đã được kiểm chứng. Các cách đăng nhập khác nằm trong báo cáo nhà cung cấp. Hoạt ảnh công khai và thanh toán vẫn chưa bật.
+Bản beta sáng tạo thử nghiệm nội bộ với đăng ký web đang hoạt động, chưa phải bản thương mại hoàn chỉnh. Đã kiểm chứng đăng nhập bằng mật khẩu, Google và Apple qua LazyingArt cùng tạo ảnh AgInTi. GitHub, chọn trực tiếp nhà cung cấp, mua hàng native, hoạt ảnh công khai, bán tác phẩm và tải WeChat cách ly theo người dùng vẫn được theo dõi trong danh sách hoàn thành.
 
 ## Trích dẫn
 

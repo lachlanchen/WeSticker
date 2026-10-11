@@ -30,7 +30,9 @@
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## الاستوديو
 
@@ -40,7 +42,7 @@
 
 ## الخطط
 
-الاشتراكات الشهرية المقترحة: Pocket بسعر 0.99 دولار و3 أرصدة صور؛ Creator بسعر 9.99 و40 رصيداً؛ Studio بسعر 24.99 و120 رصيداً مع مساعدة رفع اختيارية. وضع الصور مجاني والتحريك يستهلك 3 أرصدة. الدفع معطل حتى الربط والتحقق.
+الاشتراكات الشهرية على الويب متاحة: Pocket بسعر 0.99 دولار و3 أرصدة، وCreator بسعر 9.99 دولار و40 رصيداً، وStudio بسعر 24.99 دولار و120 رصيداً. وضع الصور مجاني. تشمل الخطط ملفات ZIP للمجموعات الافتراضية بلغات النص الثلاث. تُختبر مشتريات التطبيقات وخدمات التحريك والرفع الاختيارية بشكل منفصل.
 
 ## التشغيل محلياً
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## حالة الإصدار
 
-إصدار تجريبي داخلي، وليس إصداراً تجارياً مكتملاً. تم التحقق من الدخول بكلمة المرور وGoogle عبر LazyingArt وتوليد الصور عبر AgInTi. راجع تقرير المزوّدين لمسارات الدخول الأخرى. التحريك العام والمدفوعات ما زالا معطلين.
+نسخة إنشاء تجريبية داخلية مع اشتراكات ويب فعالة، وليست إصداراً تجارياً مكتملاً. تم التحقق من الدخول بكلمة المرور وGoogle وApple عبر LazyingArt وتوليد الصور عبر AgInTi. لا تزال مهام GitHub والاختيار المباشر للمزوّد والمشتريات الأصلية والتحريك العام ومبيعات المبدعين ورفع WeChat المعزول لكل مستخدم مسجلة في قائمة الإنجاز.
 
 ## الاستشهاد
 

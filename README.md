@@ -30,7 +30,9 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 [2026-10-11 · Public stickers / protected Create](docs/protected-create-release-20261011.md) · [Native test builds](docs/native-protected-create-20261011.md) · [Login qualification](docs/social-auth-qualification-20261011.md) · [AgInTi qualification](docs/aginti-images.md)
 
-![Chat studio](docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](docs/request-completion-ledger.md) · [Compact native builds](docs/compact-native-release-20261012.md) · [Web subscription evidence](docs/stripe-qualification.md)
+
+![Chat studio](docs/screenshots/compact-create-desktop.png)
 
 ## The Studio
 
@@ -40,7 +42,7 @@ An independent sticker studio for Aya and friends, personal characters and creat
 
 ## Plans
 
-Proposed monthly subscriptions: Pocket $0.99 / 3 image credits; Creator $9.99 / 40 credits; Studio $24.99 / 120 credits and optional upload assistance. Photo mode is free; animation uses 3 credits. Billing is disabled until connected and qualified.
+Web monthly subscriptions are live: Pocket $0.99 / 3 credits, Creator $9.99 / 40 credits, Studio $24.99 / 120 credits. Photo mode is free. Plans include the default collection ZIPs in all three lettering languages. Native purchases and optional animation/upload services are qualified separately.
 
 ## Run Locally
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## Release Status
 
-Internal-test beta, not a completed commercial release. Password and Google sign-in through LazyingArt, plus AgInTi image generation, are qualified. See the provider report for other login paths. Public animation and payments remain gated.
+Internal-test creator beta with live web subscriptions, not a completed commercial release. Password, Google and Apple sign-in through LazyingArt and AgInTi image generation are verified. GitHub/direct-provider selection, native IAP, public animation, creator sales and customer-isolated WeChat uploads remain in the completion ledger.
 
 ## Citation
 

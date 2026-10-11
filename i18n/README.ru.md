@@ -30,7 +30,9 @@
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## Студия
 
@@ -40,7 +42,7 @@
 
 ## Тарифы
 
-Предлагаемые месячные тарифы: Pocket $0.99 / 3 кредита изображений; Creator $9.99 / 40; Studio $24.99 / 120 и дополнительная помощь с загрузкой. Фоторежим бесплатен, анимация стоит 3 кредита. Оплата отключена до подключения и проверки.
+Веб-подписки доступны: Pocket 0,99 USD / 3 кредита в месяц, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Фоторежим бесплатен. Тарифы включают ZIP стандартных коллекций с подписями на трёх языках. Нативные покупки и дополнительные сервисы анимации и загрузки проверяются отдельно.
 
 ## Локальный запуск
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## Статус выпуска
 
-Внутренняя тестовая бета, не завершённый коммерческий выпуск. Вход по паролю и через Google посредством LazyingArt, а также генерация AgInTi проверены. Другие способы входа описаны в отчёте провайдеров. Публичная анимация и платежи пока отключены.
+Внутренняя бета для создания стикеров с действующими веб-подписками, а не завершённый коммерческий выпуск. Проверены вход по паролю, Google и Apple через LazyingArt и генерация изображений AgInTi. GitHub, прямой выбор провайдера, нативные покупки, публичная анимация, продажи авторов и изолированная загрузка WeChat остаются в реестре задач.
 
 ## Цитирование
 

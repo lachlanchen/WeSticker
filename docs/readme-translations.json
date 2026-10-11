@@ -17,11 +17,11 @@
       "Private photo uploads, reusable approved characters, plan-limited drafts, editable captions, individual approval and ZIP export.",
       "Optional image generation, local animation, creator sales review and isolated WeChat draft uploads. The assistant saves drafts; it never submits review."
     ],
-    "plans": "Proposed monthly subscriptions: Pocket $0.99 / 3 image credits; Creator $9.99 / 40 credits; Studio $24.99 / 120 credits and optional upload assistance. Photo mode is free; animation uses 3 credits. Billing is disabled until connected and qualified.",
+    "plans": "Web monthly subscriptions are live: Pocket $0.99 / 3 credits, Creator $9.99 / 40 credits, Studio $24.99 / 120 credits. Photo mode is free. Plans include the default collection ZIPs in all three lettering languages. Native purchases and optional animation/upload services are qualified separately.",
     "start": "Python 3.12+, Node 22+, a CJK font and Chromium for browser tests. The script creates a private local demo configuration; it does not borrow another app's credentials. Open http://127.0.0.1:18642. Stop with `python3 scripts/dev.py stop`.",
     "inside": "Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a separate React/Vite PWA. The private creator prototype uses Python and SQLite. The interface is English; sticker lettering supports Chinese, English and Japanese.",
     "tests": "Backend and browser tests cover public browsing, protected chat, login return, expired sessions, references, review and export. Native build evidence is recorded separately.",
-    "status": "Internal-test beta, not a completed commercial release. Password and Google sign-in through LazyingArt, plus AgInTi image generation, are qualified. See the provider report for other login paths. Public animation and payments remain gated.",
+    "status": "Internal-test creator beta with live web subscriptions, not a completed commercial release. Password, Google and Apple sign-in through LazyingArt and AgInTi image generation are verified. GitHub/direct-provider selection, native IAP, public animation, creator sales and customer-isolated WeChat uploads remain in the completion ledger.",
     "cite": "Code is MIT; artwork has separate rights. Cite this repository when using the software in research."
   },
   "zh-Hans": {
@@ -42,11 +42,11 @@
       "私有照片上传、可复用的已确认角色、按方案限额的表情草稿、逐张改字与确认，最后导出 ZIP。",
       "可选图像生成、本地动画、创作者销售审核和隔离的微信草稿上传。助手只保存草稿，不提交审核。"
     ],
-    "plans": "月费拟定为 Pocket $0.99 / 3 图像额度、Creator $9.99 / 40 额度、Studio $24.99 / 120 额度及可选上传助手。照片模式免费，动画消耗 3 额度。支付接入与验证之前不开放收费。",
+    "plans": "网页月度订阅已开放：Pocket $0.99 / 3 额度、Creator $9.99 / 40 额度、Studio $24.99 / 120 额度。照片模式免费，订阅包含默认系列中英日三种文字版本的 ZIP。原生内购及可选动画、上传服务分别验证。",
     "start": "需要 Python 3.12+、Node 22+、中日韩字体及浏览器测试用 Chromium。脚本只生成本项目的私有演示配置，不借用其他应用凭据。打开 http://127.0.0.1:18642；用 `python3 scripts/dev.py stop` 停止。",
     "inside": "Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 独立使用 React/Vite。私有创作原型使用 Python 和 SQLite。界面为英文，表情文字支持中英日三种语言。",
     "tests": "后端和浏览器测试覆盖公开浏览、受保护的聊天、登录返回、会话过期、参考素材、审核及导出。原生版本证据单独记录。",
-    "status": "当前为内部测试版，并非完整商业发布。通过 LazyingArt 的密码和 Google 登录以及 AgInTi 图像生成已验证；其他登录方式见提供商报告。公开动画服务和支付尚未开放。",
+    "status": "当前为创作内部测试版，网页订阅已上线，并非完整商业发布。通过 LazyingArt 的密码、Google 和 Apple 登录及 AgInTi 图像生成已验证。GitHub 与直接选择提供商、原生内购、公开动画、创作者销售和用户隔离的微信上传仍列在完成清单中。",
     "cite": "源代码采用 MIT 协议，角色及美术资产单独授权。研究中使用本软件时请引用本仓库。"
   },
   "zh-Hant": {
@@ -67,11 +67,11 @@
       "私有照片上傳、可重用的已確認角色、依方案限額的貼圖草稿、逐張改字與確認，最後匯出 ZIP。",
       "可選影像生成、本機動畫、創作者銷售審核及隔離的微信草稿上傳。助手只儲存草稿，不提交審核。"
     ],
-    "plans": "月費擬定為 Pocket $0.99 / 3 影像額度、Creator $9.99 / 40 額度、Studio $24.99 / 120 額度及可選上傳助手。照片模式免費，動畫消耗 3 額度。付款串接與驗證之前不開放收費。",
+    "plans": "網頁月度訂閱已開放：Pocket $0.99 / 3 額度、Creator $9.99 / 40 額度、Studio $24.99 / 120 額度。照片模式免費，訂閱包含預設系列中英日三種文字版本的 ZIP。原生內購及可選動畫、上傳服務分別驗證。",
     "start": "需要 Python 3.12+、Node 22+、中日韓字型及瀏覽器測試用 Chromium。腳本只建立本專案的私有示範設定，不借用其他應用憑證。開啟 http://127.0.0.1:18642；以 `python3 scripts/dev.py stop` 停止。",
     "inside": "Android 使用原生 Kotlin/Jetpack Compose，iOS/macOS 使用 SwiftUI，PWA 獨立使用 React/Vite。私人創作原型使用 Python 和 SQLite。介面為英文，貼圖文字支援中英日三種語言。",
     "tests": "後端與瀏覽器測試涵蓋公開瀏覽、受保護的聊天、登入返回、工作階段過期、參考素材、審核及匯出。原生版本證據另行記錄。",
-    "status": "目前為內部測試版，並非完整商業發布。透過 LazyingArt 的密碼和 Google 登入以及 AgInTi 圖像生成已驗證；其他登入方式見供應商報告。公開動畫服務和付款尚未開放。",
+    "status": "目前為創作內部測試版，網頁訂閱已上線，並非完整商業發布。透過 LazyingArt 的密碼、Google 和 Apple 登入及 AgInTi 圖像生成已驗證。GitHub 與直接選擇供應商、原生內購、公開動畫、創作者銷售和使用者隔離的微信上傳仍列於完成清單。",
     "cite": "原始碼採用 MIT 授權，角色及美術資產另行授權。研究中使用本軟體時請引用本倉庫。"
   },
   "ja": {
@@ -92,11 +92,11 @@
       "非公開の写真アップロード、再利用できる承認済みキャラクター、プラン上限内の下書き、文字編集、個別確認と ZIP 出力。",
       "画像生成、ローカル動画化、販売審査、隔離ブラウザーでの WeChat 下書きアップロードは任意機能です。助手は下書き保存のみで、審査には提出しません。"
     ],
-    "plans": "月額案は Pocket $0.99 / 画像3クレジット、Creator $9.99 / 40、Studio $24.99 / 120 と任意のアップロード支援。写真モードは無料、アニメーションは3クレジット。決済の接続・検証までは販売しません。",
+    "plans": "Web月額プランは利用可能です：Pocket $0.99 / 3クレジット、Creator $9.99 / 40、Studio $24.99 / 120。写真モードは無料です。各プランに標準コレクションの中国語・英語・日本語版ZIPを含みます。ネイティブアプリ内課金と任意の動画化・アップロード機能は個別に検証します。",
     "start": "Python 3.12+、Node 22+、CJK フォント、ブラウザーテスト用 Chromium が必要です。他アプリの認証情報は流用せず、専用の非公開デモ設定を作成します。http://127.0.0.1:18642 を開き、`python3 scripts/dev.py stop` で停止します。",
     "inside": "Android は Kotlin/Jetpack Compose、iOS/macOS は SwiftUI のネイティブ実装です。PWA は独立した React/Vite、非公開の制作試作版は Python と SQLite を使用。画面は英語、スタンプ文字は中国語・英語・日本語です。",
     "tests": "バックエンドとブラウザーで公開閲覧、認証付きチャット、ログイン後の復帰、セッション期限切れ、参考素材、確認、書き出しを検証します。ネイティブ版の証拠は別途記録します。",
-    "status": "内部テスト版であり、商用リリースの完成版ではありません。LazyingArt 経由のパスワード・Google ログインと AgInTi の画像生成は検証済みです。他のログイン方式は提供元別の報告を参照してください。公開の動画生成と決済は未開放です。",
+    "status": "制作機能の内部テスト版で、Web定期購入は稼働中です。商用リリース全体の完成を意味しません。LazyingArt経由のパスワード・Google・AppleログインとAgInTi画像生成は検証済みです。GitHubと直接のプロバイダー選択、アプリ内課金、公開動画化、クリエイター販売、利用者別に隔離したWeChatアップロードは完了リストで追跡しています。",
     "cite": "コードは MIT、キャラクターと画像は別の権利条件です。研究に利用する際は本リポジトリを引用してください。"
   },
   "ko": {
@@ -117,11 +117,11 @@
       "비공개 사진 업로드, 재사용 가능한 승인된 캐릭터, 요금제 한도 내 초안, 문구 편집, 개별 승인과 ZIP 내보내기.",
       "선택형 이미지 생성, 로컬 애니메이션, 판매 검토, 격리된 WeChat 초안 업로드. 도우미는 초안만 저장하고 심사에 제출하지 않습니다."
     ],
-    "plans": "월 요금 제안: Pocket $0.99 / 이미지 3크레딧, Creator $9.99 / 40, Studio $24.99 / 120 및 선택형 업로드 지원. 사진 모드는 무료이며 애니메이션은 3크레딧입니다. 결제 연결과 검증 전에는 판매하지 않습니다.",
+    "plans": "웹 월 구독이 제공됩니다: Pocket $0.99 / 3크레딧, Creator $9.99 / 40, Studio $24.99 / 120. 사진 모드는 무료이며 기본 컬렉션의 중국어·영어·일본어 ZIP이 포함됩니다. 네이티브 인앱 결제와 선택형 애니메이션·업로드 기능은 별도로 검증합니다.",
     "start": "Python 3.12+, Node 22+, CJK 글꼴, 브라우저 테스트용 Chromium이 필요합니다. 다른 앱의 인증 정보를 빌리지 않고 독립된 비공개 데모 설정을 만듭니다. http://127.0.0.1:18642에서 열고 `python3 scripts/dev.py stop`으로 중지합니다.",
     "inside": "Android는 Kotlin/Jetpack Compose, iOS/macOS는 SwiftUI 네이티브 앱입니다. 별도 PWA는 React/Vite, 비공개 제작 시제품은 Python과 SQLite를 사용합니다. 화면은 영어이며 스티커 문구는 중국어·영어·일본어입니다.",
     "tests": "백엔드와 브라우저 테스트는 공개 탐색, 인증된 채팅, 로그인 복귀, 세션 만료, 참고 자료, 검토와 내보내기를 다룹니다. 네이티브 빌드 증거는 별도로 기록합니다.",
-    "status": "내부 테스트 베타이며 완성된 상용 출시가 아닙니다. LazyingArt를 통한 비밀번호 및 Google 로그인과 AgInTi 이미지 생성은 검증되었습니다. 다른 로그인 경로는 제공업체 보고서를 참조하세요. 공개 애니메이션과 결제는 아직 비활성화되어 있습니다.",
+    "status": "웹 구독이 운영 중인 제작자 내부 테스트 베타이며 완성된 상용 출시가 아닙니다. LazyingArt를 통한 비밀번호·Google·Apple 로그인과 AgInTi 이미지 생성은 검증되었습니다. GitHub와 직접 제공자 선택, 네이티브 결제, 공개 애니메이션, 제작자 판매, 사용자별 격리 WeChat 업로드는 완료 목록에서 추적합니다.",
     "cite": "코드는 MIT이며 캐릭터와 그림은 별도 권리가 적용됩니다. 연구에 사용할 때 이 저장소를 인용해 주세요."
   },
   "fr": {
@@ -142,11 +142,11 @@
       "Photos privées, personnages validés réutilisables, brouillons limités par formule, textes modifiables, validation individuelle et export ZIP.",
       "Génération d’images, animation locale, examen des ventes et envoi de brouillons WeChat isolé en option. L’assistant enregistre seulement les brouillons, sans soumettre à examen."
     ],
-    "plans": "Abonnements mensuels proposés : Pocket 0,99 $ / 3 crédits image ; Creator 9,99 $ / 40 ; Studio 24,99 $ / 120 et assistance d’envoi facultative. Le mode photo est gratuit ; une animation coûte 3 crédits. Aucun paiement avant connexion et validation.",
+    "plans": "Les abonnements web mensuels sont disponibles : Pocket 0,99 USD / 3 crédits, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Le mode photo est gratuit. Les formules incluent les ZIP des collections par défaut dans les trois langues. Les achats natifs et les services facultatifs d’animation et d’envoi sont validés séparément.",
     "start": "Python 3.12+, Node 22+, police CJK et Chromium pour les tests navigateur. Le script crée une configuration de démonstration privée, sans emprunter les identifiants d’une autre application. Ouvrez http://127.0.0.1:18642. Arrêtez avec `python3 scripts/dev.py stop`.",
     "inside": "Android natif en Kotlin/Jetpack Compose, iOS/macOS en SwiftUI et PWA séparée en React/Vite. Le prototype privé de création utilise Python et SQLite. Interface anglaise, textes des stickers en chinois, anglais et japonais.",
     "tests": "Les tests couvrent consultation publique, chat protégé, retour de connexion, expiration, références, validation et export. Les preuves natives sont documentées séparément.",
-    "status": "Bêta de test interne, pas une version commerciale complète. Connexions par mot de passe et Google via LazyingArt, ainsi que génération AgInTi, vérifiées. Les autres accès figurent dans le rapport des fournisseurs. Animation publique et paiements restent désactivés.",
+    "status": "Bêta interne de création avec abonnements web actifs, et non lancement commercial complet. Les connexions par mot de passe, Google et Apple via LazyingArt et la génération AgInTi sont vérifiées. GitHub, la sélection directe du fournisseur, les achats natifs, l’animation publique, les ventes de créateurs et les envois WeChat isolés par utilisateur restent suivis dans le registre d’achèvement.",
     "cite": "Code sous MIT ; illustrations sous droits distincts. Citez ce dépôt pour un usage scientifique."
   },
   "es": {
@@ -167,11 +167,11 @@
       "Fotos privadas, personajes aprobados reutilizables, borradores limitados por plan, textos editables, aprobación individual y exportación ZIP.",
       "Generación de imágenes, animación local, revisión de ventas y carga aislada de borradores WeChat opcionales. El asistente guarda borradores; nunca los envía a revisión."
     ],
-    "plans": "Suscripciones mensuales propuestas: Pocket 0,99 USD / 3 créditos de imagen; Creator 9,99 USD / 40; Studio 24,99 USD / 120 y asistencia opcional. El modo foto es gratuito; una animación cuesta 3 créditos. Cobros desactivados hasta conectar y validar.",
+    "plans": "Las suscripciones web mensuales están activas: Pocket 0,99 USD / 3 créditos, Creator 9,99 USD / 40, Studio 24,99 USD / 120. El modo foto es gratuito. Los planes incluyen los ZIP de las colecciones predeterminadas en los tres idiomas. Las compras nativas y los servicios opcionales de animación y carga se validan por separado.",
     "start": "Python 3.12+, Node 22+, fuente CJK y Chromium para pruebas. El script crea una configuración privada de demostración sin reutilizar credenciales ajenas. Abre http://127.0.0.1:18642. Detén con `python3 scripts/dev.py stop`.",
     "inside": "Android nativo con Kotlin/Jetpack Compose, iOS/macOS con SwiftUI y PWA separada con React/Vite. El prototipo privado de creación usa Python y SQLite. Interfaz en inglés; textos en chino, inglés y japonés.",
     "tests": "Las pruebas cubren exploración pública, chat protegido, regreso tras el acceso, sesiones caducadas, referencias, revisión y exportación. La evidencia nativa se documenta por separado.",
-    "status": "Beta interna, no un lanzamiento comercial completo. El acceso por contraseña y Google mediante LazyingArt y la generación AgInTi están verificados. Consulta el informe de proveedores para otras vías de acceso. La animación pública y los pagos siguen desactivados.",
+    "status": "Beta interna de creación con suscripciones web activas, no un lanzamiento comercial completo. Se verificaron el acceso por contraseña, Google y Apple mediante LazyingArt y la generación AgInTi. GitHub, la selección directa del proveedor, las compras nativas, la animación pública, las ventas de creadores y las cargas WeChat aisladas por usuario siguen en el registro de tareas.",
     "cite": "Código MIT; ilustraciones con derechos separados. Cita el repositorio si lo usas en investigación."
   },
   "de": {
@@ -192,11 +192,11 @@
       "Private Fotos, wiederverwendbare bestätigte Figuren, tarifabhängige Entwürfe, bearbeitbare Texte, Einzelprüfung und ZIP-Export.",
       "Optionale Bilderzeugung, lokale Animation, Verkaufsprüfung und isolierter WeChat-Entwurfsupload. Der Assistent speichert nur Entwürfe und reicht nichts zur Prüfung ein."
     ],
-    "plans": "Monatliche Preisvorschläge: Pocket 0,99 USD / 3 Bild-Credits; Creator 9,99 USD / 40; Studio 24,99 USD / 120 und optionaler Upload-Assistent. Fotomodus kostenlos, Animation 3 Credits. Abrechnung bleibt bis zur Anbindung und Prüfung deaktiviert.",
+    "plans": "Web-Monatsabos sind verfügbar: Pocket 0,99 USD / 3 Credits, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Der Fotomodus ist kostenlos. Alle Tarife enthalten die ZIPs der Standardsammlungen in drei Beschriftungssprachen. Native Käufe und optionale Animations- und Uploaddienste werden getrennt qualifiziert.",
     "start": "Python 3.12+, Node 22+, CJK-Schrift und Chromium für Browsertests. Das Skript erstellt eine private Demo-Konfiguration ohne fremde App-Zugangsdaten. http://127.0.0.1:18642 öffnen; mit `python3 scripts/dev.py stop` beenden.",
     "inside": "Native Android-App mit Kotlin/Jetpack Compose, iOS/macOS mit SwiftUI und separate React/Vite-PWA. Der private Erstellungsprototyp nutzt Python und SQLite. Oberfläche Englisch; Stickertexte Chinesisch, Englisch und Japanisch.",
     "tests": "Tests prüfen öffentliches Stöbern, geschützten Chat, Anmelderückkehr, abgelaufene Sitzungen, Referenzen, Freigabe und Export. Native Nachweise werden separat dokumentiert.",
-    "status": "Interne Test-Beta, keine vollständige kommerzielle Veröffentlichung. Passwort- und Google-Anmeldung über LazyingArt sowie AgInTi-Bilderzeugung sind geprüft. Weitere Anmeldewege stehen im Anbieterbericht. Öffentliche Animation und Zahlungen bleiben deaktiviert.",
+    "status": "Interne Creator-Beta mit aktiven Web-Abos, kein vollständig abgeschlossener kommerzieller Release. Passwort-, Google- und Apple-Anmeldung über LazyingArt sowie AgInTi-Bilderzeugung sind geprüft. GitHub, direkte Anbieterauswahl, native Käufe, öffentliche Animation, Creator-Verkäufe und nutzerisolierte WeChat-Uploads werden weiterhin im Aufgabenregister verfolgt.",
     "cite": "Code unter MIT; Bildmaterial mit eigenen Rechten. Bei wissenschaftlicher Nutzung bitte dieses Repository zitieren."
   },
   "ru": {
@@ -217,11 +217,11 @@
       "Закрытая загрузка фото, повторно используемые подтверждённые персонажи, черновики в пределах тарифа, редактирование текста, проверка каждого стикера и ZIP.",
       "Опциональные генерация изображений, локальная анимация, проверка продаж и изолированная загрузка черновиков WeChat. Помощник только сохраняет черновик, не отправляя его на модерацию."
     ],
-    "plans": "Предлагаемые месячные тарифы: Pocket $0.99 / 3 кредита изображений; Creator $9.99 / 40; Studio $24.99 / 120 и дополнительная помощь с загрузкой. Фоторежим бесплатен, анимация стоит 3 кредита. Оплата отключена до подключения и проверки.",
+    "plans": "Веб-подписки доступны: Pocket 0,99 USD / 3 кредита в месяц, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Фоторежим бесплатен. Тарифы включают ZIP стандартных коллекций с подписями на трёх языках. Нативные покупки и дополнительные сервисы анимации и загрузки проверяются отдельно.",
     "start": "Нужны Python 3.12+, Node 22+, шрифт CJK и Chromium для тестов. Скрипт создаёт закрытые настройки демо без чужих учётных данных. Откройте http://127.0.0.1:18642; остановка: `python3 scripts/dev.py stop`.",
     "inside": "Нативный Android на Kotlin/Jetpack Compose, iOS/macOS на SwiftUI и отдельная PWA на React/Vite. Закрытый прототип создания использует Python и SQLite. Интерфейс английский; тексты стикеров на китайском, английском и японском.",
     "tests": "Тесты проверяют публичный просмотр, защищённый чат, возврат после входа, истечение сессии, референсы, проверку и экспорт. Доказательства для нативных сборок записаны отдельно.",
-    "status": "Внутренняя тестовая бета, не завершённый коммерческий выпуск. Вход по паролю и через Google посредством LazyingArt, а также генерация AgInTi проверены. Другие способы входа описаны в отчёте провайдеров. Публичная анимация и платежи пока отключены.",
+    "status": "Внутренняя бета для создания стикеров с действующими веб-подписками, а не завершённый коммерческий выпуск. Проверены вход по паролю, Google и Apple через LazyingArt и генерация изображений AgInTi. GitHub, прямой выбор провайдера, нативные покупки, публичная анимация, продажи авторов и изолированная загрузка WeChat остаются в реестре задач.",
     "cite": "Код MIT; права на изображения отдельные. При исследовательском использовании ссылайтесь на репозиторий."
   },
   "vi": {
@@ -242,11 +242,11 @@
       "Tải ảnh riêng tư, nhân vật đã xác nhận có thể dùng lại, bản nháp theo hạn mức gói, sửa chữ, duyệt từng ảnh và xuất ZIP.",
       "Tùy chọn tạo ảnh, hoạt ảnh cục bộ, duyệt bán và trình duyệt riêng để tải bản nháp WeChat. Trợ lý chỉ lưu nháp, không gửi xét duyệt."
     ],
-    "plans": "Giá tháng đề xuất: Pocket 0,99 USD / 3 tín dụng ảnh; Creator 9,99 USD / 40; Studio 24,99 USD / 120 và hỗ trợ tải lên tùy chọn. Chế độ ảnh miễn phí; hoạt ảnh tốn 3 tín dụng. Thanh toán chưa bật trước khi kết nối và kiểm chứng.",
+    "plans": "Đã mở đăng ký web theo tháng: Pocket 0,99 USD / 3 tín dụng, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Chế độ ảnh miễn phí. Các gói bao gồm ZIP bộ mặc định với chữ Trung, Anh và Nhật. Mua hàng trong ứng dụng và dịch vụ hoạt ảnh, tải lên tùy chọn được kiểm chứng riêng.",
     "start": "Cần Python 3.12+, Node 22+, phông CJK và Chromium để kiểm thử. Lệnh tạo cấu hình demo riêng, không dùng thông tin đăng nhập của ứng dụng khác. Mở http://127.0.0.1:18642; dừng bằng `python3 scripts/dev.py stop`.",
     "inside": "Android thuần Kotlin/Jetpack Compose, iOS/macOS dùng SwiftUI và PWA React/Vite riêng. Bản mẫu sáng tạo riêng tư dùng Python và SQLite. Giao diện tiếng Anh; chữ nhãn dán có tiếng Trung, Anh và Nhật.",
     "tests": "Kiểm thử bao gồm duyệt công khai, trò chuyện có đăng nhập, quay lại sau đăng nhập, hết phiên, ảnh tham khảo, duyệt và xuất. Bằng chứng native được ghi riêng.",
-    "status": "Bản beta thử nghiệm nội bộ, chưa phải bản thương mại hoàn chỉnh. Đăng nhập bằng mật khẩu và Google qua LazyingArt cùng tạo ảnh AgInTi đã được kiểm chứng. Các cách đăng nhập khác nằm trong báo cáo nhà cung cấp. Hoạt ảnh công khai và thanh toán vẫn chưa bật.",
+    "status": "Bản beta sáng tạo thử nghiệm nội bộ với đăng ký web đang hoạt động, chưa phải bản thương mại hoàn chỉnh. Đã kiểm chứng đăng nhập bằng mật khẩu, Google và Apple qua LazyingArt cùng tạo ảnh AgInTi. GitHub, chọn trực tiếp nhà cung cấp, mua hàng native, hoạt ảnh công khai, bán tác phẩm và tải WeChat cách ly theo người dùng vẫn được theo dõi trong danh sách hoàn thành.",
     "cite": "Mã nguồn MIT; hình ảnh có quyền riêng. Vui lòng trích dẫn kho mã khi dùng trong nghiên cứu."
   },
   "ar": {
@@ -267,11 +267,11 @@
       "رفع صور خاصة، وشخصيات مؤكدة قابلة لإعادة الاستخدام، ومسودات ضمن حدود الخطة، وتحرير النصوص، وموافقة لكل ملصق وتصدير ZIP.",
       "توليد صور وتحريك محلي ومراجعة بيع ورفع مسودات WeChat في متصفح معزول كخيارات إضافية. يحفظ المساعد المسودات فقط ولا يرسلها للمراجعة."
     ],
-    "plans": "الاشتراكات الشهرية المقترحة: Pocket بسعر 0.99 دولار و3 أرصدة صور؛ Creator بسعر 9.99 و40 رصيداً؛ Studio بسعر 24.99 و120 رصيداً مع مساعدة رفع اختيارية. وضع الصور مجاني والتحريك يستهلك 3 أرصدة. الدفع معطل حتى الربط والتحقق.",
+    "plans": "الاشتراكات الشهرية على الويب متاحة: Pocket بسعر 0.99 دولار و3 أرصدة، وCreator بسعر 9.99 دولار و40 رصيداً، وStudio بسعر 24.99 دولار و120 رصيداً. وضع الصور مجاني. تشمل الخطط ملفات ZIP للمجموعات الافتراضية بلغات النص الثلاث. تُختبر مشتريات التطبيقات وخدمات التحريك والرفع الاختيارية بشكل منفصل.",
     "start": "يتطلب Python 3.12+ وNode 22+ وخط CJK وChromium لاختبارات المتصفح. ينشئ البرنامج إعداد عرض خاصاً دون استعارة بيانات اعتماد تطبيق آخر. افتح http://127.0.0.1:18642 وأوقفه عبر `python3 scripts/dev.py stop`.",
     "inside": "تطبيق Android أصلي باستخدام Kotlin/Jetpack Compose وتطبيقا iOS/macOS باستخدام SwiftUI، مع PWA منفصلة بـ React/Vite. نموذج الإنشاء الخاص يستخدم Python وSQLite. الواجهة بالإنجليزية ونصوص الملصقات بالصينية والإنجليزية واليابانية.",
     "tests": "تغطي الاختبارات التصفح العام والمحادثة المحمية والعودة بعد الدخول وانتهاء الجلسة والمراجع والمراجعة والتصدير. تُوثّق أدلة الإصدارات الأصلية بشكل منفصل.",
-    "status": "إصدار تجريبي داخلي، وليس إصداراً تجارياً مكتملاً. تم التحقق من الدخول بكلمة المرور وGoogle عبر LazyingArt وتوليد الصور عبر AgInTi. راجع تقرير المزوّدين لمسارات الدخول الأخرى. التحريك العام والمدفوعات ما زالا معطلين.",
+    "status": "نسخة إنشاء تجريبية داخلية مع اشتراكات ويب فعالة، وليست إصداراً تجارياً مكتملاً. تم التحقق من الدخول بكلمة المرور وGoogle وApple عبر LazyingArt وتوليد الصور عبر AgInTi. لا تزال مهام GitHub والاختيار المباشر للمزوّد والمشتريات الأصلية والتحريك العام ومبيعات المبدعين ورفع WeChat المعزول لكل مستخدم مسجلة في قائمة الإنجاز.",
     "cite": "الكود بترخيص MIT، والرسوم لها حقوق منفصلة. يرجى الاستشهاد بالمستودع عند استخدامه في البحث."
   }
 }

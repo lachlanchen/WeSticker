@@ -30,7 +30,9 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## Le studio
 
@@ -40,7 +42,7 @@ Un studio indépendant pour Aya et ses amis, vos personnages et vos collections.
 
 ## Formules
 
-Abonnements mensuels proposés : Pocket 0,99 $ / 3 crédits image ; Creator 9,99 $ / 40 ; Studio 24,99 $ / 120 et assistance d’envoi facultative. Le mode photo est gratuit ; une animation coûte 3 crédits. Aucun paiement avant connexion et validation.
+Les abonnements web mensuels sont disponibles : Pocket 0,99 USD / 3 crédits, Creator 9,99 USD / 40, Studio 24,99 USD / 120. Le mode photo est gratuit. Les formules incluent les ZIP des collections par défaut dans les trois langues. Les achats natifs et les services facultatifs d’animation et d’envoi sont validés séparément.
 
 ## Exécution locale
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## État de publication
 
-Bêta de test interne, pas une version commerciale complète. Connexions par mot de passe et Google via LazyingArt, ainsi que génération AgInTi, vérifiées. Les autres accès figurent dans le rapport des fournisseurs. Animation publique et paiements restent désactivés.
+Bêta interne de création avec abonnements web actifs, et non lancement commercial complet. Les connexions par mot de passe, Google et Apple via LazyingArt et la génération AgInTi sont vérifiées. GitHub, la sélection directe du fournisseur, les achats natifs, l’animation publique, les ventes de créateurs et les envois WeChat isolés par utilisateur restent suivis dans le registre d’achèvement.
 
 ## Citation
 

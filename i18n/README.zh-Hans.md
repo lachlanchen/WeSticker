@@ -30,7 +30,9 @@
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## 创作工坊
 
@@ -40,7 +42,7 @@
 
 ## 订阅方案
 
-月费拟定为 Pocket $0.99 / 3 图像额度、Creator $9.99 / 40 额度、Studio $24.99 / 120 额度及可选上传助手。照片模式免费，动画消耗 3 额度。支付接入与验证之前不开放收费。
+网页月度订阅已开放：Pocket $0.99 / 3 额度、Creator $9.99 / 40 额度、Studio $24.99 / 120 额度。照片模式免费，订阅包含默认系列中英日三种文字版本的 ZIP。原生内购及可选动画、上传服务分别验证。
 
 ## 本地运行
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## 发布状态
 
-当前为内部测试版，并非完整商业发布。通过 LazyingArt 的密码和 Google 登录以及 AgInTi 图像生成已验证；其他登录方式见提供商报告。公开动画服务和支付尚未开放。
+当前为创作内部测试版，网页订阅已上线，并非完整商业发布。通过 LazyingArt 的密码、Google 和 Apple 登录及 AgInTi 图像生成已验证。GitHub 与直接选择提供商、原生内购、公开动画、创作者销售和用户隔离的微信上传仍列在完成清单中。
 
 ## 引用
 

@@ -30,7 +30,9 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 [2026-10-11 · Public stickers / protected Create](../docs/protected-create-release-20261011.md) · [Native test builds](../docs/native-protected-create-20261011.md) · [Login qualification](../docs/social-auth-qualification-20261011.md) · [AgInTi qualification](../docs/aginti-images.md)
 
-![Chat studio](../docs/screenshots/chat-studio-web.png)
+[2026-10-12 · Completion ledger](../docs/request-completion-ledger.md) · [Compact native builds](../docs/compact-native-release-20261012.md) · [Web subscription evidence](../docs/stripe-qualification.md)
+
+![Chat studio](../docs/screenshots/compact-create-desktop.png)
 
 ## 스튜디오
 
@@ -40,7 +42,7 @@ Aya와 친구들의 작품을 보고 나만의 캐릭터와 스티커를 만드�
 
 ## 요금제
 
-월 요금 제안: Pocket $0.99 / 이미지 3크레딧, Creator $9.99 / 40, Studio $24.99 / 120 및 선택형 업로드 지원. 사진 모드는 무료이며 애니메이션은 3크레딧입니다. 결제 연결과 검증 전에는 판매하지 않습니다.
+웹 월 구독이 제공됩니다: Pocket $0.99 / 3크레딧, Creator $9.99 / 40, Studio $24.99 / 120. 사진 모드는 무료이며 기본 컬렉션의 중국어·영어·일본어 ZIP이 포함됩니다. 네이티브 인앱 결제와 선택형 애니메이션·업로드 기능은 별도로 검증합니다.
 
 ## 로컬 실행
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 ## 출시 상태
 
-내부 테스트 베타이며 완성된 상용 출시가 아닙니다. LazyingArt를 통한 비밀번호 및 Google 로그인과 AgInTi 이미지 생성은 검증되었습니다. 다른 로그인 경로는 제공업체 보고서를 참조하세요. 공개 애니메이션과 결제는 아직 비활성화되어 있습니다.
+웹 구독이 운영 중인 제작자 내부 테스트 베타이며 완성된 상용 출시가 아닙니다. LazyingArt를 통한 비밀번호·Google·Apple 로그인과 AgInTi 이미지 생성은 검증되었습니다. GitHub와 직접 제공자 선택, 네이티브 결제, 공개 애니메이션, 제작자 판매, 사용자별 격리 WeChat 업로드는 완료 목록에서 추적합니다.
 
 ## 인용
 
