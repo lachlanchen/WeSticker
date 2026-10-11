@@ -37,6 +37,7 @@ type Props = {
   onFavorite: (id: string) => void;
   onPreview: (sticker: Sticker, pack: Pack) => void;
   onDownload: (pack: Pack) => void;
+  downloadBusy?: boolean;
   onCreate?: () => void;
   onNativeSave?: (pack: Pack, sticker: Sticker) => void;
 };
@@ -134,6 +135,7 @@ export function StickerBrowser(props: Props) {
               <div className="collection-actions">
                 <button
                   className="button primary small"
+                  disabled={props.downloadBusy}
                   onClick={() => props.onDownload(active)}
                 >
                   <ArrowDownToLine size={16} />

@@ -11,13 +11,14 @@ customer content and runtime addresses remain in private handoffs.
 | Independent app and PWA | Independent HTTPS origin; native SwiftUI iOS/macOS and Compose Android | Keep platform parity; no WebView replacement |
 | Test-build delivery | Android 13 internal with compact toolbar; iOS 13 and macOS 10 in internal TestFlight | Apple compact-toolbar successors and ongoing service qualification |
 | One root login outside tabs | Implemented on web and native; intended destination and draft preserved | Retest after provider completion |
-| Google, Apple, GitHub and LazyingArt login | LazyingArt and Google-through-LazyingArt verified end to end | Central Apple existing-account linking and GitHub/provider routing qualification |
+| Google, Apple, GitHub and LazyingArt login | LazyingArt, Google and Apple-through-LazyingArt verified end to end; Apple explicit linking and a separate Apple-only login retain the original account | GitHub activation and supported direct-provider routing qualification |
 | Create and Agent merged into chat | Conversation-first Create, references, editable revisioned sticker plan and explicit application | Keep chat uncluttered and complete real render delivery tests |
 | Characters and generated work in Library | Account-scoped characters, references, collections and artifacts implemented | Ongoing cross-platform regression checks |
 | Free single generation and bounded paid packs | Server tier limits and one-image trial; quote/idempotency guards implemented | Verify actual subscription-delivered limits on each payment lane |
 | Real image generation | AgInTi real-provider canary passed; enabled | Preserve reference identity and per-user consent |
 | Real animated sticker generation | Local provider canary passed | Qualify available runtime lifecycle before public activation |
 | Web subscription payments | Live app-owned catalog/Portal/webhook and recovery timer active; web subscriptions enabled after actual sandbox lifecycle and live nonfinancial delivery tests | Ongoing monitoring; native IAP and advanced plan changes remain separate |
+| Subscriber default sticker downloads | App-owned access routing tested for all three language ZIPs, guest/expiry and network errors; 30 production archives pass CRC checks | Deploy the frontend change; keep AYA orders independent |
 | Native subscriptions | StoreKit/Play UI and server verification implemented; fixtures passed | Real app-specific store setup, purchase/restore/lifecycle qualification |
 | User-created packs for sale | Moderation and payout gates implemented | Verified creator onboarding and commercial operations before enabling sales |
 | Optional WeChat draft uploader | Save-only safety contracts implemented | Customer-isolated browser/container lifecycle and live draft qualification |
@@ -42,5 +43,6 @@ customer content and runtime addresses remain in private handoffs.
 - [Compact native successor](compact-native-release-20261012.md)
 - [Social login qualification](social-auth-qualification-20261011.md)
 - [Stripe qualification](stripe-qualification.md)
+- [Subscriber collection downloads](subscriber-downloads-20261012.md)
 - [Chat-led studio](chat-studio-20261011.md)
 - [Compact workspace evidence](compact-workspace-20261012.md)

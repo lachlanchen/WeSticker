@@ -60,6 +60,8 @@ export function PublicCatalog() {
   const [accountEpoch, setAccountEpoch] = useState(0);
   const [session, setSession] = useState<Boot | null>(null);
   const [loginError, setLoginError] = useState("");
+  const [downloadError, setDownloadError] = useState("");
+  const [collectionBusy, setCollectionBusy] = useState(false);
   const protectedView = ["create", "library", "characters", "account"].includes(
     view,
   );
@@ -138,6 +140,43 @@ export function PublicCatalog() {
     link.download = url.pathname.split("/").pop() || "sticker.gif";
     link.click();
   }
+  async function downloadCollection(pack: Pack) {
+    if (collectionBusy) return;
+    setCollectionBusy(true);
+    setDownloadError("");
+    try {
+      const next = await api<Boot>("/api/bootstrap");
+      updateSession(next);
+      if (!next.user?.consented || next.user.plan === "free" ||
+          next.user.expires <= Date.now() / 1000) {
+        setView("account");
+        return;
+      }
+      const response = await fetch(API + `/api/default/${encodeURIComponent(pack.id)}/download/${encodeURIComponent(lang)}`, {
+        credentials: "include",
+      });
+      if (response.status === 401 || response.status === 402) {
+        await refreshSession();
+        setView("account");
+        return;
+      }
+      if (!response.ok || !response.headers.get("content-type")?.includes("application/zip"))
+        throw Error("The collection could not be downloaded. Please try again.");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `WeSticker-${pack.id}-${lang}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (e) {
+      setDownloadError((e as Error).message);
+    } finally {
+      setCollectionBusy(false);
+    }
+  }
   if (protectedView && !session?.user)
     return (
       <SignInScreen
@@ -213,6 +252,7 @@ export function PublicCatalog() {
           </button>
         </header>}
         <main>
+          {downloadError && !protectedView && <p role="alert" className="studio-error">{downloadError}</p>}
           {view === "create" || view === "library" || view === "characters" ? (
             <Studio
               key={accountEpoch}
@@ -246,10 +286,8 @@ export function PublicCatalog() {
               }
               onPreview={(sticker, pack) => setPreview({ sticker, pack })}
               onNativeSave={download}
-              onDownload={(pack) => {
-                location.href =
-                  "https://aya.lazying.art/pack/" + encodeURIComponent(pack.id);
-              }}
+              onDownload={(pack) => void downloadCollection(pack)}
+              downloadBusy={collectionBusy}
             />
           )}
         </main>
