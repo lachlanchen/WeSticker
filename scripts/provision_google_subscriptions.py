@@ -92,7 +92,7 @@ def private_write(path, value, *, exclusive=False):
 
 
 def finish_plan(api, state, product, plan, *, apply, activate):
-    result = validate(product, plan, allow_active=activate)
+    result = validate(product, plan, allow_active=activate or not apply)
     if not activate or result["state"] == "ACTIVE":
         return result
     if not apply:

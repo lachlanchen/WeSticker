@@ -137,3 +137,23 @@ def test_activation_rejects_wrong_price_before_writing(tmp_path):
     with pytest.raises(ValueError, match="price"):
         catalog.provision(api, tmp_path, apply=True, activate=True)
     assert len(api.writes) == 3
+
+
+def test_read_only_audits_active_catalog_without_writes(tmp_path):
+    api = API()
+    catalog.provision(api, tmp_path, apply=True, activate=True)
+    writes = deepcopy(api.writes)
+    conversions = api.conversions
+    receipt = catalog.provision(api, tmp_path)
+    assert [p["state"] for p in receipt["products"]] == ["ACTIVE"] * 3
+    assert api.writes == writes and api.conversions == conversions
+
+
+def test_read_only_active_catalog_still_rejects_price_mismatch(tmp_path):
+    api = API()
+    catalog.provision(api, tmp_path, apply=True, activate=True)
+    writes = deepcopy(api.writes)
+    api.products["/subscriptions/westicker_pocket_monthly"]["basePlans"][0]["regionalConfigs"][0]["price"] = catalog.money(199)
+    with pytest.raises(ValueError, match="price"):
+        catalog.provision(api, tmp_path)
+    assert api.writes == writes
