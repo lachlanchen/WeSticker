@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright-core";
 
 const url =
-  process.env.WESTICKER_PUBLIC_URL || "https://aya.lazying.art/westicker/";
+  process.env.WESTICKER_PUBLIC_URL || "http://127.0.0.1:18642/";
 const out = process.env.WESTICKER_QA_OUT || ".runtime/public-catalog-qa";
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({

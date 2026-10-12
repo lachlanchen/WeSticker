@@ -60,7 +60,7 @@ it is not the feature list or build number of the new protected-Create release.
 
 | Area | Evidence | Remaining gate |
 | --- | --- | --- |
-| Public default catalog | 10 packs, 156 animations, three lettering languages, local posters; live at `aya.lazying.art/westicker/` | Installed-device monitoring |
+| Public default catalog | 10 packs, 156 animations, three lettering languages, local posters; live at `westicker.lazying.art` | Installed-device monitoring |
 | Local creation | Real browser upload, lock, photo generation, edit/review, ZIP and deletion | Animation quality and model-provider qualification |
 | Backend and release contracts | 49 pytest cases, signed payment fixtures, private ownership checks | Load audit, full abuse/privacy lifecycle |
 | WeChat agent | Two Node safety tests; save-only source | Docker/live-page customer login and save verification |

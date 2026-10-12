@@ -80,6 +80,15 @@ def run(*args):
 
 
 def main():
+    raise SystemExit(
+        "The AYA /westicker/ catalog deployment is retired. "
+        "Use the independent westicker.lazying.art creator deployment; "
+        "see docs/legacy-entry-retirement.md. No changes were made."
+    )
+
+
+def historical_deploy():
+    """Preserved for audit only; no CLI entry point restores the old catalog."""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("archive", type=Path)
     p.add_argument("sha256")

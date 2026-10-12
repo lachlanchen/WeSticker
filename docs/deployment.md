@@ -8,24 +8,24 @@ for live checks and remaining account/provider gates. Local demo accounts stay
 disabled. This deployment does not make the unqualified Docker or customer-agent
 paths below production-ready.
 
-## Public catalog PWA
+## Retired AYA Catalog Entry
 
-The read-only catalog is live at <https://aya.lazying.art/westicker/>. Install it
-with the browser's Add to Home Screen / Install command. It has its own scoped
-manifest and service worker; no API, account, payment or private-photo endpoint
-is exposed by this deployment. The existing AYA shop remains the checkout owner.
+Use <https://westicker.lazying.art/> for both public browsing and the creator
+workspace. The former AYA `/westicker/` catalog PWA is retired; old links redirect
+to the independent origin. A cleanup service worker migrates online legacy
+installations without deleting drafts or accounts. See
+[retirement and rollback](legacy-entry-retirement.md).
 
 ```bash
 python3 scripts/animated_previews.py /path/to/approved-shop/build/public
-WESTICKER_BASE=/westicker/ VITE_PUBLIC_CATALOG_ONLY=true npm run build
-node scripts/public_catalog_test.mjs
+npm run build
+node scripts/creator_edge_test.mjs
 ```
 
-`scripts/deploy_catalog_edge.py` stages a checksum-pinned static archive, changes
-only the marked AYA Caddy block, preserves the previous release/config and
-rolls back on failed probes. It requires an exact current ingress checksum.
-See [bandwidth and operations](catalog-bandwidth.md). The authenticated creator
-service below still requires its own reviewed origin and production qualification.
+`scripts/deploy_catalog_edge.py` is disabled to prevent accidental restoration
+of the old entrance. Use `scripts/deploy_creator_edge.py` for qualified immutable
+creator releases. Historical catalog notes describe the former deployment, not
+a second supported public origin. AYA remains the separate shop/checkout owner.
 
 ## Reproducible local preview
 

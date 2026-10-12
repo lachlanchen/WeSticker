@@ -1,0 +1,16 @@
+# Inside the existing AYA route, after scanner/hotlink/method guards.
+# Remove the old /westicker redirect and handle_path static PWA block.
+# Substitute the immutable, checksum-verified retirement directory at deploy.
+handle /westicker/sw.js {
+    root * /srv/westicker-catalog/retirement/RELEASE_ID
+    rewrite * /sw.js
+    header Cache-Control "no-store, max-age=0"
+    header Content-Type "application/javascript; charset=utf-8"
+    header Service-Worker-Allowed "/westicker/"
+    file_server
+}
+@retired_catalog path /westicker /westicker/*
+handle @retired_catalog {
+    header Cache-Control "no-store"
+    redir https://westicker.lazying.art/ 308
+}
