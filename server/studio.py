@@ -13,6 +13,7 @@ from .store import THEMES, audit, database, limits, uid
 from .generation import capabilities as generation_capabilities
 from .local_video_lifecycle import status as animation_status
 from .auth import provider_choices
+from . import chat_agent
 
 
 def clean_rows(rows, maximum, old=None):
@@ -70,9 +71,15 @@ def clean_rows(rows, maximum, old=None):
     return result
 
 
-def propose(cfg, pack, text, maximum, history):
+def propose(cfg, pack, text, maximum, history, request_id=None):
     rows = json.loads(pack["items"])
-    if cfg.get("chat_api_key"):
+    evidence = {}
+    if cfg.get("chat_provider") == "aginti":
+        result = chat_agent.propose(cfg, pack, rows, text, maximum, history, request_id)
+        proposal = result["proposal"]
+        source = "assistant"
+        evidence = {"engine": result["engine"], "model": result.get("model", "")}
+    elif cfg.get("chat_api_key"):
         payload = {
             "model": cfg.get("chat_model", "deepseek-chat"),
             "response_format": {"type": "json_object"},
@@ -168,6 +175,7 @@ def propose(cfg, pack, text, maximum, history):
         "reply": str(proposal.get("reply", "Proposed captions"))[:2000],
         "items": clean_rows(proposed, maximum, old) if proposed is not None else None,
         "source": source,
+        **evidence,
     }
 
 
@@ -299,7 +307,8 @@ def register_studio(app, cfg):
                 (message, user["id"], id, attempt, text, None, "working", time.time()),
             )
         try:
-            proposal = propose(cfg, p, text, limits(user)["pack_size"], history)
+            request_id = hashlib.sha256((user["id"] + ":" + message).encode()).hexdigest()
+            proposal = propose(cfg, p, text, limits(user)["pack_size"], history, request_id)
             proposal["revision"] = p["revision"]
         except Exception:
             with database(cfg) as db:

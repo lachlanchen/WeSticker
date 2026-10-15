@@ -72,6 +72,7 @@ Native Kotlin/Jetpack Compose Android and SwiftUI iOS/macOS catalog apps, plus a
 | --- | --- |
 | `src/`, `server/` | [Architecture](docs/architecture.md) |
 | `worker/`, `compose.yaml` | [Deployment](docs/deployment.md) |
+| `agent/`, `compose.agent.yaml` | [AgInTi/DeepSeek chat and Docker](docs/agent-and-docker.md) |
 | `android/`, `apple/`, `macos/` | [Release readiness](docs/release-readiness.md) |
 | `server/auth.py`, `server/billing.py` | [Integration handoff](docs/integration-handoff.md) |
 

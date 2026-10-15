@@ -1,0 +1,10 @@
+# Build the app and agent images first. The worker gets pinned AgInTi source,
+# not a writable host checkout. GPU inference remains an external service.
+services:
+  worker:
+    image: westicker-media:local
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+      additional_contexts:
+        agent-runtime: docker-image://westicker-agent:local

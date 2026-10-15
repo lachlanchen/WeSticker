@@ -24,6 +24,7 @@ from .store import (
 )
 from .studio import clean_rows, register_studio
 from .guest_chat import register_guest_chat
+from .chat_agent import available as chat_available
 from .generation import capabilities as generation_capabilities
 from .local_video_lifecycle import status as animation_status
 from .native_reconcile import MAX_EVENT_BYTES, NOTIFICATION_PATHS
@@ -239,7 +240,7 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
             providers=provider_choices(cfg, app.extensions.get("westicker_shared_identity")),
             local_accounts=cfg["local_accounts"],
             capabilities={
-                "chat": bool(cfg.get("chat_api_key")),
+                "chat": chat_available(cfg),
                 **generation_capabilities(cfg),
                 "web_checkout": bool(
                     cfg.get("stripe_purchase_enabled") is True

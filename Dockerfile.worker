@@ -1,0 +1,7 @@
+FROM westicker:local
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
+COPY --from=agent-runtime /opt/aginti /opt/aginti
+COPY --from=agent-runtime /usr/local/bin/node /usr/local/bin/node
+USER westicker
+CMD ["python", "-m", "server.worker"]

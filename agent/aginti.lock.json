@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/lazyingart/AgInTiFlow.git",
+  "commit": "e4c16b0610c41e690d9288739561a5a7e187cc9d",
+  "entry": "src/restricted-application.js",
+  "sha256": "fe99e0fe50abb64b458ebe776cb7ca0b1c8cc687e7b2a6af57726c3b0c20eb38"
+}

@@ -1,0 +1,7 @@
+{
+  "model": "deepseek-flash",
+  "apiKey": "REPLACE_WITH_PRIVATE_DEEPSEEK_CREDENTIAL",
+  "token": "REPLACE_WITH_A_RANDOM_INTERNAL_TOKEN_AT_LEAST_48_CHARACTERS",
+  "dailyRequests": 100,
+  "codexFallback": false
+}

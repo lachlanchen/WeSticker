@@ -1,0 +1,32 @@
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: agent/Dockerfile
+      additional_contexts:
+        aginti: ${AGINTI_BUILD_CONTEXT:-./.runtime/aginti-source}
+    image: westicker-agent:local
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 90s
+    read_only: true
+    ports: ["127.0.0.1:${WESTICKER_AGENT_PORT:-18646}:8001"]
+    volumes:
+      - agent-state:/data
+      - ${WESTICKER_AGENT_CONFIG:-./.config/agent.json}:/run/secrets/agent.json:ro
+    tmpfs: ["/tmp:size=32m,noexec,nosuid,nodev"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    mem_limit: 256m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options: {max-size: "2m", max-file: "2"}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:8001/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  agent-state:

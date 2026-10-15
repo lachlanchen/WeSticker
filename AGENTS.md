@@ -36,6 +36,15 @@ references and generation retain consent and quote requirements.
 Use `scripts/test_studio_isolated.py` for repeat browser QA; do not relax signup
 limits or borrow paid-provider credentials to make tests pass.
 
+Normal chat uses the pinned AgInTi restricted application SDK with DeepSeek in
+an isolated, proposal-only container. Keep this lightweight: one bounded text
+request, no model-executable tools, account-scoped history and explicit table
+application. Generation remains in the existing quote/consent/job pipeline.
+Do not mount Codex homes, active developer sessions or the Docker socket into
+customer chat. Codex fallback is unqualified and disabled; a preference for
+AgInTi does not authorize using its unrestricted CLI wrapper. See
+`docs/agent-and-docker.md` for qualification, migration and rollback.
+
 Native GIF checks must compare successive sticker pixels and exercise pause and
 resume, not just assert that an image URL loaded. Respect reduced-motion defaults
 while allowing explicit Play. Verify icons inside the compiled app and the exact

@@ -5,8 +5,8 @@
 <https://westicker.lazying.art> now serves the merged workspace and its guarded
 API, independently of AYA. See the [October 11 release record](chat-beta-release-20261011.md)
 for live checks and remaining account/provider gates. Local demo accounts stay
-disabled. This deployment does not make the unqualified Docker or customer-agent
-paths below production-ready.
+disabled. See [the AgInTi/DeepSeek and Docker runbook](agent-and-docker.md) for
+the isolated chat service, container checks and remaining migration limits.
 
 ## Retired AYA Catalog Entry
 
@@ -79,27 +79,34 @@ paste secret configuration into a handoff, README, screenshot or issue.
 Artifact records must be from the matching catalog release. Never
 point the import at Downloads, a personal photo folder, or all project media.
 
-## Docker pilot
+## Docker Deployment
+
+Use the [agent and Docker runbook](agent-and-docker.md) for current commands,
+build pins, provider provisioning, resource bounds and rollback. The following
+notes cover application configuration; the isolated WeChat uploader remains a
+separate, unqualified customer-agent path.
 
 Prepare `.config/production.json` with the production origin, state `/data` and
-demo accounts disabled. The image runs as UID/GID 10001; arrange the **private**
+demo accounts disabled. The image runs as UID/GID 1000; arrange the **private**
 config mount permissions so that this UID can read it, without world-readable
 secrets. The named volume is initialized by the image. Back up the database and
 private assets together before migrations.
 
 ```bash
-docker compose config --quiet
-docker compose build
-docker compose up -d
+docker compose -f compose.yaml -f compose.agent.yaml -f compose.media.yaml config --quiet
+docker compose -f compose.agent.yaml build
+docker compose build web
+docker compose -f compose.yaml -f compose.media.yaml build worker
+docker compose -f compose.yaml -f compose.agent.yaml -f compose.media.yaml up -d
 curl --fail http://127.0.0.1:18644/api/health
 ```
 
-Docker build/runtime has not been qualified in the initial implementation.
+App and agent containers have separate qualification; see the current runbook.
 TLS ingress must preserve Host/Origin, allow bounded 21 MB image requests, and
 route both `/api/` and `/auth/` to the same application. Do not share AYA's
-origin, database or cookies. LazyEdge may provide the protected tunnel/HTTPS
-edge after an independent domain is chosen. Only the read-only catalog route
-above is public; do not expose this prototype's API through that route.
+origin, database or cookies. Preserve the qualified creator ingress/tunnel,
+not the retired AYA catalog route. A full production-state container migration
+is separate from the current host-app/isolated-agent deployment.
 LocalVideoGen on host localhost is not reachable from an ordinary bridge
 container. Keep that optional adapter disabled until a protected route is
 explicitly designed and tested; do not solve it by exposing a public GPU API.
