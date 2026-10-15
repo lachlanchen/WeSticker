@@ -83,14 +83,25 @@ export function PublicCatalog() {
       void refreshSession().catch(() => {});
   }, [protectedView, session, loginError]);
   useEffect(() => {
-    fetch(base + "catalog.json")
-      .then((r) => {
-        if (!r.ok) throw Error("Please reload the catalog.");
-        return r.json();
-      })
-      .then((c) =>
-        setPacks(
-          c.packs.map((p: Pack) => ({
+    let cancelled = false;
+    let loaded = false;
+    let busy = false;
+    let lastRefresh = 0;
+    const controller = new AbortController();
+    async function refresh() {
+      if (busy || document.hidden || Date.now() - lastRefresh < 300_000) return;
+      busy = true;
+      lastRefresh = Date.now();
+      try {
+        let response = await fetch(base + "api/catalog", {signal: controller.signal})
+          .catch(() => null);
+        if (!response?.ok) {
+          if (loaded) return;
+          response = await fetch(base + "catalog.json", {signal: controller.signal});
+        }
+        if (!response.ok) throw Error("Please reload the catalog.");
+        const c = await response.json();
+        const next: Pack[] = c.packs.map((p: Pack) => ({
             ...p,
             banner: asset(p.banner),
             stickers: Object.fromEntries(
@@ -103,14 +114,31 @@ export function PublicCatalog() {
                 })),
               ]),
             ),
-          })),
-        ),
-      )
-      .catch((e) => setError(e.message));
+          }));
+        if (!cancelled) {
+          setPacks(next);
+          setSelected(previous => next.find(p => p.id === previous?.id) || next.find(p => p.id === c.default_pack) || null);
+          setError("");
+          loaded = true;
+        }
+      } catch (e) {
+        if (!cancelled && !loaded) setError((e as Error).message);
+      } finally { busy = false; }
+    }
+    void refresh();
+    const timer = setInterval(() => void refresh(), 300_000);
+    const onVisible = () => void refresh();
+    document.addEventListener("visibilitychange", onVisible);
     if (import.meta.env.PROD && "serviceWorker" in navigator)
       navigator.serviceWorker
         .register(base + "sw.js", { scope: base })
         .catch(() => {});
+    return () => {
+      cancelled = true;
+      controller.abort();
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, []);
   useEffect(() => {
     localStorage.setItem("westicker-saved", JSON.stringify(saved));

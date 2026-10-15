@@ -1,8 +1,9 @@
 # Public catalog bandwidth and operations
 
 Current creator PWA: <https://westicker.lazying.art>. It has its own API, account
-and billing boundary. The earlier catalog-only preview remains documented at
-<https://aya.lazying.art/westicker/>; the AYA shop stays at that host's root.
+and billing boundary. The earlier `aya.lazying.art/westicker/` entrance is
+retired; the AYA shop stays at that host's root. The current
+[shared public catalog](shared-public-catalog.md) updates owner packs automatically.
 The following October 10 deployment measurements describe the catalog-only
 preview, not authenticated creator requests. Both retain lightweight grid previews
 and original-quality download assets.

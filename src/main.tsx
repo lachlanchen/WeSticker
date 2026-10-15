@@ -685,7 +685,7 @@ function App() {
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {import.meta.env.VITE_PUBLIC_CATALOG_ONLY === "true" ? (
+    {import.meta.env.VITE_PUBLIC_CATALOG_ONLY !== "false" ? (
       <PublicCatalog />
     ) : (
       <App />

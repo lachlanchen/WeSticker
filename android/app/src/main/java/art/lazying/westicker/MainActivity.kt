@@ -83,23 +83,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         intent.data?.takeIf { it.scheme == "art.lazying.westicker" && it.host == "auth" && it.path == "/complete" }?.let { authResult = it }
         enableEdgeToEdge()
-        val catalog = JSONObject(assets.open("catalog.json").bufferedReader().use { it.readText() }).getJSONArray("packs")
-        val packs = (0 until catalog.length()).map { index ->
-            val p = catalog.getJSONObject(index)
-            val all = p.getJSONObject("stickers")
-            Pack(p.getString("id"), p.getString("english"), p.getString("name"), p.getString("banner"),
-                listOf("en", "zh", "ja").associateWith { language ->
-                    val a = all.getJSONArray(language)
-                    (0 until a.length()).map { i -> a.getJSONObject(i).let {
-                        Sticker(it.getString("id"), it.getString("label"), it.getString("gif"), it.getString("poster"))
-                    } }
-                }
-            )
-        }
+        val bundledPacks = PublicCatalogStore.parse(assets.open("catalog.json").bufferedReader().use { it.readText() })
         val loader = ImageLoader.Builder(this).components {
             if (Build.VERSION.SDK_INT >= 28) add(ImageDecoderDecoder.Factory()) else add(GifDecoder.Factory())
         }.build()
         setContent {
+            var packs by remember { mutableStateOf(bundledPacks) }
+            LaunchedEffect(Unit) {
+                withContext(Dispatchers.IO) { PublicCatalogStore.load(File(cacheDir, "public-aya-catalog.json")) }
+                    ?.let { packs = it }
+            }
             MaterialTheme(colorScheme = lightColorScheme(primary = Color(0xFFCB315E),
                 primaryContainer = Color(0xFFFFE4ED), onPrimaryContainer = Color(0xFF762340),
                 secondary = Color(0xFF007F79), surface = Color.White,
@@ -198,7 +191,7 @@ fun Catalog(packs: List<Pack>, loader: ImageLoader,
                     Surface(onClick = { selected = pack.id }, modifier = modifier, shape = RoundedCornerShape(8.dp),
                         color = selectedColor) {
                         Row(Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                            AsyncImage("file:///android_asset" + pack.stickers[language]!!.first().poster,
+                            AsyncImage(catalogImage(pack.stickers[language]!!.first().poster),
                                 null, modifier = Modifier.size(44.dp), imageLoader = loader)
                             Text(pack.english, Modifier.padding(start = 8.dp).weight(1f), maxLines = 2,
                                 style = MaterialTheme.typography.labelLarge)
@@ -237,9 +230,9 @@ fun Catalog(packs: List<Pack>, loader: ImageLoader,
                                 items(active.stickers[language]!!, key = { active.id + language + it.id }) { sticker ->
                                     Surface(shape = RoundedCornerShape(8.dp), color = MaterialTheme.colorScheme.surface) {
                                         Column {
-                                            val poster = rememberAsyncImagePainter("file:///android_asset" + sticker.poster, imageLoader = loader)
+                                            val poster = rememberAsyncImagePainter(catalogImage(sticker.poster), imageLoader = loader)
                                             AsyncImage(ImageRequest.Builder(context).data(if (playing) sticker.gif else
-                                                "file:///android_asset" + sticker.poster).build(), sticker.label,
+                                                catalogImage(sticker.poster)).build(), sticker.label,
                                                 placeholder = poster, error = poster,
                                                 modifier = Modifier.fillMaxWidth().aspectRatio(1f)
                                                     .semantics { contentDescription = "Preview " + sticker.label }
@@ -275,8 +268,8 @@ fun Catalog(packs: List<Pack>, loader: ImageLoader,
     preview?.let { (pack, sticker) ->
         AlertDialog(onDismissRequest = { preview = null }, title = { Text(sticker.label) },
             text = {
-                val poster = rememberAsyncImagePainter("file:///android_asset" + sticker.poster, imageLoader = loader)
-                AsyncImage(if (playing) sticker.gif else "file:///android_asset" + sticker.poster,
+                val poster = rememberAsyncImagePainter(catalogImage(sticker.poster), imageLoader = loader)
+                AsyncImage(if (playing) sticker.gif else catalogImage(sticker.poster),
                     sticker.label, modifier = Modifier.fillMaxWidth().aspectRatio(1f), imageLoader = loader,
                     placeholder = poster, error = poster)
             },

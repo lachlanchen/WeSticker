@@ -198,7 +198,7 @@ struct WeStickerApp: App {
 
 struct CatalogView: View {
     init(showSaved: Bool = false) { _onlySaved = State(initialValue: showSaved) }
-    private let packs: [Pack] = {
+    @State private var packs: [Pack] = {
         guard let url = bundled("catalog.json"), let data = try? Data(contentsOf: url),
               let value = try? JSONDecoder().decode(Catalog.self, from: data) else { return [] }
         return value.packs
@@ -296,6 +296,7 @@ struct CatalogView: View {
                 Button("OK", role: .cancel) { failure = nil }
             } message: { Text(failure ?? "") }
         }
+        .task { if let latest = await PublicCatalogStore.shared.load(), !Task.isCancelled { packs = latest } }
         #if os(macOS)
         .frame(minWidth: 640, minHeight: 500)
         #endif

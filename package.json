@@ -12,6 +12,7 @@
     "test:studio": "node scripts/chat_studio_test.mjs",
     "dev": "vite --host 127.0.0.1 --port 18642",
     "build": "tsc --noEmit && vite build && node scripts/asset_manifest.mjs",
+    "build:creator": "VITE_PUBLIC_CATALOG_ONLY=true npm run build",
     "test:browser": "node scripts/browser-test.mjs",
     "test:billing-ui": "node scripts/native-billing-ui-test.mjs",
     "native:sync": "python3 scripts/sync_native_catalog.py"

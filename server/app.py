@@ -29,6 +29,7 @@ from .generation import capabilities as generation_capabilities
 from .local_video_lifecycle import status as animation_status
 from .native_reconcile import MAX_EVENT_BYTES, NOTIFICATION_PATHS
 from .auth import provider_choices
+from .public_catalog import PublicCatalog
 
 
 class PaymentRequired(HTTPException):
@@ -57,6 +58,8 @@ def create_app(override=None):
         SESSION_COOKIE_SAMESITE="Lax",
     )
     app.config["WESTICKER"] = cfg
+    public_artwork = PublicCatalog(ROOT / "public/catalog.json", state / "public-catalog-cache.json",
+                                  enabled=cfg.get("public_catalog_sync", False))
 
     def throttle(key, limit=60, window=60):
         now = time.time()
@@ -263,8 +266,9 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
 
     @app.get("/api/catalog")
     def catalog():
-        default = json.loads((ROOT / "public/catalog.json").read_text())
-        return jsonify(default)
+        response = jsonify(public_artwork.get())
+        response.set_etag(hashlib.sha256(response.get_data()).hexdigest())
+        return response.make_conditional(request)
 
     @app.post("/api/auth/register")
     def register():
@@ -916,7 +920,7 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
     def public_sticker(pid, language, sid):
         import requests
 
-        catalog = json.loads((ROOT / "public/catalog.json").read_text())
+        catalog = public_artwork.get()
         pack = next((p for p in catalog["packs"] if p["id"] == pid), {})
         item = next(
             (s for s in pack.get("stickers", {}).get(language, []) if s["id"] == sid),
