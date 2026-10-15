@@ -2,6 +2,7 @@ import importlib.util
 from pathlib import Path
 
 from PIL import Image, ImageDraw
+import pytest
 
 spec = importlib.util.spec_from_file_location("line_export", Path(__file__).parents[1] / "scripts/export_line_pack.py")
 line = importlib.util.module_from_spec(spec)
@@ -57,3 +58,48 @@ def test_palette_fallback_retains_transparency_and_white(tmp_path):
             # Palette sampling can shift white slightly; it must stay opaque.
             r, g, b, alpha = rgba.getpixel((100, 100))
             assert min(r, g, b) >= 245 and alpha == 255
+
+
+def test_selected_frames_does_not_rekey_white_foreground(tmp_path):
+    frames = []
+    for index in range(5):
+        frame = Image.new("RGBA", (32, 32))
+        ImageDraw.Draw(frame).rectangle((0, 2 + index, 16, 20 + index), fill="white")
+        frames.append(frame)
+    source = tmp_path / "master.png"
+    frames[0].save(source, save_all=True, append_images=frames[1:], duration=200)
+    selected, _ = line.selected_frames(source, 32)
+    assert selected[0].getpixel((0, 10)) == (255, 255, 255, 255)
+    assert selected[0].getpixel((31, 31))[3] == 0
+
+
+def test_opaque_source_requires_explicit_legacy_choice(tmp_path):
+    source = tmp_path / "opaque.png"
+    Image.new("RGB", (32, 32), "white").save(source)
+    with pytest.raises(ValueError, match="reviewed RGBA"):
+        line.selected_frames(source, 32)
+
+
+def test_blank_alpha_master_is_rejected(tmp_path):
+    source = tmp_path / "blank.png"
+    Image.new("RGBA", (32, 32)).save(source)
+    with pytest.raises(ValueError, match="Blank alpha"):
+        line.selected_frames(source, 32)
+
+
+@pytest.mark.parametrize("palettes", [(None,), (192,), (128,)])
+def test_apng_retains_every_soft_alpha_value(tmp_path, palettes):
+    frames = []
+    for index in range(20):
+        frame = Image.new("RGBA", (270, 270))
+        draw = ImageDraw.Draw(frame)
+        for alpha in range(1, 256):
+            draw.line((alpha, 20 + index, alpha, 180 + index), fill=(255, 255, 255, alpha))
+        frames.append(frame)
+    target = tmp_path / "soft.png"
+    line.encode(frames, target, palettes=palettes)
+    line.validate(target, (270, 270))
+    with Image.open(target) as image:
+        for index, original in enumerate(frames):
+            image.seek(index)
+            assert image.convert("RGBA").getchannel("A").tobytes() == original.getchannel("A").tobytes()

@@ -33,7 +33,9 @@ def exterior_alpha(image):
     return result
 
 
-def selected_frames(source, side):
+def selected_frames(source, side, *, alpha_mode="preserve"):
+    if alpha_mode not in ("preserve", "legacy-white-key"):
+        raise ValueError("Unknown alpha mode")
     with Image.open(source) as image:
         frames, ends, total = [], [], 0
         for index in range(image.n_frames):
@@ -45,7 +47,14 @@ def selected_frames(source, side):
     for index in range(20):
         time = index * total / 20
         chosen = next((i for i,end in enumerate(ends) if end > time),len(frames)-1)
-        output.append(exterior_alpha(frames[chosen]).resize((side,side),Image.Resampling.LANCZOS))
+        frame = frames[chosen]
+        if frame.getchannel("A").getextrema()[1] == 0:
+            raise ValueError("Blank alpha frame; review the master before LINE encoding")
+        if alpha_mode == "legacy-white-key":
+            frame = exterior_alpha(frame)
+        elif frame.getchannel("A").getextrema()[0] == 255:
+            raise ValueError("Opaque input: provide a reviewed RGBA master; background removal is not LINE encoding")
+        output.append(frame.resize((side,side),Image.Resampling.LANCZOS))
     return output, total
 
 
@@ -59,7 +68,8 @@ def validate(path, expected_size, main=False):
         for index in range(image.n_frames):
             image.seek(index)
             duration += image.info.get("duration",0)
-            assert image.convert("RGBA").getchannel("A").getextrema()[0] == 0
+            extrema = image.convert("RGBA").getchannel("A").getextrema()
+            assert extrema[0] == 0 and extrema[1] > 0
         assert abs(duration-4000) < 1
         return {"frames":image.n_frames,"duration_ms":duration,"bytes":path.stat().st_size,
                 "sha256":hashlib.sha256(path.read_bytes()).hexdigest()}
@@ -70,7 +80,7 @@ def encode(frames, target, palettes=(None, 192, 128)):
         options = {}
         values = frames
         if colors:
-            # APNG palette frames must share the same palette, including transparency.
+            # Reduce RGB entropy, never threshold the approved alpha channel.
             samples = Image.new("RGB", (64 * len(frames), 64))
             for i, frame in enumerate(frames):
                 samples.paste(frame.convert("RGB").resize((64, 64)), (i * 64, 0))
@@ -78,18 +88,16 @@ def encode(frames, target, palettes=(None, 192, 128)):
             values = []
             for frame in frames:
                 value = frame.convert("RGB").quantize(palette=palette, dither=Image.Dither.NONE)
-                shared_palette = palette.getpalette()
-                value.putpalette(shared_palette + [0] * (768 - len(shared_palette)))
-                value.paste(255, mask=frame.getchannel("A").point(lambda a: 255 if a < 128 else 0))
+                value = value.convert("RGBA")
+                value.putalpha(frame.getchannel("A"))
                 values.append(value)
-            options["transparency"] = 255
         values[0].save(target,format="PNG",save_all=True,append_images=values[1:],duration=200,loop=1,disposal=0,blend=0,optimize=True,**options)
         if target.stat().st_size <= 1_000_000:
             return colors
     raise ValueError("APNG exceeds file limit after bounded encoding variants")
 
 
-def export_pack(catalog, root, pack_id, output):
+def export_pack(catalog, root, pack_id, output, *, alpha_mode="preserve"):
     pack = next(p for p in catalog["packs"] if p["id"] == pack_id)
     stickers = pack["stickers"]["ja"]
     if len(stickers) not in (8,16,24):
@@ -102,7 +110,7 @@ def export_pack(catalog, root, pack_id, output):
         assert parsed.scheme == "https" and parsed.netloc == "aya.lazying.art"
         source = (root/parsed.path.lstrip("/")).resolve()
         source.relative_to(root.resolve())
-        frames, original_ms = selected_frames(source,270)
+        frames, original_ms = selected_frames(source,270,alpha_mode=alpha_mode)
         target = output/f"{number:02d}.png"
         colors = encode(frames,target)
         rows.append({"number":number,"id":sticker["id"],"label":sticker["label"],"file":target.name,
@@ -117,7 +125,8 @@ def export_pack(catalog, root, pack_id, output):
     thumb.alpha_composite(tile,(11,0));thumb.save(output/"tab.png")
     receipt = {"pack":pack_id,"name":pack["name"],"english":pack["english"],"language":"ja",
                "status":"local conversion; visual review and platform upload pending",
-               "changes":["20 time-sampled frames", "4 seconds, one loop", "perimeter-connected near-white removed", "270px square; originals preserved"],"stickers":rows}
+               "alpha_mode":alpha_mode,
+               "changes":["20 time-sampled frames", "4 seconds, one loop", "approved alpha preserved" if alpha_mode == "preserve" else "UNREVIEWED legacy white key", "270px square; originals preserved"],"stickers":rows}
     (output/"manifest.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
     with zipfile.ZipFile(output/"line-upload.zip","w",zipfile.ZIP_DEFLATED) as archive:
         for name in ["main.png","tab.png"]+[r["file"] for r in rows]:archive.write(output/name,name)
@@ -131,5 +140,7 @@ if __name__ == "__main__":
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("artwork_root",type=Path);p.add_argument("pack");p.add_argument("output",type=Path)
     p.add_argument("--catalog",type=Path,default=Path("public/catalog.json"))
+    p.add_argument("--alpha-mode",choices=("preserve","legacy-white-key"),default="preserve",
+                   help="Preserve reviewed transparency; legacy key is for comparison only")
     args=p.parse_args()
-    print(json.dumps(export_pack(json.loads(args.catalog.read_text()),args.artwork_root,args.pack,args.output)))
+    print(json.dumps(export_pack(json.loads(args.catalog.read_text()),args.artwork_root,args.pack,args.output,alpha_mode=args.alpha_mode)))
