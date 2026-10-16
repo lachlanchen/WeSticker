@@ -93,7 +93,21 @@ CREATE TABLE IF NOT EXISTS native_links(
 CREATE TABLE IF NOT EXISTS shared_grants(
  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
  issuer TEXT NOT NULL,subject TEXT NOT NULL,link_id TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS shared_account_attempts(
+ id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ session_hash TEXT NOT NULL,purpose TEXT NOT NULL,subject TEXT,created REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS shared_points_connections(
+ user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+ issuer TEXT NOT NULL,subject TEXT NOT NULL,link_id TEXT NOT NULL,
+ state TEXT NOT NULL,revision TEXT NOT NULL DEFAULT '0',
+ UNIQUE(issuer,subject));
+CREATE TABLE IF NOT EXISTS shared_account_returns(
+ id TEXT PRIMARY KEY,purpose TEXT NOT NULL,subject TEXT NOT NULL,
+ completion_id TEXT NOT NULL,created REAL NOT NULL);
 """)
+        for table in ("sessions", "native_links"):
+            if "auth_kind" not in {r["name"] for r in db.execute(f"PRAGMA table_info({table})")}:
+                db.execute(f"ALTER TABLE {table} ADD COLUMN auth_kind TEXT NOT NULL DEFAULT 'legacy'")
 
 
 def uid():

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 import { api, setCSRF, type Boot } from "./api";
 import { WebPlans } from "./WebPlans";
+import { SharedAccountPanel } from "./SharedAccountPanel";
 
 export function AccountScreen({
   onAccount,
@@ -61,6 +62,7 @@ export function AccountScreen({
       </header>
       <h2>{boot.user.name}</h2>
       <WebPlans key={boot.user.id} boot={boot} onUpdated={update} />
+      <SharedAccountPanel key={boot.user.id} owner={boot.user.id} />
       {error && (
         <p role="alert" className="studio-error">
           {error}

@@ -87,6 +87,13 @@ class SharedIdentity:
 
     def associate(self, user_id, identity, identifier):
         with database(self.cfg) as db:
+            db.execute("BEGIN IMMEDIATE")
+            mapping = db.execute("SELECT user_id FROM identities WHERE issuer=? AND subject=?",
+                                 (identity.issuer, identity.subject)).fetchone()
+            existing = db.execute("SELECT issuer,subject FROM shared_grants WHERE user_id=?", (user_id,)).fetchone()
+            if (not mapping or mapping["user_id"] != user_id or
+                    (existing and tuple(existing) != (identity.issuer, identity.subject))):
+                abort(409, description="This identity is already linked to a different account. No accounts were merged.")
             db.execute(
                 "INSERT OR REPLACE INTO shared_grants VALUES(?,?,?,?)",
                 (user_id, identity.issuer, identity.subject, identifier),

@@ -3,6 +3,8 @@
   "state": "data",
   "local_accounts": false,
   "providers": {},
+  "shared_account_linking_enabled": false,
+  "shared_points_read_enabled": false,
   "native_billing": {
     "apple": {
       "bundle_id": "art.lazying.westicker",

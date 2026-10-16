@@ -360,7 +360,7 @@ def register_studio(app, cfg):
         id = uid()
         with database(cfg) as db:
             db.execute(
-                "INSERT INTO native_links VALUES(?,?,NULL,?,0)",
+                "INSERT INTO native_links(id,challenge,user_id,expires,used) VALUES(?,?,NULL,?,0)",
                 (id, challenge, time.time() + 600),
             )
         suffix = "&native_return=1" if body.get("app_return") is True else ""
@@ -375,8 +375,8 @@ def register_studio(app, cfg):
             abort(400)
         with database(cfg) as db:
             result = db.execute(
-                "UPDATE native_links SET user_id=? WHERE id=? AND user_id IS NULL AND expires>? AND used=0",
-                (user["id"], id, time.time()),
+                "UPDATE native_links SET user_id=?,auth_kind=? WHERE id=? AND user_id IS NULL AND expires>? AND used=0",
+                (user["id"], user["auth_kind"], id, time.time()),
             )
             if result.rowcount != 1:
                 abort(
@@ -410,4 +410,4 @@ def register_studio(app, cfg):
                 return jsonify(state="pending"), 202
             db.execute("UPDATE native_links SET used=1 WHERE id=?", (id,))
             user = row["user_id"]
-        return ext["login_user"](user, native=True)
+        return ext["login_user"](user, native=True, auth_kind=row["auth_kind"])

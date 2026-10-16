@@ -152,6 +152,19 @@
 .creator-workspace .signin-switch { border: 0; font-weight: 400; }
 .studio-login form > .primary { min-height: 46px; }
 .account-workspace { max-width: 820px; }
+.shared-account { padding: 20px 0; margin: 16px 0; border-block: 1px solid #dbe2e8; }
+.shared-account-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.shared-account-heading h2 { margin: 0; font-size: 18px; }
+.shared-account-heading button { width: 36px; height: 36px; padding: 8px; flex: 0 0 36px; }
+.shared-account h3 { font-size: 16px; margin-bottom: 4px; }
+.shared-account p { overflow-wrap: anywhere; }
+.shared-points-balance { display: grid; gap: 4px; margin: 12px 0; }
+.shared-points-balance strong { color: #16765c; font-size: 20px; overflow-wrap: anywhere; }
+.shared-points-balance time { color: #536273; font-size: 13px; }
+.shared-account-consent { display: grid; gap: 12px; margin: 12px 0; }
+.shared-account-consent label { display: block; line-height: 1.5; }
+.shared-account-consent input[type="password"] { display: block; width: 100%; margin-top: 6px; }
+.shared-account-consent input[type="checkbox"] { width: auto; margin-right: 8px; }
 .account-delete { margin: 28px 0; border-top: 1px solid #dce7ea; padding-top: 20px; }
 .account-delete p { color: #526a78; line-height: 1.6; }
 .account-delete label { margin: 16px 0; max-width: 320px; }

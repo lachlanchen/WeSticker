@@ -83,14 +83,14 @@ def create_app(override=None):
                 token = authorization[7:]
             with database(cfg) as db:
                 row = db.execute(
-                    "SELECT u.*,s.csrf FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>?",
+                    "SELECT u.*,s.csrf,s.auth_kind FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>?",
                     (hashlib.sha256(token.encode()).hexdigest(), time.time()),
                 ).fetchone()
                 g.user = dict(row) if row else None
             shared = app.extensions.get("westicker_shared_identity")
             # A pending remote revocation must not prevent a CSRF-protected
             # retry of local logout or account deletion.
-            if g.user and shared and request.path not in {"/api/auth/logout", "/api/account/delete"}:
+            if g.user and g.user["auth_kind"] != "local" and shared and request.path not in {"/api/auth/logout", "/api/account/delete", "/api/account/shared/points/disconnect"}:
                 shared.validate(g.user["id"])
         if required and not g.user:
             abort(401, description="Sign in to keep your creations private.")
@@ -135,17 +135,18 @@ def create_app(override=None):
             abort(404)
         return dict(row)
 
-    def login_user(user_id, ttl=86400 * 14, native=False):
+    def login_user(user_id, ttl=86400 * 14, native=False, auth_kind="local"):
         raw = secrets.token_urlsafe(32)
         csrf = secrets.token_urlsafe(24)
         with database(cfg) as db:
             db.execute(
-                "INSERT INTO sessions VALUES(?,?,?,?)",
+                "INSERT INTO sessions(token,user_id,csrf,expires,auth_kind) VALUES(?,?,?,?,?)",
                 (
                     hashlib.sha256(raw.encode()).hexdigest(),
                     user_id,
                     csrf,
                     time.time() + ttl,
+                    auth_kind,
                 ),
             )
         result = jsonify(ok=True, token=raw, csrf=csrf) if native else jsonify(ok=True)
@@ -327,6 +328,7 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
 
     @app.post("/api/auth/logout")
     def logout():
+        user = current(False)
         auth = request.headers.get("Authorization", "")
         raw = (
             auth[7:]
@@ -338,6 +340,8 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
                 "DELETE FROM sessions WHERE token=?",
                 (hashlib.sha256(raw.encode()).hexdigest(),),
             )
+        if user:
+            app.extensions["westicker_shared_account"].disconnect(user["id"])
         result = jsonify(ok=True)
         result.delete_cookie("westicker_session")
         return result
@@ -383,6 +387,7 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
                 )
             ]
             shared = app.extensions.get("westicker_shared_identity")
+            app.extensions["westicker_shared_account"].disconnect(user["id"], required=True)
             if shared:
                 shared.erase(user["id"])
             app.extensions["westicker"]["delete_native_account"](db, user["id"])
@@ -955,6 +960,8 @@ h1{font-size:26px;line-height:1.25}p{color:#526a78}a{color:#077982}
     from .native_billing import register_native_billing
 
     register_auth(app, cfg)
+    from .shared_account import register_shared_account
+    register_shared_account(app, cfg)
     register_billing(app, cfg)
     register_market(app, cfg)
     register_wechat(app, cfg)

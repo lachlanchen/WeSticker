@@ -118,12 +118,12 @@ def register_auth(app, cfg):
                 )
         if grant:
             shared.associate(id, *grant)
-        response = app.extensions["westicker"]["login_user"](id, ttl=ttl)
+        response = app.extensions["westicker"]["login_user"](id, ttl=ttl, auth_kind="shared" if grant else "local")
         return return_to_app(response)
 
     @app.get("/auth/<provider>/start")
     def start(provider):
-        keys = ("web_destination", "native_intent", "shared_browser")
+        keys = ("web_destination", "native_intent", "shared_browser", "shared_operation")
         previous = {key: session[key] for key in keys if key in session}
         try:
             return start_checked(provider)
@@ -135,6 +135,7 @@ def register_auth(app, cfg):
             raise
 
     def start_checked(provider):
+        session.pop("shared_operation", None)
         # Only app-owned tabs may be restored; this is not an open redirect.
         session.pop("web_destination", None)
         destination = request.args.get("view")
@@ -177,6 +178,8 @@ def register_auth(app, cfg):
                     with database(cfg) as db:
                         linked = db.execute("SELECT 1 FROM shared_grants WHERE user_id=?", (user["id"],)).fetchone()
                     if linked:
+                        if user.get("auth_kind") == "local":
+                            shared.validate(user["id"])
                         return return_to_app()
                 return shared.start()
             issuer = options["issuer"].rstrip("/")
@@ -231,6 +234,8 @@ def register_auth(app, cfg):
             abort(404)
         if provider == "lazyingart":
             if shared:
+                if session.get("shared_operation"):
+                    return app.extensions["westicker_shared_account"].complete()
                 identity, identifier = shared.complete()
                 if identity is None:
                     session.pop("native_intent", None)

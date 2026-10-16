@@ -20,7 +20,7 @@ from server.worker import work_once
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "test", choices=["chat", "browser", "local", "billing", "login", "downloads"], default="chat", nargs="?"
+        "test", choices=["chat", "browser", "local", "billing", "login", "downloads", "shared"], default="chat", nargs="?"
     )
     args = parser.parse_args()
     logging.getLogger("werkzeug").setLevel(logging.ERROR)
@@ -32,6 +32,7 @@ def main():
         "billing": "web-billing-ui-test.mjs",
         "login": "login_entry_test.mjs",
         "downloads": "collection_download_test.mjs",
+        "shared": "shared_account_test.mjs",
     }[args.test]
     with tempfile.TemporaryDirectory(prefix="westicker-qa-") as state:
         app = create_app(
