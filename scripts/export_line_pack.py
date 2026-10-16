@@ -8,6 +8,8 @@ import argparse
 import hashlib
 import html
 import json
+import subprocess
+import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
 import zipfile
@@ -95,6 +97,68 @@ def encode(frames, target, palettes=(None, 192, 128)):
         if target.stat().st_size <= 1_000_000:
             return colors
     raise ValueError("APNG exceeds file limit after bounded encoding variants")
+
+
+def encode_soft_palette(frames, target, pngquant="pngquant"):
+    """Joint RGBA palette fallback, gated on decoded alpha preservation.
+
+    Unlike binary GIF transparency, indexed PNG supports soft palette alpha.
+    This is lossy color/edge quantization and must be reported and reviewed.
+    """
+    if len(frames) != 20 or any(f.size != frames[0].size for f in frames):
+        raise ValueError("Expected twenty equal-size reviewed RGBA frames")
+    width, height = frames[0].size
+    atlas = Image.new("RGBA", (width*5, height*4))
+    for i, frame in enumerate(frames):
+        atlas.paste(frame, ((i%5)*width, (i//5)*height))
+    with tempfile.TemporaryDirectory(prefix="line-palette-") as temporary:
+        source, quantized = Path(temporary)/"source.png", Path(temporary)/"palette.png"
+        atlas.save(source)
+        subprocess.run([pngquant, "256", "--quality=65-100", "--speed", "1",
+                        "--nofs", "--output", str(quantized), str(source)], check=True,
+                       capture_output=True, timeout=180)
+        with Image.open(quantized) as palette:
+            values = [palette.crop(((i%5)*width, (i//5)*height,
+                                    (i%5+1)*width, (i//5+1)*height)) for i in range(20)]
+            transparency = palette.info.get("transparency")
+            # RGBA palette clustering can assign opaque interiors alpha 247/248.
+            # Snap only this near-opaque palette tail, then measure the decoded
+            # result against every source frame. Lower-alpha edges remain soft.
+            if isinstance(transparency, bytes):
+                transparency = bytes(255 if a >= 247 else a for a in transparency)
+            for value in values:
+                value.info["transparency"] = transparency
+            values[0].save(target, format="PNG", save_all=True, append_images=values[1:],
+                           duration=200, loop=1, disposal=0, blend=0, transparency=transparency)
+    # Keep this module dependency-light for native export environments.
+    absolute, pixels, lost_solid, solid = 0, 0, 0, 0
+    with Image.open(target) as decoded:
+        timeline = []
+        elapsed = 0.0
+        for i in range(decoded.n_frames):
+            decoded.seek(i)
+            duration = float(decoded.info.get("duration", 0))
+            if duration <= 0:
+                raise ValueError("Palette encoding lost frame timing")
+            timeline.append((elapsed, elapsed+duration, decoded.convert("RGBA").getchannel("A").tobytes()))
+            elapsed += duration
+        if abs(elapsed-len(frames)*200) >= 1:
+            raise ValueError("Palette encoding changed the duration")
+        for i, original in enumerate(frames):
+            before = original.getchannel("A").tobytes()
+            # Pillow coalesces identical adjacent frames. Compare every source
+            # time sample, not the encoded frame index.
+            after = next(alpha for start,end,alpha in timeline if start <= i*200+100 < end)
+            for a, b in zip(before, after):
+                absolute += abs(a-b)
+                pixels += 1
+                solid += a == 255
+                lost_solid += a == 255 and b < 250
+    if absolute/max(1,pixels) > 1.5 or lost_solid/max(1,solid) > .001:
+        raise ValueError("Soft-palette fallback failed alpha fidelity gate")
+    validate(target, frames[0].size)
+    return {"method":"joint-rgba-palette-256", "mean_alpha_error_255":absolute/pixels,
+            "solid_loss_fraction":lost_solid/max(1,solid)}
 
 
 def export_pack(catalog, root, pack_id, output, *, alpha_mode="preserve"):

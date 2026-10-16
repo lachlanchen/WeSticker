@@ -103,3 +103,45 @@ def test_apng_retains_every_soft_alpha_value(tmp_path, palettes):
         for index, original in enumerate(frames):
             image.seek(index)
             assert image.convert("RGBA").getchannel("A").tobytes() == original.getchannel("A").tobytes()
+
+
+def test_joint_palette_keeps_white_parts_and_soft_edges(tmp_path):
+    import shutil
+    if not shutil.which("pngquant"):
+        pytest.skip("Optional pngquant not installed")
+    frames = []
+    for i in range(20):
+        frame = Image.new("RGBA", (270, 270))
+        draw = ImageDraw.Draw(frame)
+        draw.rectangle((30+i, 30, 130+i, 150), fill="white")
+        draw.line((29+i, 30, 29+i, 150), fill=(255,255,255,100))
+        draw.rectangle((60+i, 70, 80+i, 100), fill=(0,0,0,0))
+        frames.append(frame)
+    target = tmp_path/"indexed.png"
+    report = line.encode_soft_palette(frames, target)
+    assert report["solid_loss_fraction"] == 0
+    with Image.open(target) as image:
+        assert image.n_frames == 20
+        for i in range(20):
+            image.seek(i)
+            rgba = image.convert("RGBA")
+            assert rgba.getpixel((40+i,60))[3] == 255
+            assert rgba.getpixel((65+i,80))[3] == 0
+            assert 0 < rgba.getpixel((29+i,60))[3] < 255
+
+
+def test_joint_palette_accepts_identical_frames_with_preserved_timing(tmp_path):
+    import shutil
+    if not shutil.which("pngquant"):
+        pytest.skip("Optional pngquant not installed")
+    frames = []
+    for index in range(10):
+        frame = Image.new("RGBA", (80,80))
+        ImageDraw.Draw(frame).rectangle((10+index,10,40+index,60), fill="white")
+        frames.extend([frame,frame.copy()])
+    target = tmp_path/"coalesced.png"
+    report = line.encode_soft_palette(frames,target)
+    assert report["solid_loss_fraction"] == 0
+    result = line.validate(target,(80,80))
+    assert result["duration_ms"] == 4000
+    assert 5 <= result["frames"] <= 20
