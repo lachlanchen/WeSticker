@@ -53,3 +53,35 @@ unchanged; no duplicate Android package is needed.
 The existing AppKit pixel helper accepts `--offscreen` for shared-host checks.
 It can verify native GIF play/pause/resume without bringing a window forward;
 that component check does not establish whole-app or Monterey runtime quality.
+
+## Shared Build Guard
+
+`scripts/apple_build_guard.py` provides the protocol-1 atomic-directory wrapper
+for an explicitly admitted operation. `run_guarded` checks resources/processes
+before acquisition and again under `/tmp/lazyingart-apple-build.lock`. Callers
+must supply real preflight and owned-resource cleanup checks; neither a queued
+position nor this helper grants a host slot. It is not an automatic release
+scheduler and does not wrap the existing signing commands implicitly.
+
+The owner record contains the host, thread, random token, wrapper PID/start,
+bounded operation and handback reference. Exact directory identity and metadata
+must still match at release. An existing file, directory, symlink or partial
+record is occupied. No recursive removal, stale-lock stealing or EXIT cleanup
+is implemented.
+
+Each foreground child has its own process group. Direct-child exit alone is
+insufficient: the group must be gone, and the caller must verify any simulator,
+detached helper or other QA cleanup. Process groups do not prove that an
+arbitrary detached service stopped. Failed/unknown probes, interrupted launches,
+timeouts and unverified cleanup retain the guard for explicit owner recovery.
+A timeout does not kill the child or authorize a second operation. Confirm the
+exact remaining processes and safe end condition before handing back the host.
+
+Run disposable Linux tests without acquiring any real shared-host lock:
+
+```bash
+.venv/bin/python -m pytest -q tests/test_apple_build_guard.py
+```
+
+Native-host integration and actual guard acquisition/release remain unverified
+until the admitted Mac round records its operation and cleanup receipt.
