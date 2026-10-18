@@ -14,6 +14,18 @@ from urllib.parse import urlencode
 from apple_release import Apple, BUNDLE, private_write
 
 
+def existing_internal_group(api, app):
+    groups = [g for g in api.list("betaGroups", app=app)
+              if g["attributes"]["name"] == "WeSticker Internal"]
+    if len(groups) != 1:
+        raise RuntimeError("Expected one existing WeSticker Internal group; no group created")
+    group = groups[0]
+    if not group["attributes"]["isInternalGroup"] or api.call(
+            "/v1/betaGroups/" + group["id"] + "/app")["data"]["id"] != app:
+        raise RuntimeError("Wrong group")
+    return group
+
+
 def release_notes(action, path):
     if path is None:
         if action == "attach":
@@ -93,22 +105,8 @@ def main():
     if a.action == "status" or state != "VALID":
         print(json.dumps({"platform": expected, "build": manifest["build"], "state": state}))
         return
-    groups = [g for g in api.list("betaGroups", app=app) if g["attributes"]["name"] == "WeSticker Internal"]
-    if not groups:
-        intent = root.parent / "internal-group-intent.json"
-        if intent.exists():
-            raise RuntimeError("Prior group creation unresolved")
-        private_write(intent, {"app": app})
-        group = api.call("/v1/betaGroups", {"data": {"type": "betaGroups", "attributes": {
-            "name": "WeSticker Internal", "isInternalGroup": True}, "relationships": {
-                "app": {"data": {"type": "apps", "id": app}}}}})["data"]
-    elif len(groups) == 1:
-        group = groups[0]
-    else:
-        raise RuntimeError("Ambiguous internal groups")
+    group = existing_internal_group(api, app)
     gid = group["id"]
-    if not group["attributes"]["isInternalGroup"] or api.call("/v1/betaGroups/" + gid + "/app")["data"]["id"] != app:
-        raise RuntimeError("Wrong group")
     if build["attributes"].get("usesNonExemptEncryption") is None:
         api.call("/v1/builds/" + bid, {"data": {"type": "builds", "id": bid,
                  "attributes": {"usesNonExemptEncryption": False}}}, "PATCH")

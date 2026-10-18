@@ -32,3 +32,32 @@ def test_invalid_notes_rejected(publisher, tmp_path, text):
     notes.write_text(text)
     with pytest.raises(ValueError, match="1-4000"):
         publisher.release_notes("attach", notes)
+
+
+@pytest.mark.parametrize("count,internal,app", [(0, True, "app"), (2, True, "app"),
+                                               (1, False, "app"), (1, True, "other")])
+def test_group_lookup_fails_closed_without_store_writes(publisher, count, internal, app):
+    class API:
+        def list(self, resource, **filters):
+            return [{"id": "group", "attributes": {"name": "WeSticker Internal",
+                                                     "isInternalGroup": internal}}] * count
+
+        def call(self, path):
+            assert path == "/v1/betaGroups/group/app"
+            return {"data": {"id": app}}
+
+    with pytest.raises(RuntimeError):
+        publisher.existing_internal_group(API(), "app")
+
+
+def test_existing_internal_group_is_reused(publisher):
+    class API:
+        def list(self, resource, **filters):
+            assert resource == "betaGroups" and filters == {"app": "app"}
+            return [{"id": "group", "attributes": {"name": "WeSticker Internal", "isInternalGroup": True}}]
+
+        def call(self, path):
+            assert path == "/v1/betaGroups/group/app"
+            return {"data": {"id": "app"}}
+
+    assert publisher.existing_internal_group(API(), "app")["id"] == "group"

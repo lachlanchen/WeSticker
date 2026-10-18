@@ -130,7 +130,7 @@ struct StudioRootView: View {
                             VStack(spacing: 4) {
                                 Image(systemName: symbols[index]).font(.system(size: 21))
                                 Text(labels[index]).font(.caption)
-                            }.frame(maxWidth: .infinity).frame(height: 50)
+                            }.frame(maxWidth: .infinity).frame(minHeight: 50)
                                 .foregroundStyle(selected == index ? Color.accentColor : .secondary)
                                 .background(selected == index ? Color.accentColor.opacity(0.09) : .clear, in: RoundedRectangle(cornerRadius: 8))
                                 .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: selected == index)
@@ -193,14 +193,12 @@ struct CreatorView: View {
     @ObservedObject var store: CreatorStore
     let openAgent: () -> Void
     var close: (() -> Void)? = nil
-    @State private var picked: PhotosPickerItem?
-    @State private var loading = false
     @State private var selectedLabel = 0
     @State private var shared: SharedFile?
     @State private var document: PNGDocument?
     @State private var exporting = false
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     HStack {
@@ -213,8 +211,9 @@ struct CreatorView: View {
                         else if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) { NativeImage(data: data).frame(width: 96, height: 96).allowsHitTesting(false) }
                         VStack(alignment: .leading, spacing: 10) {
                             TextField("Character name", text: $store.draft.name).textFieldStyle(.roundedBorder)
-                            PhotosPicker(selection: $picked, matching: .images) { Label(store.photo == nil ? "Choose photo" : "Replace photo", systemImage: "photo.badge.plus") }.disabled(loading)
-                            if loading { ProgressView() }
+                            StudioPhotoPicker(title: store.photo == nil ? "Choose photo" : "Replace photo",
+                                load: { try store.importPhoto($0) },
+                                failed: { store.error = "Choose a supported photo smaller than 20 MB." })
                         }
                     }
                     Toggle("I have permission to use this photo", isOn: $store.draft.rights)
@@ -247,15 +246,6 @@ struct CreatorView: View {
                         }
                     }
                 }
-        }
-        .onChange(of: picked) { value in
-            guard let value else { return }
-            loading = true
-            Task { @MainActor in
-                defer { loading = false; picked = nil }
-                do { guard let data = try await value.loadTransferable(type: Data.self) else { return }; try store.importPhoto(data) }
-                catch { store.error = "Choose a supported photo smaller than 20 MB." }
-            }
         }
         .onChange(of: store.draft.rights) { if !$0 { store.draft.locked = false } }
         #if os(iOS)
@@ -304,12 +294,12 @@ struct AgentView: View {
     let openCreate: () -> Void
     @State private var replacing = false
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     Label("On-device planner", systemImage: "iphone").font(.subheadline).foregroundStyle(.secondary)
                     Text(store.draft.title).font(.title3.bold())
-                    TextField("Pack brief", text: $store.brief, axis: .vertical).lineLimit(3...6).textFieldStyle(.roundedBorder)
+                    StudioMultilineField(title: "Pack brief", text: $store.brief, lines: 3...6)
                     Picker("Theme", selection: $store.draft.theme) {
                         Text("Daily").tag("daily"); Text("Work").tag("office"); Text("Couple").tag("couple"); Text("Sports").tag("sports")
                     }.pickerStyle(.segmented)
@@ -320,8 +310,8 @@ struct AgentView: View {
                         Button { replacing = true } label: { Label("Apply to draft", systemImage: "checkmark") }
                     }
                     Divider()
-                    LabeledContent("Cloud AI", value: "Not connected")
-                    LabeledContent("WeChat upload", value: "Not connected")
+                    HStack { Text("Cloud AI"); Spacer(); Text("Not connected").foregroundStyle(.secondary) }
+                    HStack { Text("WeChat upload"); Spacer(); Text("Not connected").foregroundStyle(.secondary) }
                     if let error = store.error { Text(error).foregroundStyle(.red) }
                 }.padding(16).frame(maxWidth: 680)
             }.compactStudioHeader("Agent")

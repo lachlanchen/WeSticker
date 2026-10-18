@@ -4,6 +4,53 @@ import UIKit
 #endif
 
 final class CatalogTests: XCTestCase {
+    #if os(iOS)
+    func testRotationPreservesPreviewSearchAndPlayback() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-studio-origin", "https://westicker.lazying.art"]
+        XCUIDevice.shared.orientation = .portrait
+        app.launch()
+        defer { app.terminate(); XCUIDevice.shared.orientation = .portrait }
+        let query = app.textFields["Search collections"]
+        XCTAssertTrue(query.waitForExistence(timeout: 20))
+        query.tap(); query.typeText("a\n")
+        if app.buttons["Pause animations"].exists { app.buttons["Pause animations"].tap() }
+        let preview = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Preview ")).firstMatch
+        XCTAssertTrue(preview.waitForExistence(timeout: 20))
+        let label = preview.label
+        preview.tap()
+        XCTAssertTrue(app.buttons["Save GIF"].waitForExistence(timeout: 10))
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(app.buttons["Close preview"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Save GIF"].isHittable)
+        capture("Landscape preserves selected preview")
+        app.buttons["Close preview"].tap()
+        XCTAssertEqual(query.value as? String, "a")
+        XCTAssertTrue(app.buttons["Play animations"].isHittable)
+        XCTAssertTrue(app.buttons[label].exists)
+        XCUIDevice.shared.orientation = .portrait
+        XCTAssertTrue(app.buttons["Play animations"].waitForExistence(timeout: 10))
+        XCTAssertEqual(query.value as? String, "a")
+        capture("Portrait preserves search and paused playback")
+    }
+
+    func testLargeTextKeepsCatalogControlsReachable() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-studio-origin", "https://westicker.lazying.art",
+                                "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        defer { app.terminate() }
+        XCTAssertTrue(app.buttons["About WeSticker"].waitForExistence(timeout: 20))
+        for title in ["Stickers", "Create", "Library", "Account"] {
+            XCTAssertTrue(app.buttons[title].isHittable, title)
+        }
+        XCTAssertTrue(app.textFields["Search collections"].isHittable)
+        let preview = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Preview ")).firstMatch
+        XCTAssertTrue(preview.waitForExistence(timeout: 20))
+        XCTAssertTrue(preview.isHittable)
+        capture("Catalog accessibility extra large text")
+    }
+    #endif
     func testGIFPlaybackPauseAndResume() throws {
         let app = XCUIApplication()
         app.launchArguments += ["-studio-origin", "https://westicker.lazying.art"]
@@ -111,6 +158,14 @@ final class CatalogTests: XCTestCase {
         character.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: old.count) + "QA character")
         XCTAssertTrue(app.textFields["Caption 1"].waitForExistence(timeout: 10))
         let caption = app.textFields["Caption 1"].value as? String
+        #if os(iOS)
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(app.textFields["Character name"].waitForExistence(timeout: 10))
+        XCTAssertEqual(app.textFields["Character name"].value as? String, "QA character")
+        XCTAssertEqual(app.textFields["Caption 1"].value as? String, caption)
+        capture("Rotated local draft remains intact")
+        XCUIDevice.shared.orientation = .portrait
+        #endif
         capture("Native preserved local draft")
         app.terminate()
         app.launch()

@@ -266,7 +266,7 @@ struct NativeBillingAccountView: View {
     @ObservedObject var cloud: CloudStudioStore
     @ObservedObject var billing: NativeBillingStore
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             Form {
                 Section {
                     if cloud.busy { ProgressView() }

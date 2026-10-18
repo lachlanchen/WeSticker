@@ -189,10 +189,12 @@ struct SharedFile: Identifiable { let url: URL; var id: String { url.path } }
 @main
 struct WeStickerApp: App {
     var body: some Scene {
-        WindowGroup { StudioRootView().tint(Color(red: 0.79, green: 0.19, blue: 0.37)) }
-        #if os(macOS)
-        .defaultSize(width: 1120, height: 800)
-        #endif
+        WindowGroup {
+            StudioRootView().tint(Color(red: 0.79, green: 0.19, blue: 0.37))
+                #if os(macOS)
+                .frame(idealWidth: 1120, idealHeight: 800)
+                #endif
+        }
     }
 }
 
@@ -206,6 +208,10 @@ struct CatalogView: View {
     @AppStorage("catalog-language") private var language = "en"
     @AppStorage("catalog-favorites") private var saved = ""
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
+    @ScaledMetric(relativeTo: .subheadline) private var navigationHeight = 72.0
     @State private var selected = "vol-01"
     @State private var query = ""
     @State private var onlySaved = false
@@ -231,7 +237,7 @@ struct CatalogView: View {
         saved = values.sorted().joined(separator: "|")
     }
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
@@ -239,19 +245,16 @@ struct CatalogView: View {
                     if !query.isEmpty { Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }.accessibilityLabel("Clear search") }
                 }.padding(12).background(Color.gray.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
                 GeometryReader { geometry in
-                    if geometry.size.width >= 700 {
-                        HStack(alignment: .top, spacing: 16) {
-                            ScrollView { LazyVStack(spacing: 6) { ForEach(filtered) { packButton($0) } } }.frame(width: 210)
-                            content.frame(maxWidth: .infinity)
-                        }
-                    } else {
-                        VStack(spacing: 12) {
+                    let sidebar = usesSidebar(width: geometry.size.width)
+                    StudioCatalogLayout(sidebar: sidebar, navigationHeight: navigationHeight) {
+                        if sidebar {
+                            ScrollView { LazyVStack(spacing: 6) { ForEach(filtered) { packButton($0) } } }
+                        } else {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: 6) { ForEach(filtered) { packButton($0).frame(width: 188) } }
-                            }.frame(height: 68)
-                            content
+                            }
                         }
-                    }
+                    } content: { content }
                 }
             }
             .padding(16)
@@ -299,6 +302,13 @@ struct CatalogView: View {
         .task { if let latest = await PublicCatalogStore.shared.load(), !Task.isCancelled { packs = latest } }
         #if os(macOS)
         .frame(minWidth: 640, minHeight: 500)
+        #endif
+    }
+    private func usesSidebar(width: CGFloat) -> Bool {
+        #if os(iOS)
+        return horizontalSizeClass == .regular && width >= 700
+        #else
+        return true
         #endif
     }
     private func packButton(_ pack: Pack) -> some View {

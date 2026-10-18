@@ -300,7 +300,7 @@ struct StudioLoginView: View {
     @State private var showServiceSettings = false
 
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             ScrollView {
                 VStack(spacing: 20) {
                     if let url = bundled("app-icon.png"), let data = try? Data(contentsOf: url) {
@@ -356,9 +356,9 @@ struct StudioServiceSettings: View {
     @ObservedObject var store: CloudStudioStore
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             Form {
-                TextField("HTTPS creator service", text: $store.origin).autocorrectionDisabled()
+                TextField("HTTPS creator service", text: $store.origin).disableAutocorrection(true)
                 if let base = try? store.validatedOrigin() {
                     Link("Terms", destination: URL(string: base + "/terms.html")!)
                     Link("Privacy", destination: URL(string: base + "/privacy.html")!)
@@ -384,7 +384,6 @@ struct CloudStudioView: View {
     @State private var character = ""
     @State private var rights = false
     @State private var creating = false
-    @State private var picked: PhotosPickerItem?
     @State private var showLocal = false
     @State private var exportURL: URL?
     @State private var showHistory = false
@@ -395,7 +394,7 @@ struct CloudStudioView: View {
     @State private var libraryPane = 0
 
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             VStack(spacing: 0) {
             GeometryReader { viewport in ScrollViewReader { proxy in ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
@@ -444,10 +443,10 @@ struct CloudStudioView: View {
                 Button { showServiceSettings = true } label: { Image(systemName: "gearshape") }.accessibilityLabel("Service settings")
             } }
             .sheet(isPresented: $showServiceSettings) { StudioServiceSettings(store: store) }
-            .sheet(isPresented: $creating) { NavigationStack { ScrollView { VStack(alignment: .leading, spacing: 16) {
+            .sheet(isPresented: $creating) { StudioNavigation { ScrollView { VStack(alignment: .leading, spacing: 16) {
                 if let w = store.workspace { creationForm(w) }
             }.padding() }.compactStudioHeader("Character references").toolbar { Button("Done") { creating = false } } }.frame(minWidth: 280, minHeight: 400) }
-            .sheet(isPresented: $showLocal) { NavigationStack {
+            .sheet(isPresented: $showLocal) { StudioNavigation {
                 CreatorView(store: local, openAgent: { showLocal = false })
                     .toolbar { Button("Close local draft") { showLocal = false } }
             } }
@@ -456,9 +455,6 @@ struct CloudStudioView: View {
                 ForEach(Array(history.enumerated()), id: \.offset) { _, row in if let id = row.asset { StudioAsset(store: store, id: id).frame(width: 150, height: 150); Text(row.label) } }
                 Button("Close") { showHistory = false }
             }.padding() }.frame(minWidth: 280, minHeight: 300) }
-            .onChange(of: picked) { value in if let value { store.perform {
-                if let data = try await value.loadTransferable(type: Data.self) { try await store.upload(data) }
-            } } }
             .task {
                 if !store.origin.isEmpty { store.perform { try await store.refresh() } }
                 while !Task.isCancelled {
@@ -486,7 +482,7 @@ struct CloudStudioView: View {
         HStack(alignment: .bottom) {
             Button { creating = true } label: { Image(systemName: "photo.badge.plus").font(.title3) }
                 .accessibilityLabel("Character references").disabled(store.busy)
-            TextField("Message your sticker assistant", text: Binding(get: { text }, set: { text = String($0.prefix(2000)) }), axis: .vertical).lineLimit(1...5).textFieldStyle(.roundedBorder)
+            StudioMultilineField(title: "Message your sticker assistant", text: Binding(get: { text }, set: { text = String($0.prefix(2000)) }))
                 .accessibilityIdentifier("chat-message-input")
             Button {
                 let message = text; text = ""; store.perform { try await store.chat(message) }
@@ -521,7 +517,10 @@ struct CloudStudioView: View {
         if character.isEmpty {
             TextField("Character name", text: $name).textFieldStyle(.roundedBorder)
             Toggle("I have permission to use these references", isOn: $rights)
-            PhotosPicker(selection: $picked, matching: .images) { Label("Upload reference (\(store.refs.count)/5)", systemImage: "photo.badge.plus") }.disabled(!rights || store.refs.count >= 5)
+            StudioPhotoPicker(title: "Upload reference (\(store.refs.count)/5)",
+                load: { data in store.perform { try await store.upload(data) } },
+                failed: { store.error = "Choose a supported photo smaller than 20 MB." })
+                .disabled(!rights || store.refs.count >= 5 || store.busy)
             ScrollView(.horizontal) { HStack { ForEach(store.refs, id: \.self) { id in VStack { StudioAsset(store: store, id: id).frame(width: 65, height: 65); Button { store.refs.removeAll { $0 == id } } label: { Image(systemName: "xmark.circle") } } } } }
         }
         TextField("Collection name", text: $title).textFieldStyle(.roundedBorder)
@@ -573,7 +572,7 @@ struct CloudStudioView: View {
             let url = FileManager.default.temporaryDirectory.appendingPathComponent("WeSticker-\(UUID().uuidString).zip")
             try data.write(to: url, options: .atomic); exportURL = url
         } }.disabled(store.dirty || store.rows.contains { !$0.approved })
-        if let exportURL { ShareLink(item: exportURL) { Label("Save or share ZIP", systemImage: "square.and.arrow.up") } }
+        if let exportURL { StudioShareZIP(url: exportURL) }
         Button("Version history") { store.perform {
             let result = try store.json(await store.request("/api/packs/\(p.id)/versions"))
             history = try (result["versions"] as? [[String: Any]] ?? []).flatMap { version in try JSONDecoder().decode([StudioRow].self, from: JSONSerialization.data(withJSONObject: version["items"] ?? [])) }
@@ -586,7 +585,7 @@ struct CloudStudioView: View {
             Toggle("Select \(index + 1)", isOn: Binding(get: { store.selected.contains(store.rows[index].id) }, set: { if $0 { store.selected.insert(store.rows[index].id) } else { store.selected.remove(store.rows[index].id) } })).labelsHidden().toggleStyle(.switch).frame(width: 45)
             VStack(alignment: .leading) {
                 TextField("Caption \(index + 1)", text: Binding(get: { store.rows[index].label }, set: { store.rows[index].label = String($0.prefix(32)); store.rows[index].approved = false; store.dirty = true })).textFieldStyle(.roundedBorder)
-                TextField("Action \(index + 1)", text: Binding(get: { store.rows[index].action ?? "" }, set: { store.rows[index].action = String($0.prefix(500)); store.rows[index].approved = false; store.dirty = true }), axis: .vertical).lineLimit(2...4).textFieldStyle(.roundedBorder)
+                StudioMultilineField(title: "Action \(index + 1)", text: Binding(get: { store.rows[index].action ?? "" }, set: { store.rows[index].action = String($0.prefix(500)); store.rows[index].approved = false; store.dirty = true }), lines: 2...4)
                 if let id = store.rows[index].asset { StudioAsset(store: store, id: id).frame(width: 110, height: 110); Toggle("Approve reference", isOn: Binding(get: { store.rows[index].approved }, set: { store.rows[index].approved = $0; store.dirty = true })) }
             }
             Button { store.selected.remove(store.rows[index].id); store.rows.remove(at: index); store.dirty = true } label: { Image(systemName: "trash") }.disabled(store.rows.count <= 1)

@@ -4,7 +4,8 @@ import AppKit
 struct GIFSmoke {
     static func main() throws {
         let app = NSApplication.shared
-        app.setActivationPolicy(.accessory)
+        let offscreen = CommandLine.arguments.contains("--offscreen")
+        app.setActivationPolicy(offscreen ? .prohibited : .accessory)
         let data = try Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[1]))
         let output = URL(fileURLWithPath: CommandLine.arguments[2], isDirectory: true)
         try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
@@ -13,7 +14,7 @@ struct GIFSmoke {
         let view = GIFImageView(frame: NSRect(x: 0, y: 0, width: 260, height: 260))
         view.imageScaling = .scaleProportionallyUpOrDown
         window.contentView = view
-        window.orderFrontRegardless()
+        if !offscreen { window.orderFrontRegardless() }
         defer { view.stop(); window.orderOut(nil) }
         view.load(data)
         func samples(_ phase: String) throws -> Int {
@@ -36,7 +37,7 @@ struct GIFSmoke {
         view.load(data)
         let resumed = try samples("resumed")
         precondition(playing > 1 && paused == 1 && resumed > 1, "GIF pixels must play, pause and resume")
-        let result: [String: Any] = ["playing_frames": playing, "paused_frames": paused, "resumed_frames": resumed, "native_appkit": true]
+        let result: [String: Any] = ["playing_frames": playing, "paused_frames": paused, "resumed_frames": resumed, "native_appkit": true, "offscreen": offscreen]
         let json = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
         try json.write(to: output.appendingPathComponent("result.json"))
         print(String(decoding: json, as: UTF8.self))
