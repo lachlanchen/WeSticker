@@ -47,3 +47,11 @@ def test_resize_and_accessibility_are_native_runtime_scenarios():
     assert "landscapeLeft" in qa and "portrait" in qa
     assert "UICTContentSizeCategoryAccessibilityXXXL" in qa
     assert "Save GIF" in qa
+
+
+def test_optional_close_is_conditional_view_not_conditional_toolbar_item():
+    creator = (SOURCES / "CreatorStudio.swift").read_text()
+    toolbar = creator.split('.compactStudioHeader("Create")', 1)[1].split('.onChange', 1)[0]
+    assert '.toolbar {\n                    ToolbarItem(placement: .primaryAction) {\n                        if let close {' in toolbar
+    assert 'Button(action: close)' in toolbar
+    assert '.accessibilityLabel("Close local draft")' in toolbar

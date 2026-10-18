@@ -2,7 +2,9 @@
 
 This candidate targets macOS 12.0 and preserves the existing iOS 16.0 baseline.
 Compatibility source is prepared; native build and runtime qualification are
-required before distributing it. Current internal builds remain iOS 1.0 (14)
+required before distributing it. The first unsigned compile found a Monterey
+toolbar availability error, now repaired in source but not yet recompiled.
+Current internal builds remain iOS 1.0 (14)
 and macOS 1.0 (11) until a new candidate is validated and processed.
 
 ## Implementation
@@ -20,6 +22,13 @@ state stay in their existing owners. Resizing does not submit work or purchases.
 The bottom tabs can grow with larger text instead of clipping to a fixed height.
 
 ## Qualification
+
+The first unsigned universal Mac Debug compile stopped with exit65 on conditional
+`ToolbarContentBuilder.buildIf`, which requires macOS13. The local draft now uses
+an unconditional toolbar item with an optional button inside its ViewBuilder.
+The close action and accessibility label are unchanged. A source regression
+checks that placement; a fresh native compile and runtime check are still needed.
+No successful binary or internal upload resulted from the failed round.
 
 Local checks: 495 Python tests passed, 18 optional integrations skipped;
 TypeScript/Vite passed; isolated browser catalog, photo draft and export checks

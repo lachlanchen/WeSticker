@@ -240,8 +240,8 @@ struct CreatorView: View {
                 }.padding(16).frame(maxWidth: 680)
             }.compactStudioHeader("Create")
                 .toolbar {
-                    if let close {
-                        ToolbarItem(placement: .primaryAction) {
+                    ToolbarItem(placement: .primaryAction) {
+                        if let close {
                             Button(action: close) { Image(systemName: "xmark") }.accessibilityLabel("Close local draft")
                         }
                     }
