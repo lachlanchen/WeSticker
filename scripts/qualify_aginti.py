@@ -25,6 +25,9 @@ def main():
     parser.add_argument("--node", default="node")
     parser.add_argument("--public-reference", required=True, type=Path)
     parser.add_argument("--submit-one", action="store_true", required=True)
+    parser.add_argument("--chat-token-file", type=Path,
+                        help="Also qualify real chat -> apply -> quote -> image generation")
+    parser.add_argument("--chat-url", default="http://127.0.0.1:18646")
     args = parser.parse_args()
     os.umask(0o077)
     os.environ.pop("WESTICKER_CONFIG", None)
@@ -35,13 +38,17 @@ def main():
         "image_provider": "aginti", "aginti_root": args.aginti_root, "aginti_node": args.node,
         "aginti_qualified": True, "image_generation_enabled": True,
         "aginti_image_model": "nano-banana-2"}
+    if args.chat_token_file:
+        cfg.update(chat_provider="aginti", chat_agent_qualified=True,
+                   chat_agent_url=args.chat_url,
+                   chat_agent_token_file=str(args.chat_token_file.resolve()))
     if invoke(cfg, {"mode": "doctor"}) != {"image": True, "safety": True}:
         raise RuntimeError("AgInTi prerequisites unavailable")
     app = create_app(cfg)
     client = app.test_client()
-    def call(url, body):
+    def call(url, body, method="POST"):
         csrf = client.get("/api/bootstrap").json.get("csrf", "")
-        result = client.post(url, json=body, headers={"Origin": cfg["origin"], "X-CSRF-Token": csrf})
+        result = client.open(url, method=method, json=body, headers={"Origin": cfg["origin"], "X-CSRF-Token": csrf})
         if result.status_code not in (200, 201, 202):
             raise RuntimeError(f"Canary step failed: {url} {result.status_code}")
         return result.json
@@ -56,16 +63,34 @@ def main():
         "refs": [result.json["id"]]})["id"]
     call(f"/api/characters/{character}/lock", {"approved": True})
     pack = call("/api/packs", {"character": character, "title": "Aya says hello", "theme": "daily", "language": "en"})["id"]
+    chat_evidence = None
+    if args.chat_token_file:
+        request = {"text": "Create one cute greeting sticker for Aya Chan. Use the English caption Hello and a gentle natural hand wave. Please give me the caption/action table.",
+                   "attempt": "chat-to-image-qualification-01"}
+        reply = call(f"/api/packs/{pack}/chat", request)
+        assert call(f"/api/packs/{pack}/chat", request) == reply
+        proposal = reply["result"]
+        assert proposal["source"] == "assistant" and len(proposal["items"]) == 1
+        assert not client.get("/api/workspace").json["jobs"]
+        call(f"/api/packs/{pack}", {"items": proposal["items"], "revision": proposal["revision"]}, "PATCH")
+        chat_evidence = {"engine": proposal["engine"], "model": proposal["model"],
+                         "proposal": proposal, "replay_identical": True, "chat_created_no_jobs": True}
+        (state / "chat.json").write_text(json.dumps(chat_evidence, indent=2))
     item = client.get("/api/workspace").json["packs"][0]["items"][0]
-    payload = {"kind": "ai", "items": [item["id"]], "attempt": "aginti-public-aya-canary-01", "consent": True}
+    quote = call(f"/api/packs/{pack}/quote", {"kind": "ai", "items": [item["id"]]})
+    assert quote["can_generate"] is True and quote["credits"] == 1
+    payload = {"kind": "ai", "items": [item["id"]], "revision": quote["revision"],
+               "attempt": "aginti-public-aya-canary-01", "consent": True}
     job = call(f"/api/packs/{pack}/generate", payload)["id"]
+    (state / "submission.json").write_text(json.dumps({"pack": pack, "job": job, "quote": quote}, indent=2))
     assert call(f"/api/packs/{pack}/generate", payload)["id"] == job
     work_once(app.config["WESTICKER"])
     workspace = client.get("/api/workspace").json
     saved = workspace["jobs"][0]
     output = {"job": job, "state": saved["state"], "error": saved.get("error"),
         "pack": pack, "items": workspace["packs"][0]["items"], "provider": "aginti-grsai",
-        "live_image_request": True, "production_enabled": False}
+        "live_image_request": True, "production_enabled": False, "chat": chat_evidence,
+        "quote": quote, "replay_job_id_identical": True}
     (state / "qualification.json").write_text(json.dumps(output, indent=2))
     print(json.dumps(output, indent=2))
     if saved["state"] != "review":

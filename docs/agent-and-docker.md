@@ -143,6 +143,9 @@ restore app admission. Preserve the `agent-state` volume. A 90-second stop
 grace period exceeds the inference deadline; never force-kill an active request.
 
 Qualification evidence and rollout scope: [2026-10-15 release](agent-release-20261015.md).
+The [2026-10-24 creation check](chat-creation-qualification-20261024.md) verifies
+Flash and Pro against the live API, then a real chat-to-image-to-ZIP workflow.
+It also records the client selection fix and the limits of that qualification.
 
 ## Migration And Recovery
 

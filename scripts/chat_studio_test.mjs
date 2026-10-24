@@ -70,6 +70,13 @@ try {
       "Hello there",
   );
   await page.getByRole("tab", {name: "Sticker plan", exact: true}).click();
+  await page.getByRole("tab", {name: "Chat", exact: true}).click();
+  // New proposals can replace all row IDs, not just edit existing captions.
+  await page.getByLabel("Message your sticker assistant").fill("words: Hello there");
+  await page.getByRole("button", {name: "Send message", exact: true}).click();
+  await page.locator('.chat-exchange').nth(2).getByRole("button", {name: "Apply table", exact: true}).click();
+  await page.waitForFunction(() => document.querySelector('[aria-label="Select sticker 1"]')?.checked);
+  await page.getByRole("tab", {name: "Sticker plan", exact: true}).click();
   await page
     .getByLabel("Action 1", { exact: true })
     .fill("Lift one hand, wave twice, blink and relax.");

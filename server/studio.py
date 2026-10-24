@@ -81,7 +81,8 @@ def propose(cfg, pack, text, maximum, history, request_id=None):
         evidence = {"engine": result["engine"], "model": result.get("model", "")}
     elif cfg.get("chat_api_key"):
         payload = {
-            "model": cfg.get("chat_model", "deepseek-chat"),
+            "model": cfg.get("chat_model", "deepseek-flash"),
+            "thinking": {"type": "disabled"},
             "response_format": {"type": "json_object"},
             "max_tokens": 3500,
             "messages": [
@@ -90,7 +91,7 @@ def propose(cfg, pack, text, maximum, history, request_id=None):
                     "content": "You are AYA, a friendly, concise sticker-design assistant. Have a natural conversation. "
                     "Return JSON only: {reply:string,items:null|[{id?,label,action}]}. "
                     "For questions, greetings, brainstorming or clarification, reply conversationally with items:null. "
-                    "Only propose a table when the user asks for captions, actions or a concrete revision. "
+                    "Propose a table when the user asks to create stickers, captions, actions or a concrete revision. "
                     "Propose edits, never claim to render, upload or charge. Preserve existing row IDs for edits. "
                     "New rows omit id. Captions are short everyday words, at most 32 characters. Actions are "
                     "specific natural gestures with anticipation and settling, not whole-body mechanical rotations. "

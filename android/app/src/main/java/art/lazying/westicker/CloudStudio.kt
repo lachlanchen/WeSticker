@@ -233,6 +233,8 @@ class CloudStudioStore(val context: Context) {
         val pack = current ?: return
         api("/api/packs/${pack.getString("id")}", JSONObject().put("items", proposal ?: JSONArray(rows)).put("revision", revision ?: pack.getInt("revision")), "PATCH")
         dirty = false; quote = null; refresh()
+        selected = selected.intersect(rows.map { it.getString("id") }.toSet())
+        if (selected.isEmpty()) selected = rows.take(1).map { it.getString("id") }.toSet()
     }
     suspend fun chat(text: String) {
         if(current==null){

@@ -267,6 +267,10 @@ export function Studio({
     setPack(updated);
     packRef.current = updated;
     setRows(items);
+    setSelected((previous) => {
+      const retained = previous.filter((id) => items.some((row) => row.id === id));
+      return retained.length ? retained : items.slice(0, 1).map((row) => row.id);
+    });
     setDirty(false);
     dirtyRef.current = false;
     setQuote(null);

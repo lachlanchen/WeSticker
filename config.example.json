@@ -29,7 +29,7 @@
   "animation_enabled": false,
   "stripe_purchase_enabled": false,
   "moderation_model": "omni-moderation-latest",
-  "chat_model": "deepseek-chat",
+  "chat_model": "deepseek-flash",
   "chat_provider": "compatible",
   "chat_agent_url": "http://agent:8001",
   "chat_agent_token_file": "",

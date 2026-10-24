@@ -12,15 +12,25 @@ const errors = [];
 page.on("pageerror", e => errors.push(e.message));
 const checks = [];
 try {
+  const catalogResponse = await context.request.get(origin + "/api/catalog");
+  assert.equal(catalogResponse.status(), 200);
+  const catalog = await catalogResponse.json();
+  const motionURLs = catalog.packs.flatMap(pack =>
+    Object.values(pack.stickers).flatMap(stickers => stickers.map(sticker => sticker.motion || sticker.gif)));
   for (const width of [390, 1360]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(origin);
     await page.locator(".collection-link").first().waitFor();
-    await page.waitForFunction(() => document.querySelector(".sticker-preview img")?.src.includes("/motion/"));
+    await page.locator(".sticker-preview").first().scrollIntoViewIfNeeded();
+    await page.waitForFunction(urls => urls.includes(document.querySelector(".sticker-preview img")?.src), motionURLs);
     await page.locator(".sticker-preview img").first().evaluate(img => img.decode());
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({ path: `${out}/catalog-${width}.png` });
     await page.getByRole("button", { name: "Create", exact: true }).first().click();
+    await page.getByRole("heading", { name: "Welcome to WeSticker", exact: true }).waitFor();
+    for (const provider of ["Google", "Apple", "GitHub", "LazyingArt"]) {
+      assert(await page.getByRole("link", { name: "Continue with " + provider, exact: true }).isVisible());
+    }
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({ path: `${out}/create-${width}.png` });
     checks.push({ width, animatedPreview: true, noOverflow: true, create: true });

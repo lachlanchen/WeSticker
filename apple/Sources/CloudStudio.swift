@@ -212,6 +212,8 @@ private enum StudioSecret {
         guard let p = current else { return }
         _ = try await request("/api/packs/\(p.id)", ["items": payload(proposed ?? rows), "revision": revision ?? p.revision], method: "PATCH")
         dirty = false; try await refresh(); quote = nil
+        selected.formIntersection(Set(rows.map(\.id)))
+        if selected.isEmpty { selected = Set(rows.prefix(1).map(\.id)) }
     }
     func chat(_ text: String) async throws {
         if current == nil {

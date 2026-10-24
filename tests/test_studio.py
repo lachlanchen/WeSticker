@@ -164,7 +164,14 @@ def test_planner_never_applies_or_charges(setup, monkeypatch):
                 ]
             }
 
-    monkeypatch.setattr("server.studio.requests.post", lambda *a, **k: Response())
+    def send(url, **kwargs):
+        assert url == "https://api.deepseek.com/v1/chat/completions"
+        assert kwargs["json"]["model"] == "deepseek-flash"
+        assert kwargs["json"]["thinking"] == {"type": "disabled"}
+        assert kwargs["json"]["response_format"] == {"type": "json_object"}
+        assert "tools" not in kwargs["json"]
+        return Response()
+    monkeypatch.setattr("server.studio.requests.post", send)
     result = call(
         c,
         f"/api/packs/{id}/chat",
